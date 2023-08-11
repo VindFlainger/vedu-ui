@@ -1,7 +1,7 @@
-import type { order } from '~/plugins/order'
+import { DateTime } from 'luxon';
 
 interface PluginsInjections {
-    $order: string
+    $luxon: DateTime
 }
 
 declare module '#app' {

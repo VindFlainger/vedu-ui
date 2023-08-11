@@ -1,7 +1,9 @@
+interface State {
+    collapsed: boolean
+}
 export const useLayoutStore = defineStore('Layout', {
-    state: () => ({
-        isSideBar: false,
-        isSideBarCollapsed: false
+    state: () : State => ({
+        collapsed: false
     }),
     getters: {
 
