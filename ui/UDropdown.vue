@@ -1,12 +1,7 @@
 <template>
-    <ElDropdown
-        :trigger="props.trigger"
-        ref="dropdown"
-        popper-class="popper"
-        placement="bottom-start"
-    >
+    <ElDropdown :trigger="props.trigger" ref="dropdown" popper-class="popper" placement="bottom-start">
         <slot>
-            <UButton :label="label" preset="outline" @click="toggle" :style="{width: `${props.width}px`}"/>
+            <UButton :label="label" preset="outline" @click="toggle" :style="{ width: `${props.width}px` }" />
         </slot>
         <template #dropdown>
             <el-dropdown-menu>
@@ -27,14 +22,14 @@ import { DropdownInstance } from 'element-plus'
 export interface Props {
     label?: string
     items?: any[]
-    trigger?: 'hover' | 'click',
+    trigger?: 'hover' | 'click'
     width?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
     items: () => [],
     trigger: 'click',
-    width: 80
+    width: 80,
 })
 
 const dropdown = ref<DropdownInstance>()
@@ -50,9 +45,7 @@ const toggle = () => {
     @apply !border-none !shadow-none relative -top-1.5 -mt-2;
 }
 
-.el-popper__arrow{
+.el-popper__arrow {
     @apply hidden;
 }
-
-
 </style>

@@ -1,6 +1,6 @@
 <template>
     <ElDialog align-center custom-class="rounded-lg">
-        <template> Test </template>
+        <template #default> Test </template>
     </ElDialog>
 </template>
 

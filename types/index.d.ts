@@ -1,7 +1,9 @@
-import { DateTime } from 'luxon';
+import { DateTime } from 'luxon'
+import { api } from '~/plugins/api'
 
 interface PluginsInjections {
     $luxon: DateTime
+    $api: typeof api
 }
 
 declare module '#app' {
@@ -9,9 +11,7 @@ declare module '#app' {
 }
 
 declare module 'nuxt/dist/app/nuxt' {
-    interface NuxtApp extends PluginsInjections {
-
-    }
+    interface NuxtApp extends PluginsInjections {}
 }
 
 declare module '@vue/runtime-core' {

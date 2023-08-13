@@ -12,11 +12,11 @@
         <div class="flex items-center justify-center">
             <slot></slot>
             <div v-if="loading && !disabled" class="ml-2">
-                <LoaderIcon :width="fontSize - 2" :fill="textColor" :height="fontSize - 2"/>
+                <LoaderIcon :width="fontSize - 2" :fill="textColor" :height="fontSize - 2" />
             </div>
             <div class="ml-2" v-else-if="icon && slots.icon">
                 <slot name="icon">
-                    <UIcon :value="icon" v-if="icon"/>
+                    <UIcon :value="icon" v-if="icon" />
                 </slot>
             </div>
         </div>
@@ -25,9 +25,9 @@
 
 <script setup lang="ts">
 import UIcon from '~/ui/UIcon.vue'
-import { useColor } from "~/ui/composables/useColor";
-import { useRounded } from "~/ui/composables/useRounded";
-import LoaderIcon from "~/ui/icons/LoaderIcon.vue";
+import { useColor } from '~/ui/composables/useColor'
+import { useRounded } from '~/ui/composables/useRounded'
+import LoaderIcon from '~/ui/icons/LoaderIcon.vue'
 
 export interface Props {
     color?: string
@@ -39,8 +39,8 @@ export interface Props {
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
     loading?: boolean
-    disabled?: boolean
-    inactive?: boolean,
+    disabled?: boolean | number
+    inactive?: boolean
     disabledTextColor?: string
     disabledColor?: string
     icon?: string

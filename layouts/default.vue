@@ -19,7 +19,7 @@ import SideBar from '~/components/Navs/SideBar/SideBar.vue'
 import { useLayoutStore } from '~/store/Layout'
 const layoutStore = useLayoutStore()
 
-const { collapsed } = storeToRefs(layoutStore)
+const { collapsed} = storeToRefs(layoutStore)
 </script>
 
 <style scoped lang="scss">
