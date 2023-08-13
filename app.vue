@@ -7,7 +7,7 @@
     </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 useHead({
     title: 'Vedu.  | Homepage',
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/logo.ico' }],
