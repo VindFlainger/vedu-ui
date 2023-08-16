@@ -75,6 +75,7 @@ export interface Props {
     errors?: Array<any>
     errorsCount?: number
     hideErrors?: boolean | number
+    errorState?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -144,8 +145,12 @@ const sizeFrames = computed(() => {
     }
 })
 
-const color = computed(() => (props.errors.length && !props.hideErrors ? '#DC2626' : '#49BBBD'))
-const textColor = computed(() => (props.errors.length && !props.hideErrors ? '#DC2626' : '#000000'))
+const color = computed(() =>
+    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#49BBBD'
+)
+const textColor = computed(() =>
+    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#000000'
+)
 
 const styles = computed(() => ({
     '--u-input-padding': sizeFrames.value.padding,

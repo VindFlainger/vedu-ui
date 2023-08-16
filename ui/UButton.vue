@@ -10,13 +10,36 @@
         class="relative overflow-hidden selection:bg-none"
     >
         <div class="flex items-center justify-center">
-            <slot></slot>
+            <div class="mr-2" v-if="icon || slots.leftIcon">
+                <slot name="leftIcon">
+                    <UIcon
+                        v-if="icon"
+                        v-bind="rightIconProps"
+                        :value="icon"
+                        :size="15"
+                        :color="textColor"
+                        stroke-width="2.5"
+                    />
+                </slot>
+            </div>
+            <slot>
+                <span class="top-px">
+                    {{ label }}
+                </span>
+            </slot>
             <div v-if="loading && !disabled" class="ml-2">
                 <LoaderIcon :width="fontSize - 2" :fill="textColor" :height="fontSize - 2" />
             </div>
-            <div class="ml-2" v-else-if="icon && slots.icon">
-                <slot name="icon">
-                    <UIcon :value="icon" v-if="icon" />
+            <div class="ml-2" v-else-if="icon || slots.rightIcon">
+                <slot name="rightIcon">
+                    <UIcon
+                        v-if="icon"
+                        v-bind="rightIconProps"
+                        :value="icon"
+                        :size="15"
+                        :color="textColor"
+                        stroke-width="2.5"
+                    />
                 </slot>
             </div>
         </div>
@@ -44,6 +67,8 @@ export interface Props {
     disabledTextColor?: string
     disabledColor?: string
     icon?: string
+    rightIconProps: any
+    label?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -64,34 +89,38 @@ const emit = defineEmits<{
     click: []
 }>()
 
-const slots = useSlots()
+const slots = defineSlots<{
+    default?(): any
+    'rightIcon'?(): any
+    'leftIcon'?(): any
+}>()
 
 const handleClick = () => {
-    if (!props.loading && !props.loading) emit('click')
+    if (!props.loading && !props.loading && !props.disabled) emit('click')
 }
 
 const { color } = useColor(props.color)
 const { color: textColor } = useColor(props.textColor)
 const { rounded } = useRounded(props.rounded)
 
-const padding = computed(() => {
+const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
-            return '3px 8px'
+            return { padding: '3px 8px', iconSize: '' }
         case 'sm':
-            return '4px 10px'
+            return { padding: '4px 10px' }
         case 'md':
-            return '6px 16px'
+            return { padding: '6px 16px' }
         case 'lg':
-            return '8px 18px'
+            return { padding: '8px 18px' }
         case 'xl':
-            return '12px 21px'
+            return { padding: '12px 21px' }
     }
 })
 
 const styles = computed(() => ({
     border: props.plain ? `${props.borderWidth}px solid ${color.value}` : '',
-    padding: padding.value,
+    padding: sizeFrames.value.padding,
     borderRadius: rounded.value,
     color: props.disabled ? props.disabledTextColor : textColor.value,
     fontWeight: props.fontWeight,

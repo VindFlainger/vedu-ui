@@ -19,8 +19,6 @@
 
 <script setup lang="ts">
 
-import UIcon from "~/ui/UIcon.vue";
-
 export interface Props {
     label?: string
     labelClass?: string,

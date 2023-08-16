@@ -66,9 +66,6 @@
 </template>
 
 <script setup lang="ts">
-import UIcon from '~/ui/UIcon.vue'
-import { useLayoutStore } from '~/store/Layout'
-
 const layoutStore = useLayoutStore()
 
 const { collapsed } = storeToRefs(layoutStore)
