@@ -29,7 +29,7 @@
         </div>
         <div class="mt-7 rounded-xl border border-red-500 p-2 text-red-500" v-if="invalid">
             <div class="flex items-center">
-                <UIcon value="ExclamationCircle" color="red-500"/>
+                <UIcon value="ExclamationCircle" color="red-500" />
                 <p class="ml-3 text-sm">
                     Incorrect authorization data, check the data and try again.
                 </p>
@@ -42,7 +42,7 @@
                 size="xl"
                 font-weight="400"
                 @click="handleLogin"
-                :disabled="submitCount && !meta.valid || invalid"
+                :disabled="(submitCount && !meta.valid) || invalid"
                 :loading="pending"
             >
                 Login
@@ -61,12 +61,10 @@ const { submitCount, meta, handleSubmit } = useForm({
         password: string().required('Password is required'),
     }),
 })
-
 const email = useField<string>('email')
 const password = useField<string>('password')
 const remember = ref(false)
 const invalid = ref(false)
-
 
 // prettier-ignore
 const { data, error, execute: login, pending, messages, code } = $api.Auth.LOGIN_STUDENT({

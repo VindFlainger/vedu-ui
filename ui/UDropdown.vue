@@ -1,7 +1,17 @@
 <template>
-    <ElDropdown :trigger="props.trigger" ref="dropdown" popper-class="popper" placement="bottom-start">
+    <ElDropdown
+        :trigger="props.trigger"
+        ref="dropdown"
+        popper-class="popper"
+        placement="bottom-start"
+    >
         <slot>
-            <UButton :label="label" preset="outline" @click="toggle" :style="{ width: `${props.width}px` }" />
+            <UButton
+                :label="label"
+                preset="outline"
+                @click="toggle"
+                :style="{ width: `${props.width}px` }"
+            />
         </slot>
         <template #dropdown>
             <el-dropdown-menu>
@@ -42,7 +52,7 @@ const toggle = () => {
 
 <style>
 .popper {
-    @apply !border-none !shadow-none relative -top-1.5 -mt-2;
+    @apply relative -top-1.5 -mt-2 !border-none !shadow-none;
 }
 
 .el-popper__arrow {

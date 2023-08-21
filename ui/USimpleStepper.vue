@@ -1,39 +1,8 @@
 <template>
-    <div class="prevent-select">
-        <div>
-            <slot v-for="slot in activeSlots" :name="slot.value"> {{}} </slot>
-        </div>
-    </div>
-    <div class="mt-8" v-if="isSingle">
-        <slot name="navigation">
-            <div v-if="navigation" class="flex">
-                <UButton label="Back" v-if="lastActiveItemIndex">
-                    <template #leftIcon>
-                        <UIcon
-                            class="absolute left-[6px] top-1/2 -translate-y-1/2"
-                            value="ChevronLeft"
-                            color="white"
-                            size="15"
-                            strokeWidth="3"
-                            
-                        />
-                    </template>
-                </UButton>
-                <UButton label="Next" class="ml-auto mr-0">
-                    <template #rightIcon>
-                        <UIcon
-                            class="absolute right-[6px] top-1/2 -translate-y-1/2"
-                            value="ChevronRight"
-                            color="white"
-                            size="15"
-                            strokeWidth="3"
-                        />
-                    </template>
-                </UButton>
-            </div>
-        </slot>
+    <div>
         <UPath
-            class="mt-4"
+            v-if="isSingle"
+            class="mb-5"
             v-bind="pathProps"
             :items="slots"
             :modelValue="modelValue"
@@ -41,6 +10,44 @@
             :returning="returning"
             @update:modelValue="handlePathChange"
         />
+        <div class="prevent-select">
+            <div>
+                <slot v-for="slot in activeSlots" :name="slot.value"> {{}} </slot>
+            </div>
+        </div>
+        <div class="mt-8" v-if="isSingle">
+            <slot name="navigation">
+                <div v-if="navigation" class="flex">
+                    <UButton v-if="lastActiveSlotIndex" label="Back">
+                        <template #leftIcon>
+                            <UIcon
+                                class="absolute left-[6px] top-1/2 -translate-y-1/2"
+                                value="ChevronLeft"
+                                color="white"
+                                size="15"
+                                strokeWidth="3"
+                            />
+                        </template>
+                    </UButton>
+                    <UButton
+                        label="Next"
+                        class="ml-auto mr-0"
+                        @click="handleNext"
+                        :disabled="slots[lastActiveSlotIndex].disabledNext"
+                    >
+                        <template #rightIcon>
+                            <UIcon
+                                class="absolute right-[6px] top-1/2 -translate-y-1/2"
+                                value="ChevronRight"
+                                color="white"
+                                size="15"
+                                strokeWidth="3"
+                            />
+                        </template>
+                    </UButton>
+                </div>
+            </slot>
+        </div>
     </div>
 </template>
 
@@ -53,6 +60,7 @@ export interface Props {
     slots: {
         value: string
         name?: string
+        disabledNext?: boolean
     }[]
     displayColumn?: boolean
     moveable?: boolean
@@ -82,12 +90,11 @@ const activeSlots = computed(() => {
     )
 })
 
-const lastActiveItemIndex = computed(() =>
+const lastActiveSlotIndex = computed(() =>
     props.slots.findIndex((item) => item.value === props.modelValue)
 )
 
 const handlePathChange = (v: string) => {
-    console.log(v)
     emit('update:modelValue', v)
 }
 </script>

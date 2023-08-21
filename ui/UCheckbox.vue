@@ -1,8 +1,20 @@
 <template>
-    <label class="flex items-center" :class="{'prevent-select': !selection}">
-        <div :style="checkboxStyles" class="outline outline-1 rounded-sm outline-black">
-            <UIcon value="Check" :size="checkboxMetrics.wh" stroke-width="2.5" v-if="checked && !solid"/>
-            <div v-else-if="checked && solid" class="w-full h-full bg-black p-[2px] bg-clip-content rounded"/>
+    <label class="flex items-center" :class="{ 'prevent-select': !selection }">
+        <div
+            :style="checkboxStyles"
+            class="rounded-sm outline outline-1"
+        >
+            <UIcon
+                v-if="checked && !solid"
+                :color="color"
+                value="Check"
+                :size="checkboxMetrics.wh"
+                stroke-width="2.5"
+            />
+            <div
+                v-else-if="checked && solid"
+                class="h-full w-full rounded bg-black bg-clip-content p-[2px]"
+            />
         </div>
         <input
             class="hidden"
@@ -10,29 +22,34 @@
             :class="checkboxClass"
             :checked="checked"
             @change="checked = $event"
-        >
+        />
         <span class="ml-2" :class="labelClass">
-            <slot> <span>{{ label }}</span> </slot>
+            <slot>
+                <span>{{ label }}</span>
+            </slot>
         </span>
     </label>
 </template>
 
 <script setup lang="ts">
+import { useColor } from '~/ui/composables/useColor'
 
 export interface Props {
     label?: string
-    labelClass?: string,
-    checkboxClass?: string,
-    value?: string | number | null,
+    labelClass?: string
+    checkboxClass?: string
+    value?: string | number | null
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     modelValue?: boolean | Array<string | number | null | undefined>
     selection?: boolean
     solid?: boolean
+    color?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
     size: 'md',
-    selection: false
+    selection: false,
+    color: 'black',
 })
 const emit = defineEmits<{
     'update:modelValue': [v: Props['modelValue']]
@@ -40,6 +57,7 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 
+const { color } = useColor(props.color)
 
 const checked = computed({
     get() {
@@ -50,24 +68,28 @@ const checked = computed({
         const checked = event.target.checked
 
         if (Array.isArray(props.modelValue)) {
-            if (!checked) emit('update:modelValue', props.modelValue.filter(value => value !== props.value))
+            if (!checked)
+                emit(
+                    'update:modelValue',
+                    props.modelValue.filter((value) => value !== props.value)
+                )
             if (checked) emit('update:modelValue', [...props.modelValue, props.value])
         } else emit('update:modelValue', checked)
-    }
+    },
 })
 
 const checkboxMetrics = computed(() => {
     switch (props.size) {
         case 'xs':
-            return { wh: 8, }
+            return { wh: 8 }
         case 'sm':
-            return { wh: 10, }
+            return { wh: 10 }
         case 'md':
-            return { wh: 12, }
+            return { wh: 12 }
         case 'lg':
-            return { wh: 16, }
+            return { wh: 16 }
         case 'xl':
-            return { wh: 20, }
+            return { wh: 20 }
     }
 })
 
@@ -75,7 +97,7 @@ const checkboxStyles = computed(() => ({
     minHeight: `${checkboxMetrics.value.wh}px`,
     height: `${checkboxMetrics.value.wh}px`,
     minWidth: `${checkboxMetrics.value.wh}px`,
-    width: `${checkboxMetrics.value.wh}px`
+    width: `${checkboxMetrics.value.wh}px`,
+    outlineColor: color
 }))
-
 </script>
