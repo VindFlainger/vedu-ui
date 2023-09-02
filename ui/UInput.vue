@@ -35,7 +35,7 @@
                 <slot name="prefix" v-else></slot>
             </template>
             <template #suffix>
-                <UIcon v-if="rightIcon" :value="rightIcon" :size="sizeFrames.iconSizes.default" />
+                <UIcon v-if="rightIcon" :value="rightIcon" :size="sizeFrames.iconSizes.default"/>
                 <UIcon
                     v-else-if="type === 'password' && passwordAppearance"
                     :value="passwordVisible ? 'Eye' : 'EyeSlash'"
@@ -68,13 +68,18 @@
         </ElInput>
         <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
             <li
-                v-for="error in errors.slice(0, errorsCount)"
+                v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
                 :key="error"
-                :class="{ 'ml-3 list-disc': errors.length > 1 && errorsCount > 1 }"
+                :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
             >
                 {{ error }}
             </li>
         </ul>
+        <div v-if="hint || slots.hint" class="mt-2">
+            <slot name="hint">
+                <p class="text-sm ml-2 text-gray-500">{{ hint }}</p>
+            </slot>
+        </div>
     </div>
 </template>
 
@@ -102,7 +107,8 @@ export interface Props {
     hideErrors?: boolean | number
     errorState?: boolean
     max?: string | number
-    min?: string | number
+    min?: string | number,
+    hint?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -121,6 +127,7 @@ const attrs = useAttrs()
 const slots = defineSlots<{
     prefix?(): any
     suffix?(): any
+    hint?(): any
 }>()
 
 const emit = defineEmits<{
@@ -267,7 +274,7 @@ const styles = computed(() => ({
     '--u-input-padding-content': sizeFrames.value.paddingContent,
     '--color': color.value,
     '--text-color': textColor.value,
-    height: `${sizeFrames.value.height}px`,
+    'height': `${sizeFrames.value.height}px`,
 }))
 
 const passwordVisible = ref(false)
@@ -276,6 +283,7 @@ const passwordVisible = ref(false)
 <style scoped lang="scss">
 .u-input :deep(input) {
     padding: var(--u-input-padding);
+
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
         -webkit-appearance: none;

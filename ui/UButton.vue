@@ -11,13 +11,13 @@
     >
         <div class="flex items-center justify-center">
             <div class="mr-2" v-if="icon || slots.leftIcon">
-                <slot name="leftIcon">
+                <slot name="leftIcon" :color="activeTextColor" :disabled="disabled">
                     <UIcon
                         v-if="icon"
                         v-bind="rightIconProps"
                         :value="icon"
                         :size="15"
-                        :color="textColor"
+                        :color="activeTextColor"
                         stroke-width="2.5"
                     />
                 </slot>
@@ -28,16 +28,16 @@
                 </span>
             </slot>
             <div v-if="loading && !disabled" class="ml-2">
-                <LoaderIcon :width="fontSize - 2" :fill="textColor" :height="fontSize - 2" />
+                <LoaderIcon :width="fontSize - 2" :fill="activeTextColor" :height="fontSize - 2" />
             </div>
             <div class="ml-2" v-else-if="icon || slots.rightIcon">
-                <slot name="rightIcon">
+                <slot name="rightIcon" :color="activeTextColor" :disabled="disabled">
                     <UIcon
                         v-if="icon"
                         v-bind="rightIconProps"
                         :value="icon"
                         :size="15"
-                        :color="textColor"
+                        :color="activeTextColor"
                         stroke-width="2.5"
                     />
                 </slot>
@@ -99,9 +99,14 @@ const handleClick = () => {
     if (!props.loading && !props.loading && !props.disabled) emit('click')
 }
 
-const { color } = useColor(props.color)
-const { color: textColor } = useColor(props.textColor)
+const { color: _color } = useColor(props.color)
+const { color: _textColor } = useColor(props.textColor)
 const { rounded } = useRounded(props.rounded)
+
+const activeColor = computed(() => (props.disabled ? props.disabledColor : _color.value))
+const activeTextColor = computed(() =>
+    props.disabled ? props.disabledTextColor : _textColor.value
+)
 
 const sizeFrames = computed(() => {
     switch (props.size) {
@@ -119,15 +124,15 @@ const sizeFrames = computed(() => {
 })
 
 const styles = computed(() => ({
-    border: props.plain ? `${props.borderWidth}px solid ${color.value}` : '',
+    border: props.plain ? `${props.borderWidth}px solid ${activeColor.value}` : '',
     padding: sizeFrames.value.padding,
     borderRadius: rounded.value,
-    color: props.disabled ? props.disabledTextColor : textColor.value,
+    color: activeTextColor.value,
     fontWeight: props.fontWeight,
     fontSize: `${props.fontSize}px`,
-    '--color': props.disabled ? props.disabledColor : color.value,
-    '--hover-opacity': props.disabled || props.loading ? '1' : '0.8',
     filter: props.loading ? 'grayscale(0.3)' : '',
+    '--u-button-color': activeColor.value,
+    '--u-button-hover-opacity': props.disabled || props.loading ? '1' : '0.8',
 }))
 </script>
 
@@ -141,7 +146,7 @@ const styles = computed(() => ({
     top: 0;
     left: 0;
     z-index: -1;
-    background: var(--color);
+    background: var(--u-button-color);
 }
 
 .u-button-bg::before {
@@ -158,6 +163,6 @@ const styles = computed(() => ({
 .u-button-bg:hover::after {
     content: '';
     position: absolute;
-    opacity: var(--hover-opacity);
+    opacity: var(--u-button-hover-opacity);
 }
 </style>

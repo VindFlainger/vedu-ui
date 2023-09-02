@@ -75,16 +75,25 @@
                     v-if="!active"
                     value="ChevronDown"
                     class="absolute right-3 top-[calc(50%+2px)] -translate-y-1/2"
-                    color="primary-700"
+                    :color="color"
                 />
                 <UIcon
                     v-else
                     value="ChevronUp"
                     class="absolute right-3 top-[calc(50%)] -translate-y-1/2"
-                    color="primary-700"
+                    :color="color"
                 />
             </template>
         </ElSelect>
+        <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
+            <li
+                v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
+                :key="error"
+                :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
+            >
+                {{ error }}
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -112,7 +121,8 @@ export interface Props {
     options?: any[]
     collapseTags?: boolean
     maxCollapseTags?: number
-    hideCheckboxStyle?: boolean
+    hideCheckboxStyle?: boolean,
+    labelClass?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -216,12 +226,12 @@ const styles = computed(() => ({
 <style scoped lang="scss">
 .u-select {
     :deep(.el-input__wrapper.is-focus) {
-        box-shadow: 0 0 0 1px #49bbbd !important;
+        box-shadow: 0 0 0 1px var(--color) !important;
     }
 
     :deep(.el-input__wrapper) {
         @apply rounded-full;
-        box-shadow: 0 0 0 1px #49bbbd !important;
+        box-shadow: 0 0 0 1px var(--color) !important;
         padding: var(--u-select-padding-content);
 
         .el-input__suffix {
@@ -288,6 +298,6 @@ const styles = computed(() => ({
 }
 
 .el-select :deep(.el-input.is-focus .el-input__wrapper) {
-    box-shadow: 0 0 0 1px #49bbbd !important;
+    box-shadow: 0 0 0 1px var(--color) !important;
 }
 </style>

@@ -29,12 +29,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const color = computed<string>(() => parseColor(props.color))
 
-const styles = {
+const styles = computed(()=>({
     width: `${props.size}px`,
     height: `${props.size}px`,
     color: `${color.value}`,
     strokeWidth: props.strokeWidth
-}
+}))
 
 
 </script>

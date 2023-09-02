@@ -11,14 +11,21 @@
             @update:modelValue="handlePathChange"
         />
         <div class="prevent-select">
-            <div>
-                <slot v-for="slot in activeSlots" :name="slot.value"> {{}} </slot>
+            <div v-for="(slot, i) in slots">
+                <div v-if="lastActiveSlotIndex >= i" v-show="i === lastActiveSlotIndex">
+                    <slot :name="slot.value"/>
+                </div>
             </div>
         </div>
         <div class="mt-8" v-if="isSingle">
             <slot name="navigation">
                 <div v-if="navigation" class="flex">
-                    <UButton v-if="lastActiveSlotIndex" label="Back">
+                    <UButton
+                        v-if="lastActiveSlotIndex"
+                        :label="backLabel"
+                        :disabled="false"
+                        @click="handleMove(-1)"
+                    >
                         <template #leftIcon>
                             <UIcon
                                 class="absolute left-[6px] top-1/2 -translate-y-1/2"
@@ -30,16 +37,16 @@
                         </template>
                     </UButton>
                     <UButton
-                        label="Next"
+                        :label="(slots.length - 1) === lastActiveSlotIndex? finishLabel: nextLabel"
                         class="ml-auto mr-0"
-                        @click="handleNext"
-                        :disabled="slots[lastActiveSlotIndex].disabledNext"
+                        @click="handleMove(1)"
+                        :disabled="nextDisabled"
                     >
-                        <template #rightIcon>
+                        <template #rightIcon="{ color }" v-if="(slots.length - 1) !== lastActiveSlotIndex">
                             <UIcon
                                 class="absolute right-[6px] top-1/2 -translate-y-1/2"
                                 value="ChevronRight"
-                                color="white"
+                                :color="color"
                                 size="15"
                                 strokeWidth="3"
                             />
@@ -56,11 +63,10 @@ import { fa } from 'element-plus/es/locale'
 import { mode } from 'process'
 
 export interface Props {
-    modelValue?: string | Array<string>
+    modelValue?: string
     slots: {
         value: string
         name?: string
-        disabledNext?: boolean
     }[]
     displayColumn?: boolean
     moveable?: boolean
@@ -68,33 +74,49 @@ export interface Props {
     skipping?: boolean
     returning?: boolean
     navigation?: boolean
+    nextDisabled?: boolean,
+    confirmNext?: boolean,
+    confirmBack?: boolean,
+    nextLabel?: string,
+    backLabel?: string,
+    finishLabel?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
     slots: () => [],
     returning: true,
     navigation: true,
+    confirmNext: true,
+    nextLabel: 'Next',
+    backLabel: 'Back',
+    finishLabel: 'Finish'
 })
 
 const emit = defineEmits<{
     'update:modelValue': [v: Props['modelValue']]
+    'step-next': [target: string, move: () => void]
+    'step-back': [target: string, move: () => void]
 }>()
 
 const isSingle = computed(() => !Array.isArray(props.modelValue))
-
-const activeSlots = computed(() => {
-    return props.slots.filter((slot) =>
-        Array.isArray(props.modelValue)
-            ? props.modelValue.includes(slot.value)
-            : props.modelValue === slot.value
-    )
-})
 
 const lastActiveSlotIndex = computed(() =>
     props.slots.findIndex((item) => item.value === props.modelValue)
 )
 
-const handlePathChange = (v: string) => {
-    emit('update:modelValue', v)
+const handleMove = (n: number) => {
+    if (n !== 0) {
+        const newActiveSlot = props.slots[lastActiveSlotIndex.value + n]
+        const move = () => emit('update:modelValue', newActiveSlot.value)
+        if (n > 0 ? props.confirmNext : props.confirmBack)
+            n > 0 ? emit('step-next', newActiveSlot.value, move) : emit('step-back', newActiveSlot.value, move)
+        else move()
+    }
 }
+
+const handlePathChange = (v: string) => {
+    const n = props.slots.findIndex(slot => slot.value === v) - lastActiveSlotIndex.value
+    handleMove(n)
+}
+
 </script>

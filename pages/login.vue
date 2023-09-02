@@ -1,17 +1,28 @@
 <template>
     <div class="flex h-screen items-center justify-center">
-        <div class="grid h-[850px] w-full max-w-[1440px] grid-cols-2 p-9">
-            <img class="h-full rounded-3xl object-cover" src="~/assets/images/login.png" />
-            <div class="flex flex-col justify-center px-20">
+        <div class="grid h-full max-h-[850px] w-full max-w-[1440px] grid-cols-1 md:grid-cols-5 lg:grid-cols-2 p-9">
+            <div class="h-full relative max-md:hidden max-lg:col-span-2">
+                <img class="xl:block hidden h-full rounded-3xl object-cover" src="~/assets/images/login.png"/>
+                <img class="absolute xl:hidden block h-full w-full rounded-3xl object-cover" src="~/assets/images/login-vertical.jpg"/>
+            </div>
+            <div class="flex flex-col justify-center md:px-6 lg:px-12 xl:px-20 max-lg:col-span-3">
                 <div>
                     <div class="flex flex-col items-center">
                         <p>Welcome to Vedu!</p>
-                        <USwitch :items="actions" v-model="action" size="md" />
-                        <USwitch v-if="action === 'register'" :items="roles" v-model="role" size="md" />
+                        <USwitch :items="actions" v-model="action" size="md"/>
+                        <USwitch
+                            v-if="action === 'register'"
+                            :items="roles"
+                            v-model="role"
+                            size="md"
+                        />
                     </div>
                     <div>
                         <LazyActionLogin v-if="action === 'login'" class="mt-4"/>
-                        <LazyActionRegisterStudent v-if="action === 'register' && role === 'student'" class="mt-4"/>
+                        <LazyActionRegisterStudent
+                            v-if="action === 'register' && role === 'student'"
+                            class="mt-4"
+                        />
                     </div>
                 </div>
             </div>

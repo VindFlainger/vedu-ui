@@ -1,9 +1,6 @@
 <template>
     <label class="flex items-center" :class="{ 'prevent-select': !selection }">
-        <div
-            :style="checkboxStyles"
-            class="rounded-sm outline outline-1"
-        >
+        <div :style="checkboxStyles" class="rounded-sm outline outline-1">
             <UIcon
                 v-if="checked && !solid"
                 :color="color"
@@ -98,6 +95,6 @@ const checkboxStyles = computed(() => ({
     height: `${checkboxMetrics.value.wh}px`,
     minWidth: `${checkboxMetrics.value.wh}px`,
     width: `${checkboxMetrics.value.wh}px`,
-    outlineColor: color
+    outlineColor: color,
 }))
 </script>
