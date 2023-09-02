@@ -7,6 +7,19 @@ export default defineNuxtConfig({
   devServer: {
     port: 8080
   },
+  imports: {
+    presets: [
+      {
+        from: 'vee-validate',
+        imports: ['useField', 'useForm']
+      },
+      {
+        from: 'yup',
+        imports: ['string', 'object']
+      },
+    ],
+    dirs: ['stores']
+  },
   // @ts-ignore
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
@@ -29,6 +42,10 @@ export default defineNuxtConfig({
   components: [
     {
       path: '~/components',
+      pathPrefix: false
+    },
+    {
+      path: '~/ui',
       pathPrefix: false
     }
   ],

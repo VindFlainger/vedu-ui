@@ -14,12 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import HeaderBar from '~/components/Navs/Header/HeaderBar.vue'
-import SideBar from '~/components/Navs/SideBar/SideBar.vue'
-import { useLayoutStore } from '~/store/Layout'
-const layoutStore = useLayoutStore()
-
-const { collapsed} = storeToRefs(layoutStore)
+const { collapsed } = storeToRefs(useLayoutStore())
 </script>
 
 <style scoped lang="scss">

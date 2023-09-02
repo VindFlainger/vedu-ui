@@ -6,6 +6,7 @@ export interface Controls {
 }
 
 export function useFetchData<DataT>(
+    method: 'GET' | 'POST' = 'GET',
     path: MaybeRefOrGetter<string>,
     options?: UseFetchOptions<DataT>,
     controls?: Controls
@@ -13,18 +14,14 @@ export function useFetchData<DataT>(
     const counter = ref(0)
     const result = useFetch(path, {
         ...options,
+        method,
         onRequest: ({ request, options }) => {
-            return new Promise((resolve)=>{
-                setTimeout(()=>{
-                    resolve()
-                }, 5000)
-                console.log('here')
-            })
+           
         },
         onRequestError: () => {},
         onResponse: () => {},
         onResponseError: () => {},
-        baseURL: 'http://localhost:8080/',
+        baseURL: 'http://localhost:3000/',
     })
 
     const {messages, code} = useErrors(result.error)

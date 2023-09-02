@@ -10,13 +10,36 @@
         class="relative overflow-hidden selection:bg-none"
     >
         <div class="flex items-center justify-center">
-            <slot></slot>
-            <div v-if="loading && !disabled" class="ml-2">
-                <LoaderIcon :width="fontSize - 2" :fill="textColor" :height="fontSize - 2" />
+            <div class="mr-2" v-if="icon || slots.leftIcon">
+                <slot name="leftIcon" :color="activeTextColor" :disabled="disabled">
+                    <UIcon
+                        v-if="icon"
+                        v-bind="rightIconProps"
+                        :value="icon"
+                        :size="15"
+                        :color="activeTextColor"
+                        stroke-width="2.5"
+                    />
+                </slot>
             </div>
-            <div class="ml-2" v-else-if="icon && slots.icon">
-                <slot name="icon">
-                    <UIcon :value="icon" v-if="icon" />
+            <slot>
+                <span class="top-px">
+                    {{ label }}
+                </span>
+            </slot>
+            <div v-if="loading && !disabled" class="ml-2">
+                <LoaderIcon :width="fontSize - 2" :fill="activeTextColor" :height="fontSize - 2" />
+            </div>
+            <div class="ml-2" v-else-if="icon || slots.rightIcon">
+                <slot name="rightIcon" :color="activeTextColor" :disabled="disabled">
+                    <UIcon
+                        v-if="icon"
+                        v-bind="rightIconProps"
+                        :value="icon"
+                        :size="15"
+                        :color="activeTextColor"
+                        stroke-width="2.5"
+                    />
                 </slot>
             </div>
         </div>
@@ -44,6 +67,8 @@ export interface Props {
     disabledTextColor?: string
     disabledColor?: string
     icon?: string
+    rightIconProps: any
+    label?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -64,41 +89,50 @@ const emit = defineEmits<{
     click: []
 }>()
 
-const slots = useSlots()
+const slots = defineSlots<{
+    default?(): any
+    'rightIcon'?(): any
+    'leftIcon'?(): any
+}>()
 
 const handleClick = () => {
-    if (!props.loading && !props.loading) emit('click')
+    if (!props.loading && !props.loading && !props.disabled) emit('click')
 }
 
-const { color } = useColor(props.color)
-const { color: textColor } = useColor(props.textColor)
+const { color: _color } = useColor(props.color)
+const { color: _textColor } = useColor(props.textColor)
 const { rounded } = useRounded(props.rounded)
 
-const padding = computed(() => {
+const activeColor = computed(() => (props.disabled ? props.disabledColor : _color.value))
+const activeTextColor = computed(() =>
+    props.disabled ? props.disabledTextColor : _textColor.value
+)
+
+const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
-            return '3px 8px'
+            return { padding: '3px 8px', iconSize: '' }
         case 'sm':
-            return '4px 10px'
+            return { padding: '4px 10px' }
         case 'md':
-            return '6px 16px'
+            return { padding: '6px 16px' }
         case 'lg':
-            return '8px 18px'
+            return { padding: '8px 18px' }
         case 'xl':
-            return '12px 21px'
+            return { padding: '12px 21px' }
     }
 })
 
 const styles = computed(() => ({
-    border: props.plain ? `${props.borderWidth}px solid ${color.value}` : '',
-    padding: padding.value,
+    border: props.plain ? `${props.borderWidth}px solid ${activeColor.value}` : '',
+    padding: sizeFrames.value.padding,
     borderRadius: rounded.value,
-    color: props.disabled ? props.disabledTextColor : textColor.value,
+    color: activeTextColor.value,
     fontWeight: props.fontWeight,
     fontSize: `${props.fontSize}px`,
-    '--color': props.disabled ? props.disabledColor : color.value,
-    '--hover-opacity': props.disabled || props.loading ? '1' : '0.8',
     filter: props.loading ? 'grayscale(0.3)' : '',
+    '--u-button-color': activeColor.value,
+    '--u-button-hover-opacity': props.disabled || props.loading ? '1' : '0.8',
 }))
 </script>
 
@@ -112,7 +146,7 @@ const styles = computed(() => ({
     top: 0;
     left: 0;
     z-index: -1;
-    background: var(--color);
+    background: var(--u-button-color);
 }
 
 .u-button-bg::before {
@@ -129,6 +163,6 @@ const styles = computed(() => ({
 .u-button-bg:hover::after {
     content: '';
     position: absolute;
-    opacity: var(--hover-opacity);
+    opacity: var(--u-button-hover-opacity);
 }
 </style>

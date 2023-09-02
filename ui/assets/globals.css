@@ -3,3 +3,18 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+
+.el-popper__arrow{
+    display: none;
+}
+
+.el-popper{
+    user-select: none;
+    border-radius: 16px !important;
+    overflow-x: hidden;
+}
+
+.el-scrollbar__view{
+    padding: 0 !important; 
+}
