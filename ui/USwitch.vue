@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative mt-6 grid rounded-full bg-primary-500"
+        class="relative grid rounded-full bg-primary-500"
         :style="styles"
         :class="{'prevent-select': !selection}"
     >
@@ -40,7 +40,8 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     items: () => [],
-    selection: false
+    selection: false,
+    size: 'md'
 })
 
 const emit = defineEmits<{
@@ -57,7 +58,7 @@ const metrics = computed(() => {
         case 'xs':
             return {}
         case 'sm':
-            return {}
+            return { outerPadding: '6px 7px', innerPadding: '5px 20px' }
         case 'md':
             return { outerPadding: '6px 7px', innerPadding: '6px 26px' }
         case 'lg':

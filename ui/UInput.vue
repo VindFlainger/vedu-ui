@@ -2,11 +2,11 @@
     <div v-bind="{ class: attrs.class }" :class="{ 'prevent-select': !selection }">
         <p
             v-if="props.label"
-            class="font-medium"
+            class="font-medium text-base"
             :style="[sizeFrames.labelStyles, { color: textColor }]"
             :class="labelClass"
         >
-            {{ props.label }}
+            {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
         </p>
         <ElInput
             class="u-input [&>div]:rounded-full [&>div]:!shadow-[0_0_0_1px_var(--color)] [&_input]:text-base [&_input]:text-[var(--text-color)]"
@@ -16,6 +16,7 @@
             :min="min"
             :style="styles"
             :type="passwordVisible ? 'text' : (type as string)"
+            :required="required"
             @update:model-value="handleUpdate"
             @keypress="handleKeypress"
             @blur="handleBlur"
@@ -35,7 +36,13 @@
                 <slot name="prefix" v-else></slot>
             </template>
             <template #suffix>
-                <UIcon v-if="rightIcon" :value="rightIcon" :size="sizeFrames.iconSizes.default"/>
+                <UIcon
+                    v-if="rightIcon"
+                    :value="rightIcon"
+                    :tag="rightIconButton?'button':undefined"
+                    :size="sizeFrames.iconSizes.default"
+                    @click="emit('click:rightIcon')"
+                />
                 <UIcon
                     v-else-if="type === 'password' && passwordAppearance"
                     :value="passwordVisible ? 'Eye' : 'EyeSlash'"
@@ -68,14 +75,32 @@
         </ElInput>
         <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
             <li
-                v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
+                v-for="error in (activeErrors as Array<any>).slice(0, errorsCount as number)"
                 :key="error"
-                :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
+                :class="{ 'ml-3 list-disc': (activeErrors as Array<any>) > 1 && errorsCount > 1 }"
             >
                 {{ error }}
             </li>
         </ul>
-        <div v-if="hint || slots.hint" class="mt-2">
+        <ul v-if="(props.hideErrors || !activeErrors.length) && (hint || slots.hint)" class="mt-1 pl-2 text-sm text-red-500">
+            <li
+                v-for="error in (activeErrors as Array<any>).slice(0, errorsCount as number)"
+                :key="error"
+                :class="{ 'ml-3 list-disc': (activeErrors as Array<any>).length > 1 && errorsCount > 1 }"
+            >
+                {{ error }}
+            </li>
+        </ul>
+        <ul v-if="(props.hideErrors || !activeErrors.length) && activeSuccesses.length" class="mt-1 pl-2 text-sm text-green-500">
+            <li
+                v-for="success in (activeSuccesses as Array<any>)"
+                :key="success"
+                :class="{ 'ml-3 list-disc': (activeSuccesses as Array<any>).length > 1}"
+            >
+                {{ success }}
+            </li>
+        </ul>
+        <div v-if="(props.hideErrors || !activeErrors.length) && (hint || slots.hint)" class="mt-2">
             <slot name="hint">
                 <p class="text-sm ml-2 text-gray-500">{{ hint }}</p>
             </slot>
@@ -101,14 +126,17 @@ export interface Props {
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     leftIcon?: string
     rightIcon?: string
+    rightIconButton?: boolean,
     selection?: boolean
     errors?: Array<any>
     errorsCount?: number
     hideErrors?: boolean | number
+    conditions?: Record<string, ['success' | 'error', boolean]>,
     errorState?: boolean
     max?: string | number
     min?: string | number,
-    hint?: string
+    hint?: string,
+    required?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -119,7 +147,28 @@ const props = withDefaults(defineProps<Props>(), {
     numberAppearance: true,
     selection: false,
     errors: () => [],
-    errorsCount: 3,
+    errorsCount: 1,
+    required: false,
+    rightIconButton: false
+})
+
+const activeErrors = computed(() => {
+    const errors = []
+    if (props.conditions) errors
+        .push(...Object.entries(props.conditions)
+            .filter((([_, v]) => v[0] === 'error' && v[1]))
+            .map(([k, _]) => k))
+    errors.push(...props.errors)
+    return errors
+})
+
+const activeSuccesses = computed(() => {
+    const successes = []
+    if (props.conditions) successes
+        .push(...Object.entries(props.conditions)
+            .filter((([_, v]) => v[0] === 'success' && v[1]))
+            .map(([k, _]) => k))
+    return successes
 })
 
 const attrs = useAttrs()
@@ -131,7 +180,8 @@ const slots = defineSlots<{
 }>()
 
 const emit = defineEmits<{
-    'update:modelValue': [v: Props['modelValue']]
+    'update:modelValue': [v: Props['modelValue']],
+    'click:rightIcon': []
 }>()
 
 const handleUpdate = (value: Props['modelValue']) => {
@@ -263,10 +313,10 @@ const sizeFrames = computed(() => {
 })
 
 const color = computed(() =>
-    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#49BBBD'
+    (activeErrors.value.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#49BBBD'
 )
 const textColor = computed(() =>
-    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#000000'
+    (activeErrors.value.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#000000'
 )
 
 const styles = computed(() => ({

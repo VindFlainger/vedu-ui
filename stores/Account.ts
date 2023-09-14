@@ -15,8 +15,9 @@ export const useAccountStore = defineStore('Account', {
         },
     },
     actions: {
-        async setAuth(refreshToken: string, expires: number) {
-            localStorage.setItem('refresh_token', refreshToken)
+        async setAuth(refreshToken: string, expires: number, remember: boolean = true) {
+            if (remember) localStorage.setItem('refresh_token', refreshToken)
+            else sessionStorage.setItem('refresh_token', refreshToken)
             this.expires = expires
         },
     },

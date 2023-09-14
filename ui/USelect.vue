@@ -6,7 +6,7 @@
             :style="[sizeFrames.labelStyles, { color: textColor }]"
             :class="labelClass"
         >
-            {{ props.label }}
+            {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
         </p>
         <ElSelect
             v-bind="{ ...attrs, class: inputClass }"
@@ -122,7 +122,8 @@ export interface Props {
     collapseTags?: boolean
     maxCollapseTags?: number
     hideCheckboxStyle?: boolean,
-    labelClass?: string
+    labelClass?: string,
+    required?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -136,6 +137,7 @@ const props = withDefaults(defineProps<Props>(), {
     imageName: 'img',
     collapseTags: true,
     maxCollapseTags: 2,
+    required: false
 })
 
 const attrs = useAttrs()

@@ -11,31 +11,18 @@ export function useFetchData<DataT>(
     options?: UseFetchOptions<DataT>,
     controls?: Controls
 ) {
-    const counter = ref(0)
-    const result = useFetch(path, {
+    return useFetch(path, {
         ...options,
         method,
-        onRequest: ({ request, options }) => {
-           
+        onRequest: async ({ request, options }) => {
+
         },
-        onRequestError: () => {},
-        onResponse: () => {},
-        onResponseError: () => {},
-        baseURL: 'http://localhost:3000/',
+        onRequestError: () => {
+        },
+        onResponse: () => {
+        },
+        onResponseError: () => {
+        },
+        baseURL: 'http://localhost:3000/'
     })
-
-    const {messages, code} = useErrors(result.error)
-
-    return {
-        ...result,
-        execute: () => {
-            counter.value++
-            return result.execute()
-        },
-        pending: options?.lazy
-            ? computed(() => result.pending.value && !!counter.value)
-            : result.pending,
-        messages,
-        code
-    }
 }
