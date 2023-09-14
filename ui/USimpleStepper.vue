@@ -12,12 +12,12 @@
         />
         <div class="prevent-select">
             <div v-for="(slot, i) in slots">
-                <div v-if="lastActiveSlotIndex >= i" v-show="i === lastActiveSlotIndex">
+                <div v-if="lastActiveSlotIndex >= i" v-show="i === lastActiveSlotIndex" :class="slotsClass">
                     <slot :name="slot.value"/>
                 </div>
             </div>
         </div>
-        <div class="mt-8" v-if="isSingle">
+        <div class="mt-6 mb-2" v-if="isSingle">
             <slot name="navigation">
                 <div v-if="navigation" class="flex">
                     <UButton
@@ -41,6 +41,7 @@
                         class="ml-auto mr-0"
                         @click="handleMove(1)"
                         :disabled="nextDisabled"
+                        :loading="nextLoading"
                     >
                         <template #rightIcon="{ color }" v-if="(slots.length - 1) !== lastActiveSlotIndex">
                             <UIcon
@@ -75,11 +76,13 @@ export interface Props {
     returning?: boolean
     navigation?: boolean
     nextDisabled?: boolean,
+    nextLoading?: boolean,
     confirmNext?: boolean,
     confirmBack?: boolean,
     nextLabel?: string,
     backLabel?: string,
-    finishLabel?: string
+    finishLabel?: string,
+    slotsClass?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -106,11 +109,14 @@ const lastActiveSlotIndex = computed(() =>
 
 const handleMove = (n: number) => {
     if (n !== 0) {
-        const newActiveSlot = props.slots[lastActiveSlotIndex.value + n]
-        const move = () => emit('update:modelValue', newActiveSlot.value)
-        if (n > 0 ? props.confirmNext : props.confirmBack)
-            n > 0 ? emit('step-next', newActiveSlot.value, move) : emit('step-back', newActiveSlot.value, move)
-        else move()
+        if ((lastActiveSlotIndex.value + n) >= props.slots.length) emit('step-next', 'finish', ()=>{})
+        else {
+            const newActiveSlot = props.slots[lastActiveSlotIndex.value + n]
+            const move = () => emit('update:modelValue', newActiveSlot.value)
+            if (n > 0 ? props.confirmNext : props.confirmBack)
+                n > 0 ? emit('step-next', newActiveSlot.value, move) : emit('step-back', newActiveSlot.value, move)
+            else move()
+        }
     }
 }
 

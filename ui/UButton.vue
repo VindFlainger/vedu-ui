@@ -7,7 +7,7 @@
             'cursor-not-allowed': disabled,
             'cursor-default': loading,
         }"
-        class="relative overflow-hidden selection:bg-none"
+        class="relative overflow-hidden selection:bg-none z-10"
     >
         <div class="flex items-center justify-center">
             <div class="mr-2" v-if="icon || slots.leftIcon">
@@ -84,6 +84,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabledColor: '#E6E6E6',
     disabledTextColor: '#8A8A8A',
 })
+
 
 const emit = defineEmits<{
     click: []

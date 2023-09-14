@@ -13,3 +13,14 @@ button:focus{
     outline: none
 }
 
+.main-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    background: #f3f4f6;
+    border-radius: 5px;
+}
+
+.main-scrollbar::-webkit-scrollbar-thumb {
+    width: 8px;
+    background: #9ca3af;
+    border-radius: 5px;
+}

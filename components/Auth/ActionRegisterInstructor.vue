@@ -122,7 +122,6 @@
 
 <script setup lang="ts">
 import { number } from "yup";
-import { useRouteQuery } from "@vueuse/router";
 
 const { $api } = useNuxtApp()
 
@@ -206,7 +205,7 @@ const nextLoading = computed(() => {
 const registerLoading = ref(false)
 const register = async () => {
     registerLoading.value = true
-    const { data, error } = await $api.Auth.REGISTER_STUDENT({
+    const { data, error } = await $api.Auth.REGISTER_INSTRUCTOR({
         body: {
             email: email.value.value,
             password: password.value.value,

@@ -1,4 +1,14 @@
-import { log } from "console"
+/*
+export interface RequestError {
+    message: string,
+    code: number,
+    stack?: string
+}
+
+export type RequestErrors = {
+    errors: AppError[],
+    status: number
+}
 
 export function useErrors<ErrorT>(error: any){
     const messages = computed(()=> toValue(error)?.data?.messages || [])
@@ -11,4 +21,4 @@ export function useErrors<ErrorT>(error: any){
         code,
         messages
     }
-}
+}*/
