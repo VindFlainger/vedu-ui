@@ -1,7 +1,9 @@
 import auth from "~/api/auth"
+import questions from "~/api/questions";
 
 export const api = {
-    Auth: auth
+    Auth: auth,
+    Questions: questions
 }
 
 export default defineNuxtPlugin(() => {

@@ -14,6 +14,8 @@ module.exports = {
             colors: {
                 'regal-blue': '#243c5a',
                 'regal-green': '#43833e',
+                'primary-900': '#058c97',
+                'primary-800': '#0e9b98',
                 'primary-700': '#49BBBD',
                 'primary-500': '#92D6D6',
             },

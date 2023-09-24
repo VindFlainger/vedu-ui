@@ -10,10 +10,29 @@
 
 .el-popper{
     user-select: none;
-    border-radius: 16px !important;
+    border-radius: 12px !important;
     overflow-x: hidden;
 }
 
 .el-scrollbar__view{
     padding: 0 !important; 
+}
+
+.pretty_scrollbar::-webkit-scrollbar{
+    width: 8px;
+    background: #f5f5f4;
+}
+
+@media screen and (max-width: 600px) {
+    .pretty_scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+}
+
+.pretty_scrollbar::-webkit-scrollbar-thumb{
+    background: #d6d3d1;
+}
+
+.pretty_scrollbar::-webkit-scrollbar-track{
+    margin-bottom: 13px;
 }

@@ -44,7 +44,7 @@ import USwitch from '~/ui/USwitch.vue'
 import { useRouteQuery } from "@vueuse/router";
 
 definePageMeta({
-    layout: 'empty',
+    layout: 'empty'
 })
 
 const actions = [

@@ -2,22 +2,25 @@
     <client-only>
         <ElDialog
             v-bind="$attrs"
-            class="u-modal !rounded-2xl overflow-hidden"
+            class="u-modal !rounded-2xl overflow-hidden max-sm:!w-11/12"
             modal-class="u-modal-dialog"
             :style="styles"
             :width="width as string"
             :align-center="!!alignCenter"
         >
             <template #header>
-                <div class="relative prevent-select">
-                    <p class="font-medium text-lg pr-2 !pb-0 relative z-10" :style="stylesHeader">
-                        {{ title }}
-                    </p>
-                    <div class="u-modal-dialog__bg"/>
+                <div class="relative prevent-select flex items-center h-[60px] py-2" :style="stylesHeader">
+                    <div class="flex" :class="{'-ml-2': icon}">
+                        <UIcon v-if="icon" :value="icon" color="white" class="z-10 relative mr-[7px]"/>
+                        <p class="font-bold text-lg text-white tracking-wider pr-2 !pb-0 relative z-10 !py-0">
+                            {{ title }}
+                        </p>
+                    </div>
+                    <div class="u-modal-dialog__bg invert"/>
                 </div>
             </template>
             <template #default>
-                <div :style="stylesBody">
+                <div :style="stylesBody" class="max-h-[calc(100vh-100px)] overflow-y-auto pretty_scrollbar">
                     <slot></slot>
                 </div>
             </template>
@@ -36,7 +39,8 @@ export interface Props {
     maxWidth?: number | string,
     width?: number | string,
     padding?: string,
-    title?: string
+    title?: string,
+    icon?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,7 +61,7 @@ const stylesBody = computed(() => ({
 }))
 
 const stylesHeader = computed(() => ({
-    'padding': props.padding
+    'padding': props.padding,
 }))
 
 
@@ -73,12 +77,12 @@ const stylesHeader = computed(() => ({
 }
 
 :global(.el-dialog__close) {
-    color: black !important;
+    color: white !important;
     transition-duration: 0.3s;
 }
 
 :global(.u-modal-dialog .el-dialog__headerbtn:hover .el-dialog__close){
-    color: rgb(73 187 189) !important;
+    transform: scale(1.2);
 }
 
 :global(.u-modal-dialog .el-dialog__headerbtn){
@@ -102,6 +106,5 @@ const stylesHeader = computed(() => ({
     top: -8px;
     right: -16px;
     background: url("/ui/assets/images/layered-waves-haikei.svg");
-    opacity: 0.4;
 }
 </style>

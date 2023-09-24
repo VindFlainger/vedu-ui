@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
-  ssr: true,
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/color-mode', '@pinia/nuxt', '@element-plus/nuxt', '@nuxtjs/i18n'],
   plugins: ['~/plugins/icons.ts'],
   devServer: {
@@ -19,6 +18,10 @@ export default defineNuxtConfig({
       },
     ],
     dirs: ['stores']
+  },
+  routeRules: {
+    '/auth': { ssr: true },
+    '/**': { ssr: false }
   },
   // @ts-ignore
   colorMode: {

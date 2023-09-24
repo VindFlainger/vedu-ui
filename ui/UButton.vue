@@ -5,17 +5,16 @@
         :class="{
             'u-button-bg': !plain,
             'cursor-not-allowed': disabled,
-            'cursor-default': loading,
         }"
         class="relative overflow-hidden selection:bg-none z-10"
     >
-        <div class="flex items-center justify-center">
-            <div class="mr-2" v-if="icon || slots.leftIcon">
+        <div v-if="!iconStyle" class="flex items-center justify-center">
+            <div class="mr-2" v-if="leftIcon || slots.leftIcon">
                 <slot name="leftIcon" :color="activeTextColor" :disabled="disabled">
                     <UIcon
-                        v-if="icon"
-                        v-bind="rightIconProps"
-                        :value="icon"
+                        v-if="leftIcon"
+                        v-bind="leftIconProps"
+                        :value="leftIcon"
                         :size="15"
                         :color="activeTextColor"
                         stroke-width="2.5"
@@ -23,19 +22,16 @@
                 </slot>
             </div>
             <slot>
-                <span class="top-px">
+                <span class="top-px relative">
                     {{ label }}
                 </span>
             </slot>
-            <div v-if="loading && !disabled" class="ml-2">
-                <LoaderIcon :width="fontSize - 2" :fill="activeTextColor" :height="fontSize - 2" />
-            </div>
-            <div class="ml-2" v-else-if="icon || slots.rightIcon">
+            <div class="ml-2" v-if="rightIcon || slots.rightIcon">
                 <slot name="rightIcon" :color="activeTextColor" :disabled="disabled">
                     <UIcon
-                        v-if="icon"
+                        v-if="rightIcon"
                         v-bind="rightIconProps"
-                        :value="icon"
+                        :value="rightIcon"
                         :size="15"
                         :color="activeTextColor"
                         stroke-width="2.5"
@@ -43,6 +39,17 @@
                 </slot>
             </div>
         </div>
+        <div v-else>
+            <UIcon
+                v-if="icon"
+                v-bind="iconProps"
+                :value="icon"
+                :size="15"
+                :color="activeTextColor"
+                stroke-width="2.5"
+            />
+        </div>
+        <div v-if="loading && !disabled" class="u-button-loading"></div>
     </button>
 </template>
 
@@ -66,9 +73,14 @@ export interface Props {
     inactive?: boolean
     disabledTextColor?: string
     disabledColor?: string
-    icon?: string
-    rightIconProps: any
+    rightIcon?: string
+    leftIcon?: string
+    rightIconProps?: any
+    leftIconProps?: any
     label?: any
+    iconStyle?: boolean,
+    icon?: string,
+    iconProps?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,7 +90,6 @@ const props = withDefaults(defineProps<Props>(), {
     rounded: 'xl',
     textColor: 'white',
     fontWeight: 500,
-    fontSize: 16,
     loading: false,
     disabled: false,
     disabledColor: '#E6E6E6',
@@ -112,25 +123,25 @@ const activeTextColor = computed(() =>
 const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
-            return { padding: '3px 8px', iconSize: '' }
+            return { padding: '3px 8px', iconStylePadding: '2px', fontSize: 14 }
         case 'sm':
-            return { padding: '4px 10px' }
+            return { padding: '4px 10px', iconStylePadding: '4px', fontSize: 14 }
         case 'md':
-            return { padding: '6px 16px' }
+            return { padding: '6px 16px', iconStylePadding: '6px', fontSize: 16 }
         case 'lg':
-            return { padding: '8px 18px' }
+            return { padding: '8px 18px', iconStylePadding: '8px', fontSize: 16 }
         case 'xl':
-            return { padding: '12px 21px' }
+            return { padding: '12px 21px', iconStylePadding: '12px', fontSize: 16 }
     }
 })
 
 const styles = computed(() => ({
     border: props.plain ? `${props.borderWidth}px solid ${activeColor.value}` : '',
-    padding: sizeFrames.value.padding,
-    borderRadius: rounded.value,
+    padding: props.iconStyle ? sizeFrames.value.iconStylePadding : sizeFrames.value.padding,
+    borderRadius: props.iconStyle? '50%' :rounded.value,
     color: activeTextColor.value,
     fontWeight: props.fontWeight,
-    fontSize: `${props.fontSize}px`,
+    fontSize: `${props.fontSize || sizeFrames.value.fontSize }px`,
     filter: props.loading ? 'grayscale(0.3)' : '',
     '--u-button-color': activeColor.value,
     '--u-button-hover-opacity': props.disabled || props.loading ? '1' : '0.8',
@@ -165,5 +176,24 @@ const styles = computed(() => ({
     content: '';
     position: absolute;
     opacity: var(--u-button-hover-opacity);
+}
+
+.u-button-loading::after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: -100%;
+    transform: skewX(-30deg);
+    width: 205%;
+    background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 49%, #FC4F4F 80%, #3268de 100%);
+    opacity: 0.5;
+    animation: slidebg 1s linear infinite alternate;
+}
+
+@keyframes slidebg {
+    to {
+        left: 0;
+    }
 }
 </style>

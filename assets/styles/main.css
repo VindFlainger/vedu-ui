@@ -24,3 +24,15 @@ button:focus{
     background: #9ca3af;
     border-radius: 5px;
 }
+
+body::-webkit-scrollbar{
+    width: 8px;
+    background: #f3f4f6;
+    border-radius: 5px;
+}
+
+body::-webkit-scrollbar-thumb {
+    margin-top: 56px;
+    width: 8px;
+    background: #9ca3af;
+}

@@ -14,7 +14,7 @@ export function useFetchData<DataT>(
     return useFetch(path, {
         ...options,
         method,
-        onRequest: async ({ request, options }) => {
+       /* onRequest: async ({ request, options }) => {
 
         },
         onRequestError: () => {
@@ -22,7 +22,7 @@ export function useFetchData<DataT>(
         onResponse: () => {
         },
         onResponseError: () => {
-        },
+        },*/
         baseURL: 'http://localhost:3000/'
     })
 }
