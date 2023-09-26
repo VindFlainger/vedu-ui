@@ -18,9 +18,10 @@
         />
         <client-only>
             <QuestionEditDialog
+                v-if="selectedQuestion"
                 v-model="showEditModal"
                 :question="selectedQuestion"
-                @close="showEditModal = false"
+                @close="handleEditModalClose"
                 max-width="800"
             />
         </client-only>
@@ -29,97 +30,20 @@
 
 <script setup lang="ts">
 import { useRouteQuery } from "@vueuse/router";
+const questionsStore = useQuestionsStore()
 
-const app = getCurrentInstance()
-
-
+const { questions } = storeToRefs(questionsStore)
 
 useSeoMeta({
     title: 'Questions'
 })
 
-definePageMeta({
-
-})
+definePageMeta({})
 
 const page = useRouteQuery('page', 1, { transform: v => Number(v) })
 const perPage = useRouteQuery('per-page', 30, { transform: v => Number(v) })
 const count = ref(300)
 
-
-const questions = ref([
-    {
-        id: 'smasginraww',
-        type: 'text',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles.</p>',
-        tags: ['Math', 'Programming', 'AIDI'],
-        answers: ['Math', 'AI', 'Easy math question', 'Math', 'AI', 'Easy', 'Math', 'AI', 'Easy math question']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description. FIFO and LIFO principles. Real world examples and description. FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-])
 
 const selectedQuestion = ref(null)
 const showEditModal = ref(false)
@@ -128,7 +52,8 @@ const handleEdit = (v: any) => {
     showEditModal.value = true
 }
 
-
+const handleEditModalClose = () => {
+    showEditModal.value = false
+    selectedQuestion.value = null
+}
 </script>
-
-<style></style>

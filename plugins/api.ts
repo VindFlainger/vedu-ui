@@ -1,10 +1,4 @@
-import auth from "~/api/auth"
-import questions from "~/api/questions";
-
-export const api = {
-    Auth: auth,
-    Questions: questions
-}
+import api from '~/api/index'
 
 export default defineNuxtPlugin(() => {
     return {
