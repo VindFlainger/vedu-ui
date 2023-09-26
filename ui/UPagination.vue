@@ -16,7 +16,7 @@
             <div class="mr-0 ml-auto flex items-center gap-2">
                 <UButton icon-style icon="ArrowLeft" @click="handlePageChange(-1)"></UButton>
                 <UInput
-                    v-model.number="lazyPage as any"
+                    v-model.number="lazyPage"
                     :number-appearance="false"
                     :min="min"
                     :max="max"
@@ -24,7 +24,7 @@
                     class="w-12 text-center"
                     size="xs"
                     type="number"
-                    @change-number="emit('update:page', lazyPage > 0?lazyPage as any:1)"
+                    @change-number="emit('update:page', lazyPage > 0?lazyPage.value:1)"
                 />
                 <UButton icon-style icon="ArrowRight" @click="handlePageChange(1)"></UButton>
             </div>
@@ -69,7 +69,7 @@ const handlePageChange = (i: 1 | -1) => {
     if (newPage <= max.value && newPage >= min.value) emit('update:page', newPage)
 }
 
-const perPageOptions = [
+const perPageOptions = ref([
     {
         value: 15
     },
@@ -79,7 +79,7 @@ const perPageOptions = [
     {
         value: 50
     }
-]
+])
 
 const handlePerPageChange = (v: number) => {
     emit('update:page', 1)
