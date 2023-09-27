@@ -8,7 +8,8 @@
 <script setup lang="ts">
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { QuillEditor } from "@vueup/vue-quill";
-import BlotFormatter from 'quill-blot-formatter';
+// @ts-ignore
+import BlotFormatter from "quill-blot-formatter/dist/BlotFormatter"
 
 
 const modules = ref({
