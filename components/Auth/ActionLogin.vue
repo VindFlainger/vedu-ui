@@ -6,6 +6,9 @@
                 v-model="email.value.value"
                 :errors="email.errors.value"
                 :hide-errors="!submitCount"
+                size="md"
+                rounded="full"
+                color="primary-700"
                 type="email"
                 label="Email"
                 :error-state="invalid"
@@ -17,6 +20,9 @@
                 v-model="password.value.value"
                 :errors="password.errors.value"
                 :hide-errors="!submitCount"
+                size="md"
+                rounded="full"
+                color="primary-700"
                 type="password"
                 left-icon="Key"
                 :error-state="invalid"
@@ -44,15 +50,16 @@
                     font-weight="400"
                     @click="handleLogin"
                     :disabled="(submitCount && !meta.valid) || invalid"
-                    :loading="pending"
                 >
                     Login
                 </UButton>
             </div>
         </div>
-        <ActionRecoveryModal
-            v-model="forgotPasswordModal"
-        />
+        <client-only>
+            <ActionRecoveryModal
+                v-model="forgotPasswordModal"
+            />
+        </client-only>
     </div>
 </template>
 

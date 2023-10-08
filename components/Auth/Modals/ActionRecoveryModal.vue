@@ -6,20 +6,36 @@
         max-width="460"
     >
         <div>
-            <div v-if="!recoveryStageActive">
-                <UInput
-                    v-model="email.value.value"
-                    :errors="recoveryEmailSubmits?email.errors.value:[]"
-                    label="Email"
-                    type="email"
-                />
-                <p class="text-sm text-gray-500 mt-2 ml-2">
-                    An email will be sent to your email address with the steps to restore access. Follow them to recover
-                    access to your account.
-                </p>
-                <ErrorsCard class="mt-4" :errors="errors"/>
-                <div class="mt-6">
-                    <UButton label="Send Email" @click="handleRecoveryEmail"/>
+            <div v-if="!route.query.recovery_session">
+                <div v-if="!successSent">
+                    <UInput
+                        v-model="email.value.value"
+                        :errors="recoveryEmailSubmits?email.errors.value:[]"
+                        label="Email"
+                        size="md"
+                        rounded="full"
+                        color="primary-700"
+                        type="email"
+                    />
+                    <p class="text-sm text-gray-500 mt-2 ml-2">
+                        An email will be sent to your email address with the steps to restore access. Follow them to
+                        recover
+                        access to your account.
+                    </p>
+                    <ErrorsCard class="mt-4" :errors="errors"/>
+                    <div class="mt-6">
+                        <UButton
+                            :loading="recoveryEmailLoading"
+                            label="Send Email"
+                            @click="handleRecoveryEmail"
+                        />
+                    </div>
+                </div>
+                <div v-else class="flex flex-col items-center py-6">
+                    <UIcon value="ShieldCheck" color="primary-700" size="100"></UIcon>
+                    <p class="text-center max-w-[250px] text-sm mt-2 text-gray-600 font-medium">Recovery instructions
+                        have been sent to the email address.</p>
+                    <UButton class="mt-6" label="Home" size="sm" @click="close"/>
                 </div>
             </div>
             <div v-else>
@@ -35,6 +51,9 @@
                     v-model="password.value.value"
                     :errors="changePasswordSubmits?password.errors.value:[]"
                     :password-appearance="false"
+                    size="md"
+                    rounded="full"
+                    color="primary-700"
                     type="password"
                     left-icon="Key"
                     label="New Password"
@@ -61,6 +80,9 @@
                     :password-appearance="false"
                     type="password"
                     label="Repeat password"
+                    size="md"
+                    rounded="full"
+                    color="primary-700"
                     left-icon="Key"
                     required
                 />
@@ -86,6 +108,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits()
 
 const errors = ref(null)
+const successSent = ref(false)
 
 
 const close = () => {
@@ -98,13 +121,15 @@ const { handleSubmit: _handleRecoveryEmail, submitCount: recoveryEmailSubmits } 
     })
 })
 const email = useField<string>("email");
-const handleRecoveryEmail = _handleRecoveryEmail(async (values) => {
+const recoveryEmailLoading = ref(false)
+const handleRecoveryEmail = _handleRecoveryEmail(async () => {
+    recoveryEmailLoading.value = true
     const { data, error } = await $api.Auth.RECOVERY_EMAIL({
-        body: {
-            email: email.value.value
-        }
+        body: { email: email.value.value }
     })
-   /* if (data.value?.success)*/
+    recoveryEmailLoading.value = false
+    if (data.value?.success) successSent.value = true
+    else if (error.value?.data) errors.value = error.value?.data
 })
 
 const { handleSubmit: _handleChangePassword, submitCount: changePasswordSubmits } = useForm({
@@ -126,13 +151,14 @@ const { handleSubmit: _handleChangePassword, submitCount: changePasswordSubmits 
 })
 const password = useField<string>("password");
 const repeatedPassword = useField<string>("repeatedPassword");
-const handleChangePassword = _handleChangePassword(async (values) => {
+const changePasswordLoading = ref(false)
+const handleChangePassword = _handleChangePassword(async () => {
+    changePasswordLoading.value = true
     const { data, error } = await $api.Auth.CHANGE_PASSWORD()
-
+    changePasswordLoading.value = false
+    if (data.value?.success) close()
+    else if (error.value?.data) errors.value = error.value?.data
 })
-
-
-const recoveryStageActive = computed(() => route.query.recovery_session)
 
 const passwordChecks = computed(() => {
     return [

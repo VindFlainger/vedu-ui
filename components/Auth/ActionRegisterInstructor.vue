@@ -14,11 +14,14 @@
                     class="w-full"
                     v-model="email.value.value"
                     :errors="invalidIdentification?email.errors.value:[]"
-                    :conditions="{
-                        'The user with this email is already registered': ['error', emailStatus === 'duplicated'],
-                        'Email is available': ['success', emailStatus === 'available']
-                    }"
+                    :conditions="[
+                        ['The user with this email is already registered', 'error', emailStatus === 'duplicated'],
+                        ['Email is available', 'success', emailStatus === 'available']
+                    ]"
                     right-icon-button
+                    size="md"
+                    rounded="full"
+                    color="primary-700"
                     type="email"
                     label="Email"
                     :right-icon="email.meta.valid?'ArrowPath':''"
@@ -31,6 +34,9 @@
                     v-model="password.value.value"
                     :errors="invalidIdentification?password.errors.value:[]"
                     :password-appearance="false"
+                    size="md"
+                    rounded="full"
+                    color="primary-700"
                     type="password"
                     left-icon="Key"
                     label="Password"
@@ -55,6 +61,9 @@
                     v-model="repeatedPassword.value.value"
                     :errors="invalidIdentification?repeatedPassword.errors.value:[]"
                     :password-appearance="false"
+                    size="md"
+                    rounded="full"
+                    color="primary-700"
                     type="password"
                     label="Repeat password"
                     left-icon="Key"
@@ -68,6 +77,9 @@
                         v-model="firstName.value.value"
                         :errors="firstName.errors.value"
                         label="First name"
+                        size="md"
+                        rounded="full"
+                        color="primary-700"
                         required
                     />
                     <UInput
@@ -75,6 +87,9 @@
                         v-model="lastName.value.value"
                         :errors="lastName.errors.value"
                         label="Last name"
+                        size="md"
+                        rounded="full"
+                        color="primary-700"
                         required
                     />
                     <UInput
@@ -82,6 +97,9 @@
                         v-model.number="age.value.value"
                         :errors="age.errors.value"
                         label="Age"
+                        size="md"
+                        rounded="full"
+                        color="primary-700"
                         type="number"
                         max="100"
                         min="10"
@@ -92,6 +110,9 @@
                         :options="genderOptions"
                         :errors="gender.errors.value"
                         label="Gender"
+                        size="md"
+                        rounded="full"
+                        color="primary-700"
                         required
                     />
                     <CountrySelect
@@ -99,12 +120,22 @@
                         v-model="country.value.value"
                         :errors="country.errors.value"
                         required
+                        size="md"
+                        rounded="full"
+                        color="primary-700"
                     />
                 </div>
             </template>
             <template #completion>
-                <UInput label="Invite code" left-icon="Star"
-                        hint="With the help of an invitation code, we will automatically add you to the necessary courses and give you the appropriate privileges. You can get an invitation code from your teacher or organization.">
+                <UInput
+                    label="Invite code"
+                    left-icon="Star"
+                    size="md"
+                    rounded="full"
+                    color="primary-700"
+                    hint="With the help of an invitation code, we will automatically add you to the necessary courses
+                    and give you the appropriate privileges. You can get an invitation code from your teacher or organization."
+                >
                 </UInput>
                 <div class="mt-6">
                     <UCheckbox v-model="agreement">

@@ -1,8 +1,4 @@
-import auth from "~/api/auth"
-
-export const api = {
-    Auth: auth
-}
+import api from '~/api/index'
 
 export default defineNuxtPlugin(() => {
     return {

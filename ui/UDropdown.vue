@@ -2,25 +2,27 @@
     <ElDropdown
         :trigger="props.trigger"
         ref="dropdown"
-        popper-class="popper"
         placement="bottom-start"
     >
-        <slot>
+        <slot name="opener" :toggle="toggle">
             <UButton
                 :label="label"
-                preset="outline"
+
                 @click="toggle"
-                :style="{ width: `${props.width}px` }"
             />
         </slot>
         <template #dropdown>
-            <el-dropdown-menu>
-                <el-dropdown-item v-for="item in items">
-                    <slot v-bind="item">
-                        {{ item.label }}
-                    </slot>
-                </el-dropdown-item>
-            </el-dropdown-menu>
+            <div class="w-16">
+                <slot name="content">
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-for="item in items">
+                            <slot v-bind="item">
+                                {{ item.label }}
+                            </slot>
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </slot>
+            </div>
         </template>
     </ElDropdown>
 </template>
@@ -28,12 +30,14 @@
 <script setup lang="ts">
 import UButton from '~/ui/UButton.vue'
 import { DropdownInstance } from 'element-plus'
+import { Props as ButtonProps } from '~/ui/UButton.vue'
 
 export interface Props {
     label?: string
     items?: any[]
     trigger?: 'hover' | 'click'
-    width?: number
+    width?: number,
+    buttonProps?: ButtonProps
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,7 +49,6 @@ const props = withDefaults(defineProps<Props>(), {
 const dropdown = ref<DropdownInstance>()
 
 const toggle = () => {
-    console.log('here')
     dropdown.value?.handleOpen()
 }
 </script>

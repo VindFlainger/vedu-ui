@@ -1,105 +1,121 @@
 <template>
-    <div v-bind="{ class: attrs.class }">
-        <p
-            v-if="props.label"
-            class="font-medium"
-            :style="[sizeFrames.labelStyles, { color: textColor }]"
-            :class="labelClass"
-        >
-            {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
-        </p>
-        <ElSelect
-            v-bind="{ ...attrs, class: inputClass }"
-            class="u-select w-full focus:!outline-none"
-            :style="styles"
-            @visible-change="active = $event"
-            :collapse-tags="collapseTags"
-            :max-collapse-tags="maxCollapseTags"
-            @update:model-value="emit('update:modelValue', $event)"
-            :model-value="modelValue"
-            popper-class="u-select-popper"
-        >
-            <template #default>
-                <ElOption
-                    v-for="option in computedOptions"
-                    :key="option.value"
-                    :value="option.value"
-                    :label="option.label"
-                >
-                    <template #default="props">
-                        <div
-                            class="group"
-                            :class="{
+    <client-only>
+        <div v-bind="{ class: attrs.class }">
+            <p
+                v-if="props.label"
+                class="font-medium"
+                :style="[sizeFrames.labelStyles, { color: textColor }]"
+                :class="labelClass"
+            >
+                {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
+            </p>
+            <ElSelect
+                v-bind="{ ...attrs, class: inputClass }"
+                class="u-select w-full focus:!outline-none"
+                :style="styles"
+                @visible-change="active = $event"
+                :collapse-tags="collapseTags"
+                :max-collapse-tags="maxCollapseTags"
+                @update:model-value="emit('update:modelValue', $event)"
+                :model-value="modelValue"
+                popper-class="u-select-popper"
+                :placeholder="placeholder"
+            >
+                <template #default>
+                    <ElOption
+                        v-for="option in computedOptions"
+                        :key="option.value"
+                        :value="option.value"
+                        :label="option.label"
+                    >
+                        <template #default="props">
+                            <div
+                                class="group"
+                                :class="{
                                 active: attrs.multiple
                                     ? modelValue?.includes(option.value)
                                     : option.value === modelValue,
                             }"
-                        >
-                            <div class="flex items-center py-3 pl-3 pr-3" :class="{'group-[.active]:bg-primary-700/20': hideCheckboxStyle}">
-                                <UCheckbox
-                                    v-if="!hideCheckboxStyle"
-                                    size="sm"
-                                    :model-value="
+                            >
+                                <div
+                                    class="flex items-center"
+                                    :class="{'group-[.active]:bg-primary-700/20': hideCheckboxStyle}"
+                                    :style="{ padding: sizeFrames.paddingDropdownItem }"
+                                >
+                                    <UCheckbox
+                                        v-if="!hideCheckboxStyle"
+                                        class="mr-[6px]"
+                                        size="sm"
+                                        :model-value="
                                         attrs.multiple
                                             ? modelValue?.includes(option.value)
                                             : option.value === modelValue
                                     "
-                                    color="primary-700"
-                                />
-                                <img
-                                    v-if="option.img"
-                                    :src="option.img"
-                                    :style="sizeFrames.imageStyles"
-                                    class="mr-2"
-                                />
-                                <span
-                                    class="relative top-px text-gray-700"
-                                    :class="{
+                                        color="primary-700"
+                                    />
+                                    <img
+                                        v-if="option.img"
+                                        :src="option.img"
+                                        :style="sizeFrames.imageStyles"
+                                        class="mr-2"
+                                    />
+                                    <span
+                                        class="relative top-px text-gray-700"
+                                        :class="{
                                         'group-[.active]:text-primary-700': !hideCheckboxStyle,
                                     }"
-                                >
+                                    >
                                     {{ option.label }}
                                 </span>
+                                </div>
                             </div>
-                        </div>
-                    </template>
-                </ElOption>
-            </template>
-            <template #prefix>
-                <UIcon
-                    v-if="leftIcon"
-                    class="[&_svg]:!text-[var(--text-color)]"
-                    :value="leftIcon"
-                />
-                <UIcon
-                    v-if="!active"
-                    value="ChevronDown"
-                    class="absolute right-3 top-[calc(50%+2px)] -translate-y-1/2"
-                    :color="color"
-                />
-                <UIcon
-                    v-else
-                    value="ChevronUp"
-                    class="absolute right-3 top-[calc(50%)] -translate-y-1/2"
-                    :color="color"
-                />
-            </template>
-        </ElSelect>
-        <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
-            <li
-                v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
-                :key="error"
-                :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
-            >
-                {{ error }}
-            </li>
-        </ul>
-    </div>
+                        </template>
+                    </ElOption>
+                </template>
+                <template #prefix>
+                    <UIcon
+                        v-if="leftIcon"
+                        class="[&_svg]:!text-[var(--text-color)]"
+                        :value="leftIcon"
+                    />
+                    <UIcon
+                        v-if="!active"
+                        value="ChevronDown"
+                        class="absolute top-[calc(50%+1px)] -translate-y-1/2"
+                        :style="{'right': sizeFrames.iconRight}"
+                        :color="color"
+                        :size="sizeFrames.iconSize"
+                    />
+                    <UIcon
+                        v-else
+                        value="ChevronUp"
+                        class="absolute top-[calc(50%)] -translate-y-1/2"
+                        :style="{'right': sizeFrames.iconRight}"
+                        :color="color"
+                        :size="sizeFrames.iconSize"
+                    />
+                </template>
+            </ElSelect>
+            <div class="flex">
+                <ul class="h-6" v-if="infoLine"></ul>
+                <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
+                    <li
+                        v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
+                        :key="error"
+                        :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
+                    >
+                        {{ error }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </client-only>
 </template>
 
 <script setup lang="ts">
-import { fa } from 'element-plus/es/locale'
-import { mode } from 'process'
+
+import { useRounded } from "~/ui/composables/useRounded";
+import { useColor } from "~/ui/composables/useColor";
 
 defineOptions({
     inheritAttrs: false,
@@ -108,7 +124,7 @@ defineOptions({
 export interface Props {
     label?: string
     inputClass?: string
-    modelValue?: any[]
+    modelValue?: any[] | any,
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     leftIcon?: string
     errors?: Array<any>
@@ -123,12 +139,16 @@ export interface Props {
     maxCollapseTags?: number
     hideCheckboxStyle?: boolean,
     labelClass?: string,
-    required?: boolean
+    required?: boolean,
+    placeholder?: string,
+    rounded?: string,
+    color?: string,
+    infoLine?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
     inputClass: '',
-    size: 'md',
+    size: 'sm',
     errors: () => [],
     errorsCount: 3,
     options: () => [],
@@ -137,7 +157,10 @@ const props = withDefaults(defineProps<Props>(), {
     imageName: 'img',
     collapseTags: true,
     maxCollapseTags: 2,
-    required: false
+    required: false,
+    placeholder: '',
+    rounded: 'xl',
+    color: 'gray-400'
 })
 
 const attrs = useAttrs()
@@ -151,65 +174,73 @@ const emit = defineEmits<{
     'update:modelValue': [v: any]
 }>()
 
-const active = ref(false)
-
-const computedOptions = computed(() =>
-    props.options.map((option) => ({
-        value: option[props.valueName],
-        label: option[props.labelName],
-        img: option[props.imageName],
-    }))
-)
-
 const isPrefixed = computed(() => slots.prefix || props.leftIcon)
 
+const { rounded } = useRounded(props.rounded)
 const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
             return {
-                height: `32px`,
-                paddingContent: '1px 8px',
+                height: 32,
+                paddingContent: '0 8px',
                 padding: `0 2px 0 ${isPrefixed.value ? '1px' : '2px'}`,
+                iconSize: 16,
+                iconRight: '6px',
                 labelStyles: { marginBottom: '3px' },
+                paddingDropdownItem: '6px'
             }
         case 'sm':
             return {
-                height: `40px`,
+                height: 36,
                 paddingContent: '1px 12px',
                 padding: `0 '4px' 0 ${isPrefixed.value ? '2px' : '4px'}`,
+                iconSize: 20,
+                iconRight: '7px',
                 labelStyles: { marginBottom: '5px' },
+                paddingDropdownItem: '10px'
             }
         case 'md':
             return {
-                height: `46px`,
+                height: 48,
                 paddingContent: '1px 16px',
                 padding: `0 6px 0 ${isPrefixed.value ? '3px' : '6px'}`,
                 labelStyles: { marginBottom: '6px' },
                 tagsPadding: '0 0 0 48px',
+                iconSize: 24,
+                iconRight: '12px',
                 imageStyles: {
                     width: '20px',
                     height: '20px',
                 },
+                paddingDropdownItem: '12px'
             }
         case 'lg':
             return {
-                height: `56px`,
+                height: 56,
                 paddingContent: '1px 20px',
                 padding: `0 8px 0 ${isPrefixed.value ? '4px' : '8px'}`,
                 labelStyles: { marginBottom: '10px' },
+                iconSize: 24,
+                iconRight: '12px',
+                paddingDropdownItem: '12px'
             }
         case 'xl':
             return {
-                height: `64px`,
+                height: 64,
                 paddingContent: '1px 24px',
                 padding: `0 10px 0 ${isPrefixed.value ? '5px' : '10px'}`,
                 labelStyles: { marginBottom: '12px' },
+                iconSize: 24,
+                iconRight: '12px',
+                paddingDropdownItem: '12px'
             }
     }
 })
 
+const { color: _color } = useColor(props.color)
+
 const color = computed(() =>
-    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#49BBBD'
+    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : _color.value
 )
 const textColor = computed(() =>
     (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#000000'
@@ -220,20 +251,33 @@ const styles = computed(() => ({
     '--u-select-padding-content': sizeFrames.value.paddingContent,
     '--color': color.value,
     '--text-color': textColor.value,
-    '--u-select-height': sizeFrames.value.height,
+    '--u-select-height': `${sizeFrames.value.height}px`,
     '--u--select-tags-padding': sizeFrames.value.tagsPadding,
+    '--u-select-rounded': rounded.value,
+    '--el-select-input-focus-border-color': color.value,
+    '--u-select-text-color': textColor.value
 }))
+
+const active = ref(false)
+
+const computedOptions = computed(() =>
+    props.options.map((option) => ({
+        value: option[props.valueName],
+        label: option[props.labelName],
+        img: option[props.imageName],
+    }))
+)
 </script>
 
 <style scoped lang="scss">
 .u-select {
-    :deep(.el-input__wrapper.is-focus) {
-        box-shadow: 0 0 0 1px var(--color) !important;
+    :deep(input){
+        color: var(--u-select-text-color)
     }
 
     :deep(.el-input__wrapper) {
-        @apply rounded-full;
-        box-shadow: 0 0 0 1px var(--color) !important;
+        border-radius: var(--u-select-rounded);
+        box-shadow: inset 0 0 0 1px var(--color) !important;
         padding: var(--u-select-padding-content);
 
         .el-input__suffix {
@@ -249,6 +293,7 @@ const styles = computed(() => ({
         height: var(--u-select-height);
         padding: var(--u-select-padding);
     }
+
 
     :deep(.el-select__tags) {
         padding: var(--u--select-tags-padding);
@@ -287,6 +332,7 @@ const styles = computed(() => ({
     .el-select-dropdown {
         padding: 8px 0 !important;
     }
+
     .el-select-dropdown__item {
         @apply h-auto p-0 leading-none;
         &.selected {
@@ -300,6 +346,6 @@ const styles = computed(() => ({
 }
 
 .el-select :deep(.el-input.is-focus .el-input__wrapper) {
-    box-shadow: 0 0 0 1px var(--color) !important;
+    /*box-shadow: 0 0 0 1px var(--color) !important;*/
 }
 </style>

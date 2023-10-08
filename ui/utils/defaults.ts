@@ -16,8 +16,14 @@ const config = resolveConfig({
             colors: {
                 'regal-blue': '#243c5a',
                 'regal-green': '#43833e',
-                'primary': {700: '#49BBBD'},
+                'primary': {
+                    700: '#49BBBD',
+                    900: '#058c97',
+                    800: '#0e9b98',
+                    500: '#92D6D6',
+                },
             },
+
         },
     },
     plugins: [],

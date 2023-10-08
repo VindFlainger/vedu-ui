@@ -1,11 +1,13 @@
 // @ts-ignore
 import {DateTime} from "luxon";
+import dateFormats from "~/config/dateFormats";
 
 
 export default defineNuxtPlugin(() => {
     return {
         provide: {
-            luxon: DateTime
+            luxon: DateTime,
+            dateFormats: dateFormats
         },
     }
 })
