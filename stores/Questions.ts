@@ -1,88 +1,19 @@
-import { Question, QuestionAnswers } from "~/models/QuestionModel";
+import { Question, QuestionAnswers, QuestionTag } from "~/models/QuestionModel";
 
-const questions = [
-    {
-        id: 'smasginraww',
-        type: 'text',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles.</p>',
-        tags: ['Math', 'Programming', 'AIDI'],
-        answers: ['Math', 'AI', 'Easy math question', 'Math', 'AI', 'Easy', 'Math', 'AI', 'Easy math question']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p><img src="https://cdn.pixabay.com/photo/2017/03/27/16/46/dolomites-2179602_1280.jpg">FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description. FIFO and LIFO principles. Real world examples and description. FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-    {
-        id: 'smasginraww',
-        type: 'multiple',
-        title: 'Queue Question',
-        content: '<p>FIFO and LIFO principles. Real world examples and description</p>',
-        tags: ['Math', 'Programming', 'AI']
-    },
-]
+
 
 import api from '~/api/index'
+import { GetQuestionsPayload } from "~/api/questions";
 
 interface State {
-    questions: Question[]
+    questions: Question[],
+    tags: QuestionTag[]
 }
 
 export const useQuestionsStore = defineStore('Questions', {
     state: (): State => ({
-        questions: questions
+        questions: [],
+        tags: []
     }),
     getters: {},
     actions: {
@@ -90,6 +21,16 @@ export const useQuestionsStore = defineStore('Questions', {
             const res = await api.questions.UPDATE_ANSWERS({ id, answers })
             const question = this.questions.find(question => question.id === id)
             if (question) question.answers = res.data
+        },
+        async fetchAvailableTags(){
+            const res = await api.questions.GET_TAGS()
+            this.tags = res
+            return this.tags
+        },
+        async fetchQuestions(filters: GetQuestionsPayload){
+            const res = await api.questions.GET_QUESTIONS({})
+            this.questions = res
+            return this.questions
         }
     }
 })

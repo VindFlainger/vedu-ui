@@ -14,10 +14,10 @@
                     class="w-full"
                     v-model="email.value.value"
                     :errors="invalidIdentification?email.errors.value:[]"
-                    :conditions="{
-                        'The user with this email is already registered': ['error', emailStatus === 'duplicated'],
-                        'Email is available': ['success', emailStatus === 'available']
-                    }"
+                    :conditions="[
+                        ['The user with this email is already registered', 'error', emailStatus === 'duplicated'],
+                        ['Email is available', 'success', emailStatus === 'available']
+                    ]"
                     right-icon-button
                     size="md"
                     rounded="full"
@@ -111,9 +111,11 @@
                         :errors="gender.errors.value"
                         label="Gender"
                         required
+                        size="md"
                     />
                     <CountrySelect
                         class="col-span-2"
+                        size="md"
                         v-model="country.value.value"
                         :errors="country.errors.value"
                         required

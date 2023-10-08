@@ -1,6 +1,6 @@
 <template>
     <client-only>
-        <div class="flex items-center p-2 rounded-lg" v-bind="$attrs">
+        <div class="flex items-center rounded-lg" v-bind="$attrs">
             <USelect
                 class="w-14 [&_input]:text-center [&_input]:right-[6px] [&_input]:relative"
                 :options="perPageOptions"

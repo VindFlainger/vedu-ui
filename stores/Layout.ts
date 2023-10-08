@@ -1,9 +1,9 @@
 interface State {
-    collapsed: boolean
+    collapsed: boolean,
 }
 export const useLayoutStore = defineStore('Layout', {
     state: () : State => ({
-        collapsed: false
+        collapsed: false,
     }),
     getters: {
 

@@ -1,8 +1,8 @@
 <template>
     <label class="flex items-center" :class="{ 'prevent-select': !selection }">
-        <div :style="checkboxStyles" class="rounded-sm outline outline-1 relative" :class="{'!rounded-full': radioStyle}">
+        <div :style="checkboxStyles" class="rounded-sm outline outline-1">
             <UIcon
-                v-if="checked && !solid && !radioStyle"
+                v-if="checked && !solid"
                 :color="color"
                 value="Check"
                 :size="checkboxMetrics.wh"
@@ -10,18 +10,12 @@
             />
             <div
                 v-else-if="checked && solid"
-                :style="{backgroundColor: markerColor}"
-                class="h-full w-full rounded bg-clip-content p-[2px]"
-            />
-            <div
-                v-else-if="checked && radioStyle"
-                :style="{backgroundColor: markerColor}"
-                class="h-full w-full rounded-full bg-clip-content p-[15%]"
+                class="h-full w-full rounded bg-black bg-clip-content p-[2px]"
             />
         </div>
         <input
             class="hidden"
-            type="checkbox"
+            type="radio"
             :class="checkboxClass"
             :checked="checked"
             @change="checked = $event"
@@ -47,15 +41,12 @@ export interface Props {
     selection?: boolean
     solid?: boolean
     color?: string
-    markerColor?: string
-    radioStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
     size: 'md',
     selection: false,
     color: 'black',
-    markerColor: 'primary-900'
 })
 const emit = defineEmits<{
     'update:modelValue': [v: Props['modelValue']]
@@ -64,8 +55,6 @@ const emit = defineEmits<{
 const attrs = useAttrs()
 
 const { color } = useColor(props.color)
-const { color: markerColor } = useColor(props.markerColor)
-
 
 const checked = computed({
     get() {

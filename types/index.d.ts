@@ -1,9 +1,11 @@
 import { DateTime } from 'luxon'
-import { api } from '~/plugins/api'
+import api from '~/api/index'
+import DateFormats from "~/config/dateFormats";
 
 interface PluginsInjections {
-    $luxon: DateTime
+    $luxon: typeof DateTime
     $api: typeof api
+    $dateFormats: typeof DateFormats
 }
 
 declare module '#app' {

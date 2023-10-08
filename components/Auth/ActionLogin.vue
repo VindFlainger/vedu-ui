@@ -55,9 +55,11 @@
                 </UButton>
             </div>
         </div>
-        <ActionRecoveryModal
-            v-model="forgotPasswordModal"
-        />
+        <client-only>
+            <ActionRecoveryModal
+                v-model="forgotPasswordModal"
+            />
+        </client-only>
     </div>
 </template>
 

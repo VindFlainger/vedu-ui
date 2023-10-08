@@ -44,6 +44,7 @@
                                 >
                                     <UCheckbox
                                         v-if="!hideCheckboxStyle"
+                                        class="mr-[6px]"
                                         size="sm"
                                         :model-value="
                                         attrs.multiple
@@ -95,22 +96,26 @@
                     />
                 </template>
             </ElSelect>
-            <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
-                <li
-                    v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
-                    :key="error"
-                    :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
-                >
-                    {{ error }}
-                </li>
-            </ul>
+            <div class="flex">
+                <ul class="h-6" v-if="infoLine"></ul>
+                <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
+                    <li
+                        v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
+                        :key="error"
+                        :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
+                    >
+                        {{ error }}
+                    </li>
+                </ul>
+            </div>
         </div>
     </client-only>
 </template>
 
 <script setup lang="ts">
-import { fa } from 'element-plus/es/locale'
-import { mode } from 'process'
+
+import { useRounded } from "~/ui/composables/useRounded";
+import { useColor } from "~/ui/composables/useColor";
 
 defineOptions({
     inheritAttrs: false,
@@ -135,12 +140,15 @@ export interface Props {
     hideCheckboxStyle?: boolean,
     labelClass?: string,
     required?: boolean,
-    placeholder?: string
+    placeholder?: string,
+    rounded?: string,
+    color?: string,
+    infoLine?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
     inputClass: '',
-    size: 'md',
+    size: 'sm',
     errors: () => [],
     errorsCount: 3,
     options: () => [],
@@ -150,7 +158,9 @@ const props = withDefaults(defineProps<Props>(), {
     collapseTags: true,
     maxCollapseTags: 2,
     required: false,
-    placeholder: ''
+    placeholder: '',
+    rounded: 'xl',
+    color: 'gray-400'
 })
 
 const attrs = useAttrs()
@@ -164,23 +174,14 @@ const emit = defineEmits<{
     'update:modelValue': [v: any]
 }>()
 
-const active = ref(false)
-
-const computedOptions = computed(() =>
-    props.options.map((option) => ({
-        value: option[props.valueName],
-        label: option[props.labelName],
-        img: option[props.imageName],
-    }))
-)
-
 const isPrefixed = computed(() => slots.prefix || props.leftIcon)
 
+const { rounded } = useRounded(props.rounded)
 const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
             return {
-                height: `32px`,
+                height: 32,
                 paddingContent: '0 8px',
                 padding: `0 2px 0 ${isPrefixed.value ? '1px' : '2px'}`,
                 iconSize: 16,
@@ -190,17 +191,17 @@ const sizeFrames = computed(() => {
             }
         case 'sm':
             return {
-                height: `40px`,
+                height: 36,
                 paddingContent: '1px 12px',
                 padding: `0 '4px' 0 ${isPrefixed.value ? '2px' : '4px'}`,
                 iconSize: 20,
                 iconRight: '7px',
                 labelStyles: { marginBottom: '5px' },
-                paddingDropdownItem: '8px'
+                paddingDropdownItem: '10px'
             }
         case 'md':
             return {
-                height: `46px`,
+                height: 48,
                 paddingContent: '1px 16px',
                 padding: `0 6px 0 ${isPrefixed.value ? '3px' : '6px'}`,
                 labelStyles: { marginBottom: '6px' },
@@ -215,7 +216,7 @@ const sizeFrames = computed(() => {
             }
         case 'lg':
             return {
-                height: `56px`,
+                height: 56,
                 paddingContent: '1px 20px',
                 padding: `0 8px 0 ${isPrefixed.value ? '4px' : '8px'}`,
                 labelStyles: { marginBottom: '10px' },
@@ -225,7 +226,7 @@ const sizeFrames = computed(() => {
             }
         case 'xl':
             return {
-                height: `64px`,
+                height: 64,
                 paddingContent: '1px 24px',
                 padding: `0 10px 0 ${isPrefixed.value ? '5px' : '10px'}`,
                 labelStyles: { marginBottom: '12px' },
@@ -236,8 +237,10 @@ const sizeFrames = computed(() => {
     }
 })
 
+const { color: _color } = useColor(props.color)
+
 const color = computed(() =>
-    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#49BBBD'
+    (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : _color.value
 )
 const textColor = computed(() =>
     (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#000000'
@@ -248,19 +251,32 @@ const styles = computed(() => ({
     '--u-select-padding-content': sizeFrames.value.paddingContent,
     '--color': color.value,
     '--text-color': textColor.value,
-    '--u-select-height': sizeFrames.value.height,
+    '--u-select-height': `${sizeFrames.value.height}px`,
     '--u--select-tags-padding': sizeFrames.value.tagsPadding,
+    '--u-select-rounded': rounded.value,
+    '--el-select-input-focus-border-color': color.value,
+    '--u-select-text-color': textColor.value
 }))
+
+const active = ref(false)
+
+const computedOptions = computed(() =>
+    props.options.map((option) => ({
+        value: option[props.valueName],
+        label: option[props.labelName],
+        img: option[props.imageName],
+    }))
+)
 </script>
 
 <style scoped lang="scss">
 .u-select {
-    :deep(.el-input__wrapper.is-focus) {
-        box-shadow: 0 0 0 1px var(--color) !important;
+    :deep(input){
+        color: var(--u-select-text-color)
     }
 
     :deep(.el-input__wrapper) {
-        @apply rounded-full;
+        border-radius: var(--u-select-rounded);
         box-shadow: inset 0 0 0 1px var(--color) !important;
         padding: var(--u-select-padding-content);
 
@@ -316,6 +332,7 @@ const styles = computed(() => ({
     .el-select-dropdown {
         padding: 8px 0 !important;
     }
+
     .el-select-dropdown__item {
         @apply h-auto p-0 leading-none;
         &.selected {
@@ -329,6 +346,6 @@ const styles = computed(() => ({
 }
 
 .el-select :deep(.el-input.is-focus .el-input__wrapper) {
-    box-shadow: 0 0 0 1px var(--color) !important;
+    /*box-shadow: 0 0 0 1px var(--color) !important;*/
 }
 </style>
