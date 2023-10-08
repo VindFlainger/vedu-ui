@@ -2,7 +2,7 @@
     <div class="flex flex-col min-h-[100%] relative">
         <UActionBar :active="getBreakpointData('lg', true, false).value">
             <QuestionsActionBar
-                v-model:search-query="searchQuery as string"
+                v-model:search-query="searchQuery"
                 :active-tags="computedActiveTags"
                 @open:add-question-modal="handleOpenAddDialog"
             />
@@ -60,7 +60,7 @@ useSeoMeta({
     title: 'Questions'
 })
 
-const searchQuery = useRouteQuery<string>('query')
+const searchQuery = useRouteQuery<string, string>('query')
 const activeTags = useRouteQuery('tags', ['1', '2'])
 
 const computedActiveTags = computed(() => {
