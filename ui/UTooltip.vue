@@ -11,11 +11,12 @@
 </script>
 
 <style scoped>
-.u-tooltip :deep(.el-popper__arrow){
+:global(.u-tooltip .el-popper__arrow){
     display: block;
 }
 
-.u-tooltip :deep(.el-popper){
+:global(.u-tooltip .el-popper){
     @apply !overflow-x-auto
 }
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div v-bind="{ class: attrs.class }" :class="{ 'prevent-select': !selection }" class="px-[2px]">
+    <div v-bind="{ class: attrs.class }" :class="{ 'prevent-select': !selection }">
         <p
             v-if="props.label"
             class="font-medium text-base"
@@ -18,6 +18,7 @@
             :type="passwordVisible ? 'text' : (type as string)"
             :required="required"
             :maxlength="maxlenght as string"
+            ref="Input"
             @update:model-value="handleUpdate"
             @keypress="handleKeypress"
             @blur="handleBlur"
@@ -26,13 +27,13 @@
             <template #prefix>
                 <UIcon
                     v-if="leftIcon"
-                    class="[&_svg]:!text-[var(--text-color)]"
+                    class="[&_svg]:!text-[var(--u-input-text-color)]"
                     :value="leftIcon"
                     :size="sizeFrames.iconSizes.default"
                 />
                 <UIcon
                     v-else-if="type === 'email'"
-                    class="[&_svg]:!text-[var(--text-color)]"
+                    class="[&_svg]:!text-[var(--u-input-text-color)]"
                     value="Envelope"
                 />
                 <slot name="prefix" v-else></slot>
@@ -362,6 +363,12 @@ const handleNumberChange = (action: string) => {
     else if (v > max) emit('update:modelValue', max.toString())
     else emit('update:modelValue', v)
 }
+
+const Input = ref()
+
+defineExpose({
+    input: Input
+})
 
 </script>
 

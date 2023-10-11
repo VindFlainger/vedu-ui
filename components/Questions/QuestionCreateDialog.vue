@@ -1,5 +1,5 @@
 <template>
-    <UDialog title="Create Question" icon="Plus">
+    <UDialog title="Create Question" icon="Plus" ref="dialog">
         <template v-slot:default="{close}">
             <div>
                 <div class="flex gap-2 flex-col">
@@ -79,12 +79,12 @@
         </template>
         <template #footer="{close}">
             <UTransitionExpand>
-                <div v-if="submitted && failedChecks.length"
+                <div v-if="submitted && computedErrors.length"
                      class="flex gap-2  items-center text-sm text-red-500 border-2 border-dashed border-red-500 rounded-lg p-2 mb-4 bg-red-50">
                     <UIcon value="ExclamationCircle" color="red-500"/>
                     <div>
-                        <p v-for="check in failedChecks" :key="check.item">
-                            <span class="capitalize">{{ check.item }}:</span> {{ check.text }}
+                        <p v-for="check in computedErrors" :key="check.text">
+                            <span v-if="check.field" class="capitalize">{{ check.field }}:</span> {{ check.text }}
                         </p>
                     </div>
                 </div>
@@ -112,6 +112,8 @@
 <script setup lang="ts">
 import { Question } from "~/models/QuestionModel";
 
+const dialog = ref()
+
 const { $api } = useNuxtApp()
 
 export interface Props {
@@ -119,6 +121,10 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits<{
+    created: []
+}>()
 
 const characterLimit = ref(500)
 const typeOptions = ref([
@@ -152,27 +158,27 @@ const contentOverflow = computed(() => content.value.length > characterLimit.val
 
 const checks = computed(() => [
     {
-        item: 'title',
+        field: 'title',
         text: 'Field is required',
         invalid: !title.value
     },
     {
-        item: 'content',
+        field: 'content',
         text: 'Field is required',
         invalid: !content.value
     },
     {
-        item: 'content',
+        field: 'content',
         text: 'The maximum content size has been exceeded',
         invalid: contentOverflow.value
     },
     {
-        item: 'answers',
+        field: 'answers',
         text: 'You should add at least one answer',
         invalid: !answers.value.length
     },
     {
-        item: 'answers',
+        field: 'answers',
         text: 'You should assign at least one correct answer',
         invalid: type.value === 'single' || type.value === 'multiple' ?
             !answers.value.some(answer => (answer as any).correct) : false
@@ -184,6 +190,7 @@ const failedChecks = computed(() => checks.value
 )
 
 const submitted = ref(false)
+const { errors, fieldErrors, generalErrors } = useRequestErrors(false)
 const { loading: createLoading, addLoading: addCreateLoading, removeLoading: removeCreateLoading } = useLoading()
 const handleCreate = async () => {
     submitted.value = true
@@ -197,13 +204,22 @@ const handleCreate = async () => {
                 answers: answers.value,
                 tags: tags.value
             })
-        } catch (e) {
-
+            emit('created')
+        } catch (e: any) {
+            if (e.data.errors) errors.value = e.data.errors
         } finally {
             removeCreateLoading()
         }
     }
 }
+
+const computedErrors = computed(()=> {
+    return [
+        ...failedChecks.value,
+        ...fieldErrors.value,
+        ...generalErrors.value.map(error => ({text: error}))
+    ]
+})
 
 
 </script>

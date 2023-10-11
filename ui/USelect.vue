@@ -10,16 +10,18 @@
                 {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
             </p>
             <ElSelect
-                v-bind="{ ...attrs, class: inputClass }"
+                ref="USelect"
+                :model-value="modelValue"
                 class="u-select w-full focus:!outline-none"
+                v-bind="{ ...attrs, class: inputClass }"
+                :placeholder="placeholder"
                 :style="styles"
-                @visible-change="active = $event"
                 :collapse-tags="collapseTags"
                 :max-collapse-tags="maxCollapseTags"
-                @update:model-value="emit('update:modelValue', $event)"
-                :model-value="modelValue"
+                :loading="loading"
                 popper-class="u-select-popper"
-                :placeholder="placeholder"
+                @visible-change="active = $event"
+                @update:model-value="emit('update:modelValue', $event)"
             >
                 <template #default>
                     <ElOption
@@ -78,22 +80,45 @@
                         class="[&_svg]:!text-[var(--text-color)]"
                         :value="leftIcon"
                     />
-                    <UIcon
-                        v-if="!active"
-                        value="ChevronDown"
-                        class="absolute top-[calc(50%+1px)] -translate-y-1/2"
-                        :style="{'right': sizeFrames.iconRight}"
-                        :color="color"
-                        :size="sizeFrames.iconSize"
-                    />
-                    <UIcon
-                        v-else
-                        value="ChevronUp"
-                        class="absolute top-[calc(50%)] -translate-y-1/2"
-                        :style="{'right': sizeFrames.iconRight}"
-                        :color="color"
-                        :size="sizeFrames.iconSize"
-                    />
+                    <div class="flex absolute top-[calc(50%+1px)] -translate-y-1/2" :style="{'right': sizeFrames.iconRight}">
+                        <UDefaultLoader
+                            v-if="loading"
+                            size="20"
+                            :color="color"
+                            class="fill-black mr-[6px] !stroke-2"
+                        />
+                        <UIcon
+                            v-if="!active && !loading"
+                            value="ChevronDown"
+                            :color="color"
+                            :size="sizeFrames.iconSize"
+                        />
+                        <UIcon
+                            class="relative -top-px"
+                            v-else-if="!loading"
+                            value="ChevronUp"
+                            :color="color"
+                            :size="sizeFrames.iconSize"
+                        />
+                    </div >
+                </template>
+                <template #empty>
+                    <slot name="empty">
+                        <div class="px-2 py-3">
+                            <div class="flex items-center  text-sm text-gray-600">
+                                <UIcon value="Funnel" size="18" color="gray-600"/>
+                                <p class="ml-[6px]">No items matching query</p>
+                            </div>
+                            <button
+                                v-if="addable"
+                                class="flex items-center mt-2 cursor-pointer"
+                                @click="addItem"
+                            >
+                                <UIcon value="Plus" size="16" color="primary-900" stroke-width="2"/>
+                                <p class="text-[13px] ml-[2px] text-primary-900 font-medium">{{addableLabel}}</p>
+                            </button>
+                        </div>
+                    </slot>
                 </template>
             </ElSelect>
             <div class="flex">
@@ -143,7 +168,10 @@ export interface Props {
     placeholder?: string,
     rounded?: string,
     color?: string,
-    infoLine?: boolean
+    infoLine?: boolean,
+    addable?: boolean,
+    addableLabel?: string,
+    loading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -160,7 +188,8 @@ const props = withDefaults(defineProps<Props>(), {
     required: false,
     placeholder: '',
     rounded: 'xl',
-    color: 'gray-400'
+    color: 'gray-400',
+    addableLabel: 'Add new'
 })
 
 const attrs = useAttrs()
@@ -171,7 +200,8 @@ const slots = defineSlots<{
 }>()
 
 const emit = defineEmits<{
-    'update:modelValue': [v: any]
+    'update:modelValue': [v: any],
+    'add': [v: string]
 }>()
 
 const isPrefixed = computed(() => slots.prefix || props.leftIcon)
@@ -267,6 +297,13 @@ const computedOptions = computed(() =>
         img: option[props.imageName],
     }))
 )
+
+const USelect = ref()
+
+const addItem = () => {
+    emit('add', USelect.value.query)
+}
+
 </script>
 
 <style scoped lang="scss">

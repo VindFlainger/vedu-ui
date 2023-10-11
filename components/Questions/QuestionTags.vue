@@ -1,27 +1,42 @@
 <template>
     <div>
         <div class="flex gap-3 items-start">
-            <UInput
-                info-line
-                size="sm"
-                v-model="text"
+            <!--            <UInput
+                            info-line
+                            size="sm"
+                            v-model="text"
+                            class="max-w-xs grow"
+                            maxlenght="16"
+                            :conditions="[
+                                ['Tag duplicated', 'error', duplicated],
+                                [`The maximum number of Tags is ${tagsLimit}`, 'error', limitExceeded && text.length],
+                            ]"
+                            @enter="handleAdd"
+                        />-->
+            <USelect
+                v-model="tag"
                 class="max-w-xs grow"
-                maxlenght="16"
-                :conditions="[
-                    ['Tag duplicated', 'error', duplicated],
-                    [`The maximum number of Tags is ${tagsLimit}`, 'error', limitExceeded && text.length],
-                ]"
-                @enter="handleAdd"
-            />
+                filterable
+                :options="tags"
+                addable
+                addable-label="Add new Tag"
+                :loading="createLoading"
+                @add="handleCreate"
+            >
+                <!--                <template #empty>
+                                    <p>Add one</p>
+                                </template>-->
+            </USelect>
             <UButton
                 class="self-start shrink-0"
                 label="Add"
                 size="md"
-                :disabled="!text.length || duplicated || limitExceeded"
+                :disabled="!tag || duplicated || limitExceeded"
                 @click="handleAdd"
             />
         </div>
-        <div class="p-3 min-h-[70px] flex items-center border border-dashed border-gray-400 bg-gray-50 mt-3 rounded-lg select-none">
+        <div
+            class="p-3 min-h-[70px] flex items-center border border-dashed border-gray-400 bg-gray-50 mt-3 rounded-lg select-none">
             <div v-if="modelValue.length" class="flex gap-3 items-center">
                 <UTag
                     v-for="tag in modelValue"
@@ -42,7 +57,13 @@
 
 <script setup lang="ts">
 import { QuestionTag } from "~/models/QuestionModel";
-import { Optional, ValuesType } from "utility-types";
+import { Optional } from "utility-types";
+
+const { $api } = useNuxtApp()
+
+const questionsStore = useQuestionsStore()
+
+const { tags } = storeToRefs(questionsStore)
 
 export interface Props {
     savedTags: QuestionTag[],
@@ -59,15 +80,26 @@ const emit = defineEmits<{
 }>()
 
 const tagsLimit = ref(6)
-const text = ref('')
+const tag = ref<string | null>(null)
+
+const { loading: createLoading, addLoading: addCreateLoading, removeLoading: removeCreateLoading } = useLoading(false)
+const handleCreate = async (name: string) => {
+    try {
+        addCreateLoading()
+        const res = await $api.questions.CREATE_TAG({ label: name })
+        await questionsStore.fetchAvailableTags()
+        tag.value = res.value
+    } catch (e) {
+
+    } finally {
+        removeCreateLoading()
+    }
+}
 
 const handleAdd = () => {
     if (!duplicated.value && !limitExceeded.value) {
-        const tag = {
-            label: text.value
-        }
         emit('update:modelValue', [...props.modelValue, tag])
-        text.value = ''
+        tag.value = null
     }
 }
 

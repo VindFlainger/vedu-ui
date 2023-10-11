@@ -41,7 +41,7 @@
         </div>
         <div class="flex mt-auto mb-0 items-center justify-between pt-6">
             <UButton label="Edit" size="md" :font-size="14" class="text-sm" @click="emit('edit')"/>
-            <UButton icon-style icon="Trash" color="red-400" size="lg" tag="button"/>
+            <UButton icon-style icon="Trash" color="red-400" size="lg" tag="button" @click="emit('remove')"/>
         </div>
     </div>
 </template>
@@ -60,7 +60,8 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits<{
-    'edit': []
+    'edit': [],
+    'remove': []
 }>()
 
 </script>

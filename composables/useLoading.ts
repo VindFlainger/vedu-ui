@@ -3,7 +3,7 @@ export function useLoading(init: boolean = false){
     const addLoading = () => _loading.value++
     const removeLoading = () => _loading.value--
 
-    const loading = computed(()=> !!_loading.value)
+    const loading = computed(()=> _loading.value > 0)
 
     return {
         loading,

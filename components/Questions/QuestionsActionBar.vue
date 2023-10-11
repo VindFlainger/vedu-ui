@@ -1,7 +1,54 @@
 <template>
     <div>
         <div class="flex items-center">
-            <div class="flex items-center cursor-pointer group" @click="$emit('open:addQuestionModal')">
+            <UDropdown
+                label="asdasd"
+                width="300"
+                popper-class="!rounded-xl"
+                @visible-change="tagsDropdownVisible = $event"
+            >
+                <template #opener>
+                    <UButton
+                        icon-style
+                        icon="Funnel"
+                        class="self-start group-hover:after:!bg-primary-700"
+                        color="primary-800"
+                    />
+                </template>
+                <template #content>
+                    <div class="pt-3 px-3">
+                        <UInput
+                            ref="tagInput"
+                            placeholder="Tag Name"
+                            v-model="tagQuery"
+                            color="primary-700"
+                            autofocus
+                        />
+                        <div class="py-5">
+                            <div v-if="visibleTags.length" class="flex flex-wrap gap-2">
+                                <UTag
+                                    v-for="tag in visibleTags"
+                                    :key="tag.label"
+                                    :value="tag.label"
+                                    class="cursor-pointer"
+                                    @click="handleAddTag(tag.value)"
+                                />
+                                <UTag
+                                    v-if="(filteredTags.length - visibleTags.length) > 0"
+                                    :value="`+${filteredTags.length - visibleTags.length}`"
+                                    class="border-dashed"
+                                />
+                            </div>
+                            <div v-else class="flex flex-col gap-1 items-center py-6">
+                                <UIcon value="FaceFrown" color="gray-600"/>
+                                <p class="text-center text-sm text-gray-600">No Tags Found</p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </UDropdown>
+
+            <div class="flex items-center cursor-pointer group ml-2" @click="$emit('open:addQuestionModal')">
                 <UButton
                     icon-style
                     icon="Plus"
@@ -19,26 +66,15 @@
                 @update:model-value="emit('update:searchQuery', $event)"
             />
         </div>
-        <div class="mt-2">
-            <div class="flex ml-auto">
-                <UDropdown label="asdasd">
-                    <template #opener>
-                        <UButton
-                            icon-style
-                            icon="Funnel"
-                            class="self-start group-hover:after:!bg-primary-700"
-                            color="primary-800"
-                        />
-                    </template>
-                    <template #content>
-                        asdasdas asdasdas asdasdas asdasdas asdasdas asdasdas asdasdas asdasdas asdasdas asdasdas asdasdas
-                    </template>
-                </UDropdown>
-                <div class="flex gap-2 ml-3 self-center">
+        <div v-if="computedActiveTags.length" class="mt-5" >
+            <div class="flex items-center ml-auto">
+                <div class="flex flex-wrap gap-2 self-center">
                     <UTag
-                        v-for="tag in activeTags"
+                        v-for="tag in computedActiveTags"
                         :key="tag"
                         :value="tag.label"
+                        clearable
+                        @clear="handleRemoveTag(tag.value)"
                     />
                 </div>
             </div>
@@ -51,7 +87,8 @@ import { QuestionTag } from "~/models/QuestionModel";
 
 export interface Props {
     searchQuery?: string,
-    activeTags?: QuestionTag[]
+    tags: QuestionTag[],
+    activeTags?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -60,7 +97,34 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
     'update:searchQuery': [v: Props['searchQuery']],
+    'update:activeTags': [v: Props['activeTags']],
     'open:addQuestionModal': [],
 }>()
+
+const tagsLimit = ref(10)
+
+
+const tagQuery = ref('')
+
+const availableTags = computed(() => props.tags.filter(tag => !props.activeTags.some(x => x === tag.value)))
+const filteredTags = computed(() => availableTags.value.filter(tag => !tagQuery.value || tag.label.toLocaleLowerCase().includes(tagQuery.value.toLocaleLowerCase())))
+const visibleTags = computed(() => filteredTags.value.slice(0, tagsLimit.value))
+const computedActiveTags = computed(() => props.tags.filter(tag => props.activeTags.some(x => x === tag.value)))
+
+const tagInput = ref()
+const tagsDropdownVisible = ref(false)
+
+watch(tagsDropdownVisible, (v) => {
+    if (v) tagInput.value.input.focus()
+})
+
+const handleAddTag = (v: string) => {
+    emit('update:activeTags', [...props.activeTags, v])
+}
+
+const handleRemoveTag = (v: string) => {
+    emit('update:activeTags', props.activeTags.filter(tag => tag !== v))
+}
+
 
 </script>

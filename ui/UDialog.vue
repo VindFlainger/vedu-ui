@@ -13,7 +13,7 @@
             >
                 <div
                     v-if="showContent"
-                    class="content rounded-2xl overflow-hidden"
+                    class="content rounded-2xl overflow-hidden max-sm:!w-[90%]"
                     :style="styles"
                     @click.stop
                 >
@@ -112,6 +112,9 @@ onUnmounted(() => {
     document.body.classList.remove('u-model-parent-hidden')
 })
 
+defineExpose({
+    close: handleClose
+})
 
 </script>
 

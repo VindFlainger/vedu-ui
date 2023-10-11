@@ -8,6 +8,7 @@
                 placeholder=" "
                 size="xs"
                 label-name="value"
+                color="primary-700"
                 @update:model-value="handlePerPageChange"
             />
             <p class="text-gray-500 text-sm ml-4">
@@ -24,6 +25,7 @@
                     class="w-12 text-center"
                     size="xs"
                     type="number"
+                    color="primary-700"
                     @change-number="emit('update:page', lazyPage > 0?lazyPage.value:1)"
                 />
                 <UButton icon-style icon="ArrowRight" @click="handlePageChange(1)"></UButton>
