@@ -1,8 +1,9 @@
 <template>
     <ElTooltip popper-class="u-tooltip">
-        <slot>
-
-        </slot>
+        <slot></slot>
+        <template #content>
+            <slot name="content"></slot>
+        </template>
     </ElTooltip>
 </template>
 

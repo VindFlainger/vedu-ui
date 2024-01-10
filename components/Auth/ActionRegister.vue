@@ -24,7 +24,7 @@
                     color="primary-700"
                     type="email"
                     label="Email"
-                    :right-icon="email.meta.valid?'ArrowPath':''"
+                    :right-icon="email.value.value && email.meta.valid?'ArrowPath':''"
                     required
                     @click:right-icon="handleCheckEmail"
                     @input="emailStatus = null"
@@ -42,20 +42,35 @@
                     label="Password"
                     required
                 />
-                <div v-if="password.value.value" class="mt-6 border p-1 rounded-lg"
-                     :class="[passwordChecks.every(check => check.status)?'border-green-500':'border-red-500']">
-                    <ul v-for="check in passwordChecks">
-                        <li :class="[check.status?'text-green-500':'text-red-500']">
-                            <p class="flex">
-                                <UIcon v-if="check.status" value="CheckCircle" color="green-500" size="16"
-                                       class="relative top-px"/>
-                                <UIcon v-else value="ExclamationCircle" color="red-500" size="16"
-                                       class="relative top-px"/>
-                                <span class="ml-1 text-sm">{{ check.label }}</span>
-                            </p>
-                        </li>
-                    </ul>
-                </div>
+                <UTransitionExpand>
+                    <div
+                        v-if="password.value.value && passwordChecks.some(check => !check.status)"
+                        class="mt-6 border p-1 rounded-lg"
+                        :class="[passwordChecks.every(check => check.status)?'border-green-500':'border-red-500']"
+                    >
+                        <ul v-for="check in passwordChecks" :key="check.label">
+                            <li :class="[check.status?'text-green-500':'text-red-500']">
+                                <p class="flex">
+                                    <UIcon
+                                        v-if="check.status"
+                                        value="CheckCircle"
+                                        color="green-500"
+                                        size="16"
+                                        class="relative top-px"
+                                    />
+                                    <UIcon
+                                        v-else
+                                        value="ExclamationCircle"
+                                        color="red-500"
+                                        size="16"
+                                        class="relative top-px"
+                                    />
+                                    <span class="ml-1 text-sm">{{ check.label }}</span>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </UTransitionExpand>
                 <UInput
                     class="mt-4 w-full"
                     v-model="repeatedPassword.value.value"
@@ -76,6 +91,7 @@
                         class="col-span-2"
                         v-model="firstName.value.value"
                         :errors="firstName.errors.value"
+                        :hide-errors="!invalidPersonalData"
                         label="First name"
                         size="md"
                         rounded="full"
@@ -86,6 +102,7 @@
                         class="col-span-2"
                         v-model="lastName.value.value"
                         :errors="lastName.errors.value"
+                        :hide-errors="!invalidPersonalData"
                         label="Last name"
                         size="md"
                         rounded="full"
@@ -96,45 +113,49 @@
                         class="w-full"
                         v-model.number="age.value.value"
                         :errors="age.errors.value"
+                        :hide-errors="!invalidPersonalData"
                         label="Age"
                         size="md"
                         rounded="full"
                         color="primary-700"
                         type="number"
                         max="100"
-                        min="10"
+                        :min="role === 'instructor'?18:6"
                         required
                     />
                     <USelect
                         v-model="gender.value.value"
                         :options="genderOptions"
                         :errors="gender.errors.value"
-                        label="Gender"
-                        size="md"
+                        :hide-errors="!invalidPersonalData"
                         rounded="full"
                         color="primary-700"
+                        label="Gender"
                         required
+                        size="md"
                     />
                     <CountrySelect
-                        class="col-span-2"
                         v-model="country.value.value"
                         :errors="country.errors.value"
-                        required
+                        :hide-errors="!invalidPersonalData"
+                        class="col-span-2"
                         size="md"
                         rounded="full"
                         color="primary-700"
+                        required
                     />
                 </div>
             </template>
             <template #completion>
                 <UInput
+                    v-model="inviteCode"
                     label="Invite code"
                     left-icon="Star"
+                    hint="With the help of an invitation code, we will automatically add you to the necessary courses
+                        and give you the appropriate privileges. You can get an invitation code from your teacher or organization."
                     size="md"
                     rounded="full"
                     color="primary-700"
-                    hint="With the help of an invitation code, we will automatically add you to the necessary courses
-                    and give you the appropriate privileges. You can get an invitation code from your teacher or organization."
                 >
                 </UInput>
                 <div class="mt-6">
@@ -146,6 +167,19 @@
                         </p>
                     </UCheckbox>
                 </div>
+                <UTransitionExpand>
+                    <div
+                        v-if="registerErrorList.length"
+                        class="mt-6 flex gap-2 items-center text-sm text-red-500 border-2 border-dashed border-red-500 rounded-lg p-2 mb-4 bg-red-50"
+                    >
+                        <UIcon value="ExclamationCircle" color="red-500"/>
+                        <ul :class="{'list-disc pl-3': registerErrorList.length > 1}">
+                            <li v-for="error in registerErrorList" :key="error">
+                                <span>{{ error }}</span>;
+                            </li>
+                        </ul>
+                    </div>
+                </UTransitionExpand>
             </template>
         </USimpleStepper>
     </div>
@@ -153,13 +187,16 @@
 
 <script setup lang="ts">
 import { number } from "yup";
+import { useRouteQuery } from "@vueuse/router";
 
 const { $api } = useNuxtApp()
+const intercomStore = useIntercomStore()
 
-const genderOptions = ref([
-    { label: 'Male', value: 'male' },
-    { label: 'Female', value: 'female' },
-])
+export interface Props {
+    role: string
+}
+
+const props = withDefaults(defineProps<Props>(), {})
 
 const slots = ref([
     {
@@ -179,8 +216,15 @@ const slots = ref([
 const slot = ref("identification");
 
 const emit = defineEmits<{
-    'registered': []
+    'registered': [v: { email: string, password: string }]
 }>()
+
+
+const genderOptions = ref([
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+])
+
 
 const { meta } = useForm({
     validationSchema: object({
@@ -199,8 +243,16 @@ const { meta } = useForm({
             )
         ,
         age: number().required("Age is required"),
-        firstName: string().required("First name is required"),
-        lastName: string().required("Last name is required"),
+        firstName: string()
+            .required("First name is required")
+            .min(2, 'First name must contain from 2 to 20 characters')
+            .max(20, 'First name must contain from 2 to 20 characters')
+        ,
+        lastName: string()
+            .required("Last name is required")
+            .min(2, 'Last name must contain from 2 to 20 characters')
+            .max(20, 'Last name must contain from 2 to 20 characters')
+        ,
         gender: string().required("Gender is required"),
         country: string().required("Gender is required")
     }),
@@ -214,15 +266,14 @@ const lastName = useField<string>("lastName");
 const age = useField<string>("age");
 const gender = useField<string>("gender");
 const country = useField<string>("country");
+const inviteCode = ref('')
 const agreement = ref(false)
 
 const identificationValid = computed(() => (email.meta.valid && password.meta.valid && repeatedPassword.meta.valid))
 const personalDataValid = computed(() => (firstName.meta.valid && lastName.meta.valid && age.meta.valid && gender.meta.valid && country.meta.valid))
-const completionValid = computed(() => (!email.errors.value.length && !password.errors.value && !password.errors.value))
 
 const invalidIdentification = ref(false);
 const invalidPersonalData = ref(false);
-const invalidCompletion = ref(false);
 
 const nextDisabled = computed(() => {
     if (slot.value === 'identification') return !identificationValid.value && invalidIdentification.value
@@ -233,26 +284,40 @@ const nextLoading = computed(() => {
     if (slot.value === 'completion') return registerLoading.value
 })
 
+const { errors: registerErrors, errorList: registerErrorList } = useRequestErrors()
 const registerLoading = ref(false)
 const register = async () => {
-    registerLoading.value = true
-    const { data, error } = await $api.Auth.REGISTER_INSTRUCTOR({
-        body: {
+    try {
+        registerLoading.value = true
+        const res = await $api.auth.SIGN_UP({
             email: email.value.value,
             password: password.value.value,
-            firstName: firstName.value.value,
-            lastName: lastName.value.value,
+            first_name: firstName.value.value,
+            last_name: lastName.value.value,
             age: age.value.value,
             country: country.value.value,
-            gender: gender.value.value
+            gender: gender.value.value,
+            invite_code: inviteCode.value,
+            role: props.role
+        })
+        if (res.user_id) {
+            intercomStore.addNotification({
+                type: 'success',
+                title: 'Account created',
+                text: `The ${props.role}\'s account was successfully created. You are redirected to the sign in page`
+            })
+            emit('registered', { email: email.value.value, password: password.value.value })
         }
-    })
-    registerLoading.value = false
-    if (data.value?.success) emit('registered')
+    } catch (e: any) {
+        registerErrors.value = e.data
+    } finally {
+        registerLoading.value = false
+    }
 }
 
 
 const handleStep = async (target: string, move: () => void) => {
+    registerErrors.value = null
     if (target === "personal_data") {
         await Promise.all([email.validate(), password.validate(), repeatedPassword.validate()])
         if (identificationValid.value) move()
@@ -263,17 +328,19 @@ const handleStep = async (target: string, move: () => void) => {
         if (personalDataValid.value) move()
         else invalidPersonalData.value = true;
     }
-    if (target === 'finish'){
+    if (target === 'finish') {
         await register()
     }
 };
 
 const emailStatus = ref<null | 'duplicated' | 'available'>(null)
 const handleCheckEmail = async () => {
-    const { execute, data } = $api.Auth.CHECK_EMAIL({ body: { email: email.value.value } })
-    await execute()
-    if (!data.value?.unic) emailStatus.value = 'duplicated'
-    else emailStatus.value = 'available'
+    try {
+        const res = await $api.auth.CHECK_EMAIL({ email: email.value.value })
+        emailStatus.value = res ? 'duplicated' : 'available'
+    } catch (e) {
+
+    }
 }
 
 const passwordChecks = computed(() => {

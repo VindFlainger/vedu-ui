@@ -1,10 +1,5 @@
 import { Optional } from "utility-types";
 
-export type QuestionTextAnswer = {
-    value: string,
-    label: string,
-}
-
 export interface QuestionMultipleAnswer {
     value: string,
     label: string,
@@ -17,11 +12,11 @@ export interface QuestionOrderAnswer {
     order: number
 }
 
-export type QuestionAnswers = QuestionTextAnswer[] | QuestionMultipleAnswer[] | QuestionOrderAnswer[]
+export type QuestionAnswers = string[] | QuestionMultipleAnswer[] | QuestionOrderAnswer[]
 
 export interface QuestionTag {
-    label: string,
-    value: string
+    name: string,
+    id: string
 }
 
 export interface Question {
@@ -30,15 +25,7 @@ export interface Question {
     title: string,
     content: string,
     tags: QuestionTag[],
-    answers: QuestionAnswers
-    updated_at: string,
-    created_at: string
-}
-
-export interface QuestionModel {
-    type: 'text' | 'multiple' | 'single' | 'order',
-    title: string,
-    content: string,
-    tags: Optional<QuestionTag, 'value'>[],
-    answers: Optional<QuestionTextAnswer, 'value'>[] | Optional<QuestionMultipleAnswer, 'value'>[] | Optional<QuestionOrderAnswer, 'value'>[]
+    options: QuestionAnswers
+    updatedAt: string,
+    createdAt: string
 }

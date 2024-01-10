@@ -2,7 +2,7 @@
     <client-only>
         <div class="flex items-center rounded-lg" v-bind="$attrs">
             <USelect
-                class="w-14 [&_input]:text-center [&_input]:right-[6px] [&_input]:relative"
+                class="w-[58px] [&_input]:text-center"
                 :options="perPageOptions"
                 :model-value="perPage"
                 placeholder=" "
@@ -47,7 +47,7 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     page: 1,
-    perPage: 30,
+    perPage: 15,
     count: 0
 })
 

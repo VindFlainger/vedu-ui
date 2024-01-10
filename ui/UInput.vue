@@ -1,15 +1,18 @@
 <template>
     <div v-bind="{ class: attrs.class }" :class="{ 'prevent-select': !selection }">
-        <p
-            v-if="props.label"
-            class="font-medium text-base"
-            :style="[sizeFrames.labelStyles, { color: textColor }]"
-            :class="labelClass"
-        >
-            {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
-        </p>
+        <ULabel
+            :description="description"
+            :label="label"
+            :required="required"
+            :text-color="textColor"
+            :style="sizeFrames.labelStyles"
+            :questionIndicatorColor="isErrorState ? errorStateColor : undefined"
+        />
         <ElInput
-            class="u-input [&>div]:!shadow-[inset_0_0_0_1px_var(--u-input-color)] [&_input]:text-base [&_input]:text-[var(--u-input-text-color)]"
+            class="u-input [&>div]:!shadow-[inset_0_0_0_1px_var(--u-input-color)] [&_input]:text-base
+                [&_input]:text-[var(--u-input-text-color)] [&_.el-input\_\_prefix-inner>:last-child]:mr-[var(--u-input-icon-margin)]
+                [&_.el-input\_\_suffix-inner>:first-child]:!ml-[var(--u-input-icon-margin)]
+            "
             :model-value="modelValue"
             v-bind="{ ...attrs, class: inputClass }"
             :max="max"
@@ -43,6 +46,7 @@
                     v-if="rightIcon"
                     :value="rightIcon"
                     :tag="rightIconButton?'button':undefined"
+                    tabindex="-1"
                     :size="sizeFrames.iconSizes.default"
                     :color="color"
                     @click="emit('click:rightIcon')"
@@ -80,7 +84,7 @@
         <div class="flex">
             <ul class="h-6" v-if="infoLine"></ul>
             <div class="grow">
-                <ul v-if="(props.hideErrors || activeErrors.length)"
+                <ul v-if="!props.hideErrors && activeErrors.length"
                     class="mt-1 pl-2 text-[13px] sm:text-sm text-red-500">
                     <li
                         v-for="error in (activeErrors as Array<any>).slice(0, errorsCount as number)"
@@ -123,6 +127,8 @@ import { useColor } from "~/ui/composables/useColor";
 import { useRounded } from "~/ui/composables/useRounded";
 import { useSize } from "~/ui/composables/useSize";
 
+const errorStateColor = '#DC2626'
+
 defineOptions({
     inheritAttrs: false,
 })
@@ -154,7 +160,9 @@ export interface Props {
     rounded?: string,
     maxlenght?: string,
     infoLine?: boolean,
-    fontSize?: string | number
+    fontSize?: string | number,
+    description?: string,
+    labelProps?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -170,7 +178,7 @@ const props = withDefaults(defineProps<Props>(), {
     rightIconButton: false,
     color: 'gray-400',
     textColor: 'black',
-    rounded: 'xl',
+    rounded: 'lg',
     fontSize: 14
 })
 
@@ -209,6 +217,7 @@ const sizeFrames = computed(() => {
                     default: 24,
                     plus: 15,
                 },
+                iconMargin: 3
             }
         case 'sm':
             return {
@@ -217,11 +226,12 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '2px' : '4px'} 0 ${
                     isPrefixed.value ? '2px' : '4px'
                 }`,
-                labelStyles: { marginBottom: '5px' },
+                labelStyles: { marginBottom: '6px' },
                 iconSizes: {
                     default: 24,
                     plus: 15,
                 },
+                iconMargin: 4
             }
         case 'md':
             return {
@@ -235,6 +245,7 @@ const sizeFrames = computed(() => {
                     default: 24,
                     plus: 13,
                 },
+                iconMargin: 5
             }
         case 'lg':
             return {
@@ -248,6 +259,7 @@ const sizeFrames = computed(() => {
                     default: 24,
                     plus: 15,
                 },
+                iconMargin: 7
             }
         case 'xl':
             return {
@@ -261,6 +273,7 @@ const sizeFrames = computed(() => {
                     default: 24,
                     plus: 15,
                 },
+                iconMargin: 12
             }
     }
 })
@@ -289,9 +302,10 @@ const activeSuccesses = computed(() => {
     return successes
 })
 
+const isErrorState = computed(()=> (activeErrors.value.length && !props.hideErrors) || props.errorState)
 
-const { color } = useColor(computed(() => (activeErrors.value.length && !props.hideErrors) || props.errorState ? '#DC2626' : props.color))
-const { color: textColor } = useColor(computed(() => (activeErrors.value.length && !props.hideErrors) || props.errorState ? '#DC2626' : props.textColor))
+const { color } = useColor(computed(() => isErrorState.value ? errorStateColor : props.color))
+const { color: textColor } = useColor(computed(() => isErrorState.value ? errorStateColor : props.textColor))
 const { rounded } = useRounded(props.rounded)
 const { size: fontSize } = useSize(props.size)
 
@@ -303,7 +317,8 @@ const styles = computed(() => ({
     '--u-input-color': color.value,
     '--u-input-text-color': textColor.value,
     '--u-input-rounded': rounded.value,
-    '--u-input-font-size': fontSize.value
+    '--u-input-font-size': fontSize.value,
+    '--u-input-icon-margin': `${sizeFrames.value.iconMargin}px`
 }))
 
 const passwordVisible = ref(false)
@@ -371,6 +386,8 @@ defineExpose({
 })
 
 </script>
+
+
 
 <style scoped lang="scss">
 .u-input :deep(input) {

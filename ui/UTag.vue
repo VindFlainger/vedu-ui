@@ -1,7 +1,7 @@
 <template>
     <div
         :style="styles"
-        class="relative flex items-center border-[var(--u-tag-text-color)] text-[var(--u-tag-color)] select-none"
+        class="relative inline-flex items-center border-[var(--u-tag-text-color)] text-[var(--u-tag-color)] select-none"
     >
         <slot name="prefix"></slot>
         <span>{{ value }}</span>

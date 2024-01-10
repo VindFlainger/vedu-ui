@@ -2,7 +2,7 @@ import { colors } from './defaults'
 import { rounded } from './defaults'
 
 export const parseColor = (color: string) => {
-    if (color.includes('#')) {
+    if (color && color.includes('#')) {
         return color
     } else {
         if (/^[a-z]+-\d{2,3}$/.test(color)) {
@@ -18,3 +18,4 @@ export const parseColor = (color: string) => {
 export const parseRounded = (round: string) => {
     return rounded[round] || rounded['md']
 }
+

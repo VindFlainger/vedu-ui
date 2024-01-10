@@ -1,6 +1,7 @@
 <template>
     <label class="flex items-center" :class="{ 'prevent-select': !selection }">
-        <div :style="checkboxStyles" class="rounded-sm outline outline-1 relative" :class="{'!rounded-full': radioStyle}">
+        <div :style="checkboxStyles" class="rounded-sm outline outline-1 relative"
+             :class="{'!rounded-full': radioStyle}">
             <UIcon
                 v-if="checked && !solid && !radioStyle"
                 :color="color"
@@ -48,7 +49,8 @@ export interface Props {
     solid?: boolean
     color?: string
     markerColor?: string
-    radioStyle?: boolean
+    radioStyle?: boolean,
+    returnValue?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -70,7 +72,7 @@ const { color: markerColor } = useColor(props.markerColor)
 const checked = computed({
     get() {
         if (Array.isArray(props.modelValue)) return props.modelValue.includes(props.value)
-        else return props.modelValue
+        else return props.returnValue ? props.modelValue === props.value : props.modelValue
     },
     set(event: any) {
         const checked = event.target.checked
@@ -82,7 +84,7 @@ const checked = computed({
                     props.modelValue.filter((value) => value !== props.value)
                 )
             if (checked) emit('update:modelValue', [...props.modelValue, props.value])
-        } else emit('update:modelValue', checked)
+        } else emit('update:modelValue', props.returnValue ? props.value : checked)
     },
 })
 

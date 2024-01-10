@@ -23,7 +23,7 @@
             </div>
             <div>
                 <slot>
-                    <span class="top-px relative">
+                    <span>
                         {{ label }}
                     </span>
                 </slot>
@@ -124,9 +124,9 @@ const activeTextColor = computed(() => props.disabled ? props.disabledTextColor 
 const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
-            return { padding: '3px 8px', iconStylePadding: '2px', fontSize: 14, iconSize: 13 }
+            return { padding: '3px 10px', iconStylePadding: '2px', fontSize: 14, iconSize: 13 }
         case 'sm':
-            return { padding: '4px 10px', iconStylePadding: '4px', fontSize: 14, iconSize: 13 }
+            return { padding: '4px 13px', iconStylePadding: '4px', fontSize: 15, iconSize: 13 }
         case 'md':
             return { padding: '6px 16px', iconStylePadding: '6px', fontSize: 16, iconSize: 15 }
         case 'lg':

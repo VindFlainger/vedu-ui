@@ -11,13 +11,13 @@
             <div class="mt-3 text-sm">
                 <p class="capitalize">
                     <span class="font-bold">Created:</span>
-                    {{ $luxon.fromISO(question.created_at).toFormat($dateFormats.dayFormat) }}
+                    {{ $luxon.fromISO(question.createdAt).toFormat($dateFormats.dayFormat) }}
                 </p>
             </div>
             <div class="mt-3 text-sm">
                 <p class="capitalize">
                     <span class="font-bold">Updated:</span>
-                    {{ $luxon.fromISO(question.created_at).toFormat($dateFormats.dayFormat) }}
+                    {{ $luxon.fromISO(question.updatedAt).toFormat($dateFormats.dayFormat) }}
                 </p>
             </div>
             <div class="mt-3 text-sm">
@@ -31,8 +31,8 @@
                 <div class="flex flex-wrap question-tags gap-[6px] mt-1 pb-1">
                     <UTag
                         v-for="tag in question.tags"
-                        :key="tag.value"
-                        :value="tag.label"
+                        :key="tag.id"
+                        :value="tag.name"
                         border-width="1"
                         font-size="14"
                     />
@@ -47,14 +47,14 @@
 </template>
 
 <script setup lang="ts">
-import { Question } from "~/models/QuestionModel";
+import { Question, QuestionTag } from "~/models/QuestionModel";
 
 defineOptions({
     inheritAttrs: false
 })
 
 export interface Props {
-    question: Question
+    question: Question,
 }
 
 const props = withDefaults(defineProps<Props>(), {})

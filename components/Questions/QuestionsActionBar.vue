@@ -28,10 +28,10 @@
                             <div v-if="visibleTags.length" class="flex flex-wrap gap-2">
                                 <UTag
                                     v-for="tag in visibleTags"
-                                    :key="tag.label"
-                                    :value="tag.label"
+                                    :key="tag.id"
+                                    :value="tag.name"
                                     class="cursor-pointer"
-                                    @click="handleAddTag(tag.value)"
+                                    @click="handleAddTag(tag.id)"
                                 />
                                 <UTag
                                     v-if="(filteredTags.length - visibleTags.length) > 0"
@@ -72,9 +72,9 @@
                     <UTag
                         v-for="tag in computedActiveTags"
                         :key="tag"
-                        :value="tag.label"
+                        :value="tag.name"
                         clearable
-                        @clear="handleRemoveTag(tag.value)"
+                        @clear="handleRemoveTag(tag.id)"
                     />
                 </div>
             </div>
@@ -92,7 +92,8 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    activeTags: () => []
+    activeTags: () => [],
+    tags: () => []
 })
 
 const emit = defineEmits<{
@@ -106,10 +107,10 @@ const tagsLimit = ref(10)
 
 const tagQuery = ref('')
 
-const availableTags = computed(() => props.tags.filter(tag => !props.activeTags.some(x => x === tag.value)))
-const filteredTags = computed(() => availableTags.value.filter(tag => !tagQuery.value || tag.label.toLocaleLowerCase().includes(tagQuery.value.toLocaleLowerCase())))
+const availableTags = computed(() => props.tags.filter(tag => !props.activeTags.some(x => x === tag.id)))
+const filteredTags = computed(() => availableTags.value.filter(tag => !tagQuery.value || tag.name.toLowerCase().includes(tagQuery.value.toLowerCase())))
 const visibleTags = computed(() => filteredTags.value.slice(0, tagsLimit.value))
-const computedActiveTags = computed(() => props.tags.filter(tag => props.activeTags.some(x => x === tag.value)))
+const computedActiveTags = computed(() => props.tags.filter(tag => props.activeTags.some(x => x === tag.id)))
 
 const tagInput = ref()
 const tagsDropdownVisible = ref(false)

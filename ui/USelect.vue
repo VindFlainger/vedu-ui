@@ -12,13 +12,18 @@
             <ElSelect
                 ref="USelect"
                 :model-value="modelValue"
-                class="u-select w-full focus:!outline-none"
+                class="u-select w-full focus:!outline-none [&_.el-select\_\_input]:!ml-[var(--u-select-multiple-margin)]
+                    [&_.el-input\_\_inner]:!overflow-ellipsis [&_.el-input\_\_prefix-inner>:last-child]:!mr-[var(--u-select-icon-margin)]
+                "
+                :class="{'[&_.el-select-tags-wrapper]:!hidden': hideSelected}"
                 v-bind="{ ...attrs, class: inputClass }"
-                :placeholder="placeholder"
+                :placeholder="placeholder as string"
                 :style="styles"
-                :collapse-tags="collapseTags"
-                :max-collapse-tags="maxCollapseTags"
-                :loading="loading"
+                :collapse-tags="!!collapseTags"
+                :max-collapse-tags="maxCollapseTags as number"
+                :loading="loading as boolean"
+                :multiple="multiple as boolean"
+                :filterable="filterable as boolean"
                 popper-class="u-select-popper"
                 @visible-change="active = $event"
                 @update:model-value="emit('update:modelValue', $event)"
@@ -49,16 +54,15 @@
                                         class="mr-[6px]"
                                         size="sm"
                                         :model-value="
-                                        attrs.multiple
-                                            ? modelValue?.includes(option.value)
-                                            : option.value === modelValue
+                                            multiple
+                                                ? modelValue?.includes(option.value)
+                                                : option.value === modelValue
                                     "
                                         color="primary-700"
                                     />
                                     <img
                                         v-if="option.img"
                                         :src="option.img"
-                                        :style="sizeFrames.imageStyles"
                                         class="mr-2"
                                     />
                                     <span
@@ -80,7 +84,8 @@
                         class="[&_svg]:!text-[var(--text-color)]"
                         :value="leftIcon"
                     />
-                    <div class="flex absolute top-[calc(50%+1px)] -translate-y-1/2" :style="{'right': sizeFrames.iconRight}">
+                    <div class="flex absolute top-[calc(50%+1px)] -translate-y-1/2"
+                         :style="{'right': sizeFrames.iconRight}">
                         <UDefaultLoader
                             v-if="loading"
                             size="20"
@@ -100,7 +105,7 @@
                             :color="color"
                             :size="sizeFrames.iconSize"
                         />
-                    </div >
+                    </div>
                 </template>
                 <template #empty>
                     <slot name="empty">
@@ -115,7 +120,7 @@
                                 @click="addItem"
                             >
                                 <UIcon value="Plus" size="16" color="primary-900" stroke-width="2"/>
-                                <p class="text-[13px] ml-[2px] text-primary-900 font-medium">{{addableLabel}}</p>
+                                <p class="text-[13px] ml-[2px] text-primary-900 font-medium">{{ addableLabel }}</p>
                             </button>
                         </div>
                     </slot>
@@ -171,7 +176,10 @@ export interface Props {
     infoLine?: boolean,
     addable?: boolean,
     addableLabel?: string,
-    loading?: boolean
+    loading?: boolean,
+    hideSelected?: boolean,
+    filterable?: boolean,
+    multiple?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -187,9 +195,9 @@ const props = withDefaults(defineProps<Props>(), {
     maxCollapseTags: 2,
     required: false,
     placeholder: '',
-    rounded: 'xl',
+    rounded: 'lg',
     color: 'gray-400',
-    addableLabel: 'Add new'
+    addableLabel: 'Add new',
 })
 
 const attrs = useAttrs()
@@ -201,7 +209,7 @@ const slots = defineSlots<{
 
 const emit = defineEmits<{
     'update:modelValue': [v: any],
-    'add': [v: string]
+    'add': [{ query: string, cb: () => void }]
 }>()
 
 const isPrefixed = computed(() => slots.prefix || props.leftIcon)
@@ -212,28 +220,32 @@ const sizeFrames = computed(() => {
         case 'xs':
             return {
                 height: 32,
-                paddingContent: '0 8px',
-                padding: `0 2px 0 ${isPrefixed.value ? '1px' : '2px'}`,
+                paddingContent: `0 26px 0 6px`,
+                padding: `0 2px 0 2px`,
                 iconSize: 16,
                 iconRight: '6px',
                 labelStyles: { marginBottom: '3px' },
-                paddingDropdownItem: '6px'
+                paddingDropdownItem: '6px',
+                iconMargin: 3,
+                multipleMargin: 8
             }
         case 'sm':
             return {
                 height: 36,
-                paddingContent: '1px 12px',
-                padding: `0 '4px' 0 ${isPrefixed.value ? '2px' : '4px'}`,
+                paddingContent: `1px 26px 0 6px`,
+                padding: `0 4px 0 4px`,
                 iconSize: 20,
                 iconRight: '7px',
                 labelStyles: { marginBottom: '5px' },
-                paddingDropdownItem: '10px'
+                paddingDropdownItem: '10px',
+                iconMargin: 4,
+                multipleMargin: 8
             }
         case 'md':
             return {
                 height: 48,
-                paddingContent: '1px 16px',
-                padding: `0 6px 0 ${isPrefixed.value ? '3px' : '6px'}`,
+                paddingContent: `1px 26px 0 8px`,
+                padding: `0 6px 0 6px}`,
                 labelStyles: { marginBottom: '6px' },
                 tagsPadding: '0 0 0 48px',
                 iconSize: 24,
@@ -242,27 +254,33 @@ const sizeFrames = computed(() => {
                     width: '20px',
                     height: '20px',
                 },
-                paddingDropdownItem: '12px'
+                paddingDropdownItem: '12px',
+                iconMargin: 5,
+                multipleMargin: 12
             }
         case 'lg':
             return {
                 height: 56,
-                paddingContent: '1px 20px',
-                padding: `0 8px 0 ${isPrefixed.value ? '4px' : '8px'}`,
+                paddingContent: `1px 26px 0 10px`,
+                padding: `0 8px 0 8px}`,
                 labelStyles: { marginBottom: '10px' },
                 iconSize: 24,
                 iconRight: '12px',
-                paddingDropdownItem: '12px'
+                paddingDropdownItem: '12px',
+                iconMargin: 7,
+                multipleMargin: 14
             }
         case 'xl':
             return {
                 height: 64,
-                paddingContent: '1px 24px',
-                padding: `0 10px 0 ${isPrefixed.value ? '5px' : '10px'}`,
+                paddingContent: `1px 26px 0 12px`,
+                padding: `0 10px 0 10px`,
                 labelStyles: { marginBottom: '12px' },
                 iconSize: 24,
                 iconRight: '12px',
-                paddingDropdownItem: '12px'
+                paddingDropdownItem: '12px',
+                iconMargin: 12,
+                multipleMargin: 16
             }
     }
 })
@@ -285,30 +303,42 @@ const styles = computed(() => ({
     '--u--select-tags-padding': sizeFrames.value.tagsPadding,
     '--u-select-rounded': rounded.value,
     '--el-select-input-focus-border-color': color.value,
-    '--u-select-text-color': textColor.value
+    '--u-select-text-color': textColor.value,
+    '--u-select-icon-margin': `${sizeFrames.value.iconMargin}px`,
+    '--u-select-multiple-margin': `${sizeFrames.value.multipleMargin}px`,
 }))
 
 const active = ref(false)
 
-const computedOptions = computed(() =>
-    props.options.map((option) => ({
-        value: option[props.valueName],
-        label: option[props.labelName],
-        img: option[props.imageName],
-    }))
-)
+const computedOptions = computed(() => {
+    let options = props.options
+        .map((option) => ({
+            value: option[props.valueName],
+            label: option[props.labelName],
+            img: option[props.imageName],
+        }))
+    if (props.hideSelected) options = options.filter(option => Array.isArray(props.modelValue) ? !props.modelValue.some((x: any) => x === option.value) : props.modelValue !== option.value)
+
+    return options
+})
 
 const USelect = ref()
 
 const addItem = () => {
-    emit('add', USelect.value.query)
+    emit('add', {
+            query: USelect.value.query,
+            cb: () => {
+                USelect.value.blur()
+            }
+        }
+    )
 }
 
 </script>
 
 <style scoped lang="scss">
 .u-select {
-    :deep(input){
+    :deep(input) {
         color: var(--u-select-text-color)
     }
 

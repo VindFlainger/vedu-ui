@@ -1,4 +1,4 @@
-import { v4 } from 'uuid/index'
+import { v4 } from 'uuid'
 
 export interface Notification {
     type: 'info' | 'error' | 'success',
@@ -18,7 +18,7 @@ export const useIntercomStore = defineStore('Intercom', {
     }),
     getters: {},
     actions: {
-        addNotification(notification: Omit<Notification, 'tempId'>, timeout: number = 3000) {
+        addNotification(notification: Omit<Notification, 'tempId'>, timeout: number = 5000) {
             const tempId = v4()
             this.notifications.push({ ...notification, tempId })
             setTimeout(() => {

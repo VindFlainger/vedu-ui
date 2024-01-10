@@ -1,5 +1,5 @@
 <template>
-    <UDialog title="Edit Question" icon="Pencil">
+    <UDialog title="Edit Question" icon="Pencil" ref="dialog">
         <template v-slot:default="{close}">
             <div v-if="question">
                 <div>
@@ -38,14 +38,14 @@
                     <QuestionTSM
                         v-if="['text', 'single', 'multiple'].includes(question.type)"
                         class="mt-2"
-                        v-model="lazyAnswers"
+                        v-model="lazyOptions"
                         :type="question.type as 'text' | 'single' | 'multiple'"
-                        :saved-answers="question.answers as QuestionMultipleAnswer[] | QuestionTextAnswer[]"
+                        :saved-answers="question.options as QuestionMultipleAnswer[] | string[]"
                     />
                     <QuestionOrder
                         v-else-if="question.type === 'order'"
                         class="mt-2"
-                        v-model="lazyAnswers"
+                        v-model="lazyOptions"
                     />
                 </div>
             </div>
@@ -64,7 +64,7 @@
                     label="Save"
                     :disabled="lazyContent.length > characterLimit"
                     @click="handleUpdate"
-                    :loading="updateAnswersLoading"
+                    :loading="updateLoading"
                 />
             </div>
         </template>
@@ -72,9 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { Question, QuestionMultipleAnswer, QuestionTextAnswer } from "~/models/QuestionModel";
-
-const questionsStore = useQuestionsStore()
+import { Question, QuestionMultipleAnswer } from "~/models/QuestionModel";
+const { $api } = useNuxtApp()
 
 export interface Props {
     question: Question,
@@ -82,31 +81,36 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits<{
+const emit = defineEmits<{}>()
 
-}>()
-
+const dialog = ref()
 const characterLimit = ref(500)
 
-
-const lazyAnswers = ref(props.question.answers)
+const lazyOptions = ref(props.question.options)
 const lazyContent = ref(props.question.content)
-const lazyTags = ref(props.question.tags)
+const lazyTags = ref(props.question.tags.map(tag => tag.id))
 
 const {
-    loading: updateAnswersLoading,
-    addLoading: addUpdateAnswersLoading,
-    removeLoading: removeUpdateAnswersLoading
+    loading: updateLoading,
+    addLoading: addUpdateLoading,
+    removeLoading: removeUpdateLoading
 } = useLoading()
 
 const handleUpdate = async () => {
     try {
-        addUpdateAnswersLoading()
-        await questionsStore.updateQuestionAnswers(props.question.id, lazyAnswers.value)
+        addUpdateLoading()
+        await $api.questions.UPDATE_QUESTION({
+            id: props.question.id,
+            content: lazyContent.value,
+            tags: lazyTags.value,
+            options: lazyOptions.value
+        })
+        dialog.value.close('updated')
+
     } catch (e) {
 
     } finally {
-        removeUpdateAnswersLoading()
+        removeUpdateLoading()
     }
 }
 

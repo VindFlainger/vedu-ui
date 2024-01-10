@@ -66,13 +66,13 @@
                     <QuestionTSM
                         v-if="['text', 'single', 'multiple'].includes(type)"
                         class="mt-2"
-                        v-model="answers"
+                        v-model="options"
                         :type="type as 'text' | 'single' | 'multiple'"
                     />
                     <QuestionOrder
                         v-else-if="type === 'order'"
                         class="mt-2"
-                        v-model="answers"
+                        v-model="options"
                     />
                 </div>
             </div>
@@ -122,9 +122,6 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits<{
-    created: []
-}>()
 
 const characterLimit = ref(500)
 const typeOptions = ref([
@@ -148,11 +145,11 @@ const typeOptions = ref([
 
 const title = ref<Question['title']>('')
 const type = ref<Question['type']>('text')
-const answers = ref<Question['answers']>([])
+const options = ref<Question['options']>([])
 const content = ref<Question['content']>('')
-const tags = ref<Question['tags']>([])
+const tags = ref<string[]>([])
 
-watch(type, () => answers.value = [])
+watch(type, () => options.value = [])
 
 const contentOverflow = computed(() => content.value.length > characterLimit.value)
 
@@ -175,13 +172,13 @@ const checks = computed(() => [
     {
         field: 'answers',
         text: 'You should add at least one answer',
-        invalid: !answers.value.length
+        invalid: !options.value.length
     },
     {
         field: 'answers',
         text: 'You should assign at least one correct answer',
         invalid: type.value === 'single' || type.value === 'multiple' ?
-            !answers.value.some(answer => (answer as any).correct) : false
+            !options.value.some(option => (option as any).correct) : false
     }
 ])
 
@@ -190,7 +187,7 @@ const failedChecks = computed(() => checks.value
 )
 
 const submitted = ref(false)
-const { errors, fieldErrors, generalErrors } = useRequestErrors(false)
+const { errors, fieldErrors, generalErrors } = useRequestErrors()
 const { loading: createLoading, addLoading: addCreateLoading, removeLoading: removeCreateLoading } = useLoading()
 const handleCreate = async () => {
     submitted.value = true
@@ -201,12 +198,12 @@ const handleCreate = async () => {
                 title: title.value,
                 type: type.value,
                 content: content.value,
-                answers: answers.value,
+                options: options.value,
                 tags: tags.value
             })
-            emit('created')
+            dialog.value.close('created')
         } catch (e: any) {
-            if (e.data.errors) errors.value = e.data.errors
+            if (e.data) errors.value = e.data
         } finally {
             removeCreateLoading()
         }

@@ -27,6 +27,7 @@
                 left-icon="Key"
                 :error-state="invalid"
                 @focus="invalid = false"
+                @enter="handleLogin"
             />
             <div class="mt-4 flex justify-between">
                 <UCheckbox label="Remember me" v-model="remember" size="md" label-class="text-sm"/>
@@ -46,10 +47,11 @@
                 <UButton
                     class="mt-8 w-40"
                     rounded="full"
-                    size="xl"
+                    size="lg"
                     font-weight="400"
-                    @click="handleLogin"
+                    :loading="loading"
                     :disabled="(submitCount && !meta.valid) || invalid"
+                    @click="handleLogin"
                 >
                     Login
                 </UButton>
@@ -68,6 +70,14 @@
 const { $api } = useNuxtApp()
 const { setAuth } = useAccountStore()
 const route = useRoute()
+const router = useRouter()
+
+export interface Props {
+    email?: string,
+    password?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {})
 
 const { submitCount, meta, handleSubmit } = useForm({
     validationSchema: object({
@@ -81,24 +91,33 @@ const remember = ref(false)
 const invalid = ref(false)
 const forgotPasswordModal = ref(false)
 
-
+const { loading, addLoading, removeLoading } = useLoading()
 const handleLogin = handleSubmit(async () => {
-    const { data, error, } = await $api.Auth.LOGIN_STUDENT({
-        body: {
-            password: password.value,
-            email: email.value,
-            remember,
-        },
-    })
-    if (data.value) await setAuth(data.value.refresh_token, data.value.live_time)
-    else if (error.value?.statusCode === 401) {
+    try {
+        addLoading()
+        const res = await $api.auth.SIGN_IN({
+            password: password.value.value,
+            email: email.value.value,
+            remember: remember.value,
+        })
+        if (res) {
+            await setAuth(res.refresh_token, remember.value)
+            router.replace({ name: 'dashboard' })
+        }
+    } catch (e) {
         password.value.value = ''
         email.value.value = ''
         invalid.value = true
         submitCount.value = 0
+    } finally {
+        removeLoading()
     }
 })
 
-onMounted(()=> forgotPasswordModal.value = !!route.query.recovery_session)
+onMounted(() => {
+    forgotPasswordModal.value = !!route.query.recovery_session
+    if (props.email) email.value.value = props.email
+    if (props.password) password.value.value = props.password
+})
 
 </script>

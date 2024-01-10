@@ -1,53 +1,48 @@
 <template>
-    <transition
-        appear
-        @after-appear="handleEnter"
+    <div
+        v-if="!hidden"
+        class="modal"
+        @click="handleClose()"
     >
-        <div
-            class="modal"
-            @click="showContent = false"
+        <transition
+            name="fade"
         >
-            <transition
-                name="fade"
-                @after-leave="emit('close')"
+            <div
+                v-if="showContent"
+                class="content rounded-2xl overflow-hidden max-sm:!w-[90%]"
+                :style="styles"
+                @click.stop
             >
-                <div
-                    v-if="showContent"
-                    class="content rounded-2xl overflow-hidden max-sm:!w-[90%]"
-                    :style="styles"
-                    @click.stop
-                >
-                    <div class="relative prevent-select flex items-center h-[60px] z-20" :style="stylesHeader">
-                        <div class="flex" :class="{'-ml-2': icon}">
-                            <UIcon v-if="icon" :value="icon" color="white" class="z-10 relative mr-[7px]"/>
-                            <p class="font-bold text-lg text-white tracking-wider pr-2 !pb-0 relative z-10 !py-0">
-                                {{ title }}
-                            </p>
-                        </div>
-                        <div class="u-dialog-bg invert"/>
-                        <UIcon
-                            class="absolute top-[10px] right-[10px] z-50 cursor-pointer hover:scale-110 duration-300"
-                            value="XMark"
-                            color="white"
-                            @click="handleClose"
-                        />
+                <div class="relative prevent-select flex items-center h-[60px] z-20" :style="stylesHeader">
+                    <div class="flex" :class="{'-ml-2': icon}">
+                        <UIcon v-if="icon" :value="icon" color="white" class="z-10 relative mr-[7px]"/>
+                        <p class="font-bold text-lg text-white tracking-wider pr-2 !pb-0 relative z-10 !py-0">
+                            {{ title }}
+                        </p>
                     </div>
-                    <div class="max-h-[calc(100vh-100px)] flex flex-col z-10">
-                        <div class="overflow-y-auto max-h-full pretty_scrollbar -mt-3" :style="stylesBody">
-                            <slot :close="handleClose"></slot>
-                        </div>
-                        <div
-                            v-if="$slots.footer"
-                            class="border-t border-dashed border-gray-400 !py-4 bg-gray-50 mt-px"
-                            :style="stylesBody"
-                        >
-                            <slot name="footer" :close="handleClose"/>
-                        </div>
+                    <div class="u-dialog-bg invert"/>
+                    <UIcon
+                        class="absolute top-[10px] right-[10px] z-50 cursor-pointer hover:scale-110 duration-300"
+                        value="XMark"
+                        color="white"
+                        @click="handleClose()"
+                    />
+                </div>
+                <div class="max-h-[calc(100vh-100px)] flex flex-col z-10">
+                    <div class="overflow-y-auto max-h-full pretty_scrollbar -mt-3" :style="stylesBody">
+                        <slot :close="handleClose"></slot>
+                    </div>
+                    <div
+                        v-if="$slots.footer"
+                        class="border-t border-dashed border-gray-400 !py-4 bg-gray-50 mt-px"
+                        :style="stylesBody"
+                    >
+                        <slot name="footer" :close="handleClose"/>
                     </div>
                 </div>
-            </transition>
-        </div>
-    </transition>
+            </div>
+        </transition>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -71,7 +66,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-    'close': []
+    'close': [],
+    [key: string]: [v?: any]
 }>()
 
 const { size: maxWidth } = useSize(props.maxWidth)
@@ -96,20 +92,31 @@ const stylesFooter = computed(() => ({
 
 
 const showContent = ref(false)
-const handleEnter = () => {
-    showContent.value = true
+const hidden = ref(false)
+
+const handleClose = ($emit?: string, $data?: any) => {
+    showContent.value = false
+    setTimeout(()=> {
+        hidden.value = true
+        document.body.classList.remove('u-model-parent-hidden')
+        if ($emit) emit($emit, $data)
+        else emit('close')
+    }, 150)
 }
 
-const handleClose = () => {
-    showContent.value = false
+const handleEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape')  handleClose()
 }
 
 onMounted(() => {
     document.body.classList.add('u-model-parent-hidden')
+    document.addEventListener('keydown', handleEsc)
+    showContent.value = true
 })
 
 onUnmounted(() => {
     document.body.classList.remove('u-model-parent-hidden')
+    document.removeEventListener('keydown', handleEsc)
 })
 
 defineExpose({
@@ -127,7 +134,7 @@ defineExpose({
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
+    z-index: 10000;
 }
 
 .content {
@@ -149,9 +156,9 @@ defineExpose({
     position: absolute;
     height: 80px;
     width: 100%;
-    top: -10px;
+    top: 0;
     left: 0;
-    background: url("/ui/assets/images/layered-waves-haikei.svg");
+    background: url("/ui/assets/images/layered-waves-haikei1.svg") 100% 100% / cover;
 }
 
 </style>

@@ -1,29 +1,36 @@
-import { MaybeRefOrGetter } from "nuxt/dist/app/compat/capi";
-
 export interface RequestErrors {
-    fields: {
+    fields?: {
         field: string,
         text: string
     }[],
-    general: string[]
+    message: string,
+    code: number
 }
 
-export function useRequestErrors(fieldsMapping: MaybeRefOrGetter<boolean> = true) {
+export function useRequestErrors() {
     const errors = ref<RequestErrors | null>(null)
 
-    const fieldErrors = computed(() => {
-        return errors.value ?
-            errors.value.fields.map(error => toValue(fieldsMapping) ? `${error.field[0].toUpperCase() + error.field.substring(1)}: ${error.text}` : error)
+    const fieldErrors = computed(() => errors.value?.fields ? errors.value.fields.map(error => error) : [])
+
+    const fieldErrorsMapped = computed(() => {
+        return errors.value?.fields ?
+            errors.value.fields.map(error => `${error.field[0].toUpperCase() + error.field.substring(1)}`)
             : []
     })
 
     const generalErrors = computed(() => {
-        return errors.value ? errors.value.general : []
+        return errors.value && errors.value.message ? [errors.value.message[0] + errors.value.message.substring(1)] : []
     })
+
+    const errorList = computed(() => [...fieldErrorsMapped.value, ...generalErrors.value])
+
+    const code = computed(() => errors.value?.code)
 
     return {
         errors,
         fieldErrors,
-        generalErrors
+        generalErrors,
+        errorList,
+        code
     }
 }
