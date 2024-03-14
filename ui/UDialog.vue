@@ -13,7 +13,7 @@
                 :style="styles"
                 @click.stop
             >
-                <div class="relative prevent-select flex items-center h-[60px] z-20" :style="stylesHeader">
+                <div v-if="!hideHeader" class="relative prevent-select flex items-center h-[60px] z-20" :style="stylesHeader">
                     <div class="flex" :class="{'-ml-2': icon}">
                         <UIcon v-if="icon" :value="icon" color="white" class="z-10 relative mr-[7px]"/>
                         <p class="font-bold text-lg text-white tracking-wider pr-2 !pb-0 relative z-10 !py-0">
@@ -29,7 +29,11 @@
                     />
                 </div>
                 <div class="max-h-[calc(100vh-100px)] flex flex-col z-10">
-                    <div class="overflow-y-auto max-h-full pretty_scrollbar -mt-3" :style="stylesBody">
+                    <div
+                        class="overflow-y-auto max-h-full pretty_scrollbar"
+                        :style="stylesBody"
+                        :class="{'-mt-3': !hideHeader}"
+                    >
                         <slot :close="handleClose"></slot>
                     </div>
                     <div
@@ -55,7 +59,8 @@ export interface Props {
     padding?: string,
     title?: string,
     icon?: string,
-    modelValue: boolean
+    modelValue: boolean,
+    hideHeader?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -98,7 +103,6 @@ const handleClose = ($emit?: string, $data?: any) => {
     showContent.value = false
     setTimeout(()=> {
         hidden.value = true
-        document.body.classList.remove('u-model-parent-hidden')
         if ($emit) emit($emit, $data)
         else emit('close')
     }, 150)
@@ -108,14 +112,17 @@ const handleEsc = (e: KeyboardEvent) => {
     if (e.key === 'Escape')  handleClose()
 }
 
+const duplicated = ref(false)
+
 onMounted(() => {
+    if (document.body.classList.contains('u-model-parent-hidden')) duplicated.value = true
     document.body.classList.add('u-model-parent-hidden')
     document.addEventListener('keydown', handleEsc)
     showContent.value = true
 })
 
 onUnmounted(() => {
-    document.body.classList.remove('u-model-parent-hidden')
+    if (!duplicated.value) document.body.classList.remove('u-model-parent-hidden')
     document.removeEventListener('keydown', handleEsc)
 })
 
@@ -134,7 +141,7 @@ defineExpose({
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 10000;
+    z-index: 2000;
 }
 
 .content {

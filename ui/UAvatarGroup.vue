@@ -23,7 +23,7 @@
                     :color="avatar.color"
                     :size="size"
                     :style="{
-                    zIndex: 1000+i,
+                    zIndex: 100+i,
                 }"
                 />
                 <template #content>
@@ -43,7 +43,7 @@
                 color="gray-400"
                 :size="size"
                 :style="{
-                    zIndex: 1000+avatars.length,
+                    zIndex: 100+avatars.length,
                 }"
             />
         </div>
@@ -52,11 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import UAvatar from "../UAvatar.vue";
+import UAvatar from "./UAvatar.vue";
 import { ref, computed, watch, onMounted } from 'vue'
-import { useSize } from "../composables/useSize";
-import { useColor } from "../composables/useColor";
-import UTooltip from "../UTooltip.vue";
+import { useSize } from "./composables/useSize";
+import { useColor } from "./composables/useColor";
+import UTooltip from "./UTooltip.vue";
 
 export interface Props {
     avatars: {

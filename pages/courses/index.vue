@@ -1,8 +1,6 @@
 <template>
     <div>
-        <UCategorySelect/>
         <ActionBar>
-            axcsd
         </ActionBar>
         <CoursesOverviewList
             :courses="courses"

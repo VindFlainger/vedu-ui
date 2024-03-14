@@ -1,17 +1,16 @@
 <template>
     <client-only>
         <div v-bind="{ class: attrs.class }">
-            <p
-                v-if="props.label"
-                class="font-medium"
-                :style="[sizeFrames.labelStyles, { color: textColor }]"
-                :class="labelClass"
-            >
-                {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
-            </p>
+            <ULabel
+                v-if="label"
+                :label="label"
+                :required="required"
+                :text-color="textColor"
+                :style="sizeFrames.labelStyles"
+            />
             <ElSelect
                 ref="USelect"
-                :model-value="modelValue"
+                :model-value="lazyValue"
                 class="u-select w-full focus:!outline-none [&_.el-select\_\_input]:!ml-[var(--u-select-multiple-margin)]
                     [&_.el-input\_\_inner]:!overflow-ellipsis [&_.el-input\_\_prefix-inner>:last-child]:!mr-[var(--u-select-icon-margin)]
                 "
@@ -21,12 +20,22 @@
                 :style="styles"
                 :collapse-tags="!!collapseTags"
                 :max-collapse-tags="maxCollapseTags as number"
+                :popper-options="{
+                    modifiers: [
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, 4],
+                          },
+                        },
+                    ],
+                }"
                 :loading="loading as boolean"
                 :multiple="multiple as boolean"
                 :filterable="filterable as boolean"
                 popper-class="u-select-popper"
                 @visible-change="active = $event"
-                @update:model-value="emit('update:modelValue', $event)"
+                @update:model-value="handleChangeValue"
             >
                 <template #default>
                     <ElOption
@@ -40,8 +49,8 @@
                                 class="group"
                                 :class="{
                                 active: attrs.multiple
-                                    ? modelValue?.includes(option.value)
-                                    : option.value === modelValue,
+                                    ? lazyValue?.includes(option.value)
+                                    : option.value === lazyValue,
                             }"
                             >
                                 <div
@@ -55,8 +64,8 @@
                                         size="sm"
                                         :model-value="
                                             multiple
-                                                ? modelValue?.includes(option.value)
-                                                : option.value === modelValue
+                                                ? lazyValue?.includes(option.value)
+                                                : option.value === lazyValue
                                     "
                                         color="primary-700"
                                     />
@@ -83,6 +92,7 @@
                         v-if="leftIcon"
                         class="[&_svg]:!text-[var(--text-color)]"
                         :value="leftIcon"
+                        :size="sizeFrames.iconSize"
                     />
                     <div class="flex absolute top-[calc(50%+1px)] -translate-y-1/2"
                          :style="{'right': sizeFrames.iconRight}">
@@ -179,7 +189,8 @@ export interface Props {
     loading?: boolean,
     hideSelected?: boolean,
     filterable?: boolean,
-    multiple?: boolean
+    multiple?: boolean,
+    returnObject?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -198,6 +209,8 @@ const props = withDefaults(defineProps<Props>(), {
     rounded: 'lg',
     color: 'gray-400',
     addableLabel: 'Add new',
+    returnObject: false,
+    multiple: false
 })
 
 const attrs = useAttrs()
@@ -212,6 +225,26 @@ const emit = defineEmits<{
     'add': [{ query: string, cb: () => void }]
 }>()
 
+const lazyValue = ref<Props['modelValue']>(null)
+
+const handleChangeValue = (v: Props['modelValue']) => {
+    if (props.returnObject) {
+        if (!props.multiple) emit('update:modelValue', props.options.find(option => option[props.valueName] === v))
+        else emit('update:modelValue', props.options.filter(option => v.includes(option[props.valueName])))
+    } else {
+        emit('update:modelValue', v)
+    }
+}
+
+watch(() => props.modelValue, (v: Props['modelValue']) => {
+    if (props.returnObject) {
+        if (!props.multiple) lazyValue.value = v[props.valueName]
+        else lazyValue.value = v.map((x: any) => x[props.valueName])
+    } else {
+        lazyValue.value = v
+    }
+}, {immediate: true})
+
 const isPrefixed = computed(() => slots.prefix || props.leftIcon)
 
 const { rounded } = useRounded(props.rounded)
@@ -224,19 +257,19 @@ const sizeFrames = computed(() => {
                 padding: `0 2px 0 2px`,
                 iconSize: 16,
                 iconRight: '6px',
-                labelStyles: { marginBottom: '3px' },
+                labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 paddingDropdownItem: '6px',
                 iconMargin: 3,
                 multipleMargin: 8
             }
         case 'sm':
             return {
-                height: 36,
+                height: 35,
                 paddingContent: `1px 26px 0 6px`,
                 padding: `0 4px 0 4px`,
                 iconSize: 20,
                 iconRight: '7px',
-                labelStyles: { marginBottom: '5px' },
+                labelStyles: { marginBottom: '4px', fontSize: '15px' },
                 paddingDropdownItem: '10px',
                 iconMargin: 4,
                 multipleMargin: 8
@@ -246,7 +279,7 @@ const sizeFrames = computed(() => {
                 height: 48,
                 paddingContent: `1px 26px 0 8px`,
                 padding: `0 6px 0 6px}`,
-                labelStyles: { marginBottom: '6px' },
+                labelStyles: { marginBottom: '5px', fontSize: '16px' },
                 tagsPadding: '0 0 0 48px',
                 iconSize: 24,
                 iconRight: '12px',
@@ -263,7 +296,7 @@ const sizeFrames = computed(() => {
                 height: 56,
                 paddingContent: `1px 26px 0 10px`,
                 padding: `0 8px 0 8px}`,
-                labelStyles: { marginBottom: '10px' },
+                labelStyles: { marginBottom: '7px', fontSize: '16px' },
                 iconSize: 24,
                 iconRight: '12px',
                 paddingDropdownItem: '12px',
@@ -275,7 +308,7 @@ const sizeFrames = computed(() => {
                 height: 64,
                 paddingContent: `1px 26px 0 12px`,
                 padding: `0 10px 0 10px`,
-                labelStyles: { marginBottom: '12px' },
+                labelStyles: { marginBottom: '9px', fontSize: '16px' },
                 iconSize: 24,
                 iconRight: '12px',
                 paddingDropdownItem: '12px',

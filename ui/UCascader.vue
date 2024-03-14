@@ -6,61 +6,56 @@
             :required="required"
             :text-color="textColor"
             :style="sizeFrames.labelStyles"
+            v-bind="cascaderOptions"
         />
-        <UCascader/>
+        <ElCascader
+            class="w-full u-cascader [&_.el-input]:h-[var(--u-cascader-height)] [&_.el-input\_\_wrapper]:!shadow-[inset_0_0_0_1px_var(--u-cascader-color)]
+                [&_.el-input\_\_wrapper]:rounded-[var(--u-cascader-rounded)]
+            "
+            :style="styles"
+            :model-value="modelValue"
+            :options="options"
+            v-bind="cascaderOptions"
+            @update:model-value="emit('update:modelValue', $event)"
+        />
     </div>
 
 </template>
 
 <script setup lang="ts">
+import { useColor } from "~/ui/composables/useColor";
+import { useRounded } from "~/ui/composables/useRounded";
+
 export interface Props {
-    modelValue?: string | null | number
-    label?: string
-    inputClass?: string
-    labelClass?: string
-    type?: 'text' | 'email' | 'password' | 'number'
-    passwordAppearance?: boolean
-    numberAppearance?: boolean
-    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-    leftIcon?: string
-    rightIcon?: string
-    rightIconButton?: boolean,
-    selection?: boolean
-    errors?: Array<any>
-    errorsCount?: number
-    hideErrors?: boolean | number
-    conditions?: [string, 'success' | 'error', any][],
-    errorState?: boolean
-    max?: string | number
-    min?: string | number,
-    hint?: string,
+    modelValue?: any[],
+    options?: any[],
     required?: boolean,
-    color?: string,
     textColor?: string,
-    rounded?: string,
-    maxlenght?: string,
-    infoLine?: boolean,
-    fontSize?: string | number,
     description?: string,
-    labelProps?: any
+    labelProps?: any,
+    label?: string,
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl',
+    cascaderOptions: any,
+    color?: string,
+    rounded?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    inputClass: '',
-    type: 'text',
+    modelValue: () => [],
+    options: () => [],
     size: 'sm',
-    passwordAppearance: true,
-    numberAppearance: true,
-    selection: false,
-    errors: () => [],
-    errorsCount: 1,
-    required: false,
-    rightIconButton: false,
-    color: 'gray-400',
-    textColor: 'black',
     rounded: 'lg',
-    fontSize: 14
+    color: 'gray-400',
+
 })
+
+const { color } = useColor(computed(() => props.color))
+const { color: textColor } = useColor(computed(() => props.textColor))
+const { rounded } = useRounded(props.rounded)
+
+const emit = defineEmits<{
+    'update:modelValue': [v: any]
+}>()
 
 
 const sizeFrames = computed(() => {
@@ -122,6 +117,15 @@ const sizeFrames = computed(() => {
             }
     }
 })
+
+const styles = computed(() => ({
+    '--u-cascader-height': `${sizeFrames.value.height}px`,
+    '--u-cascader-padding-content': sizeFrames.value.paddingContent,
+    '--u-cascader-color': color.value,
+    '--u-cascader-text-color': textColor.value,
+    '--u-cascader-rounded': rounded.value,
+    '--u-cascader-icon-margin': `${sizeFrames.value.iconMargin}px`
+}))
 
 </script>
 

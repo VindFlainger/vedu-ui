@@ -1,6 +1,7 @@
 export interface State {
     user: any,
-    maintenance: boolean
+    maintenance: boolean,
+    notifications: any[]
 }
 
 import api from '~/api/index'
@@ -9,7 +10,8 @@ import api from '~/api/index'
 export const useAccountStore = defineStore('Account', {
     state: (): State => ({
         user: null,
-        maintenance: false
+        maintenance: false,
+        notifications: []
     }),
     getters: {
         role: (state): string | undefined => {
@@ -43,7 +45,101 @@ export const useAccountStore = defineStore('Account', {
         },
         async getUserData() {
             const res = await api.account.GET_USER()
-            this.user = res
+            this.user = {
+                "personal_data": {
+                    "first_name": "Alex",
+                    "last_name": "Hirzhon",
+                    "gender": "male",
+                    "age": 20,
+                    "country": {
+                        code: 'by',
+                        name: 'Belarus'
+                    },
+                    "email": "girzhon1972@gmail.com"
+                },
+                "statistic": {
+                    courses_count: 10,
+                    questions_count: 112,
+                    materials_count: 2,
+                    responses_count: 1223,
+                    notifications_count: 12
+                },
+                "billing": {
+                    "balance": 1231,
+                    "frozen": 12,
+                    "month_income": 122,
+                    "transactions": [
+                        {
+                            amount: -121,
+                            stamp: '2024-03-13T02:15:15.086Z',
+                            about: 'Payment for course',
+                            target: {
+
+                            }
+                        },
+                        {
+                            amount: 121,
+                            stamp: '2024-03-13T02:15:15.086Z',
+                            about: 'Student joined the course',
+                            target: {
+
+                            }
+                        },
+                        {
+                            amount: 0,
+                            stamp: '2024-03-13T02:15:15.086Z',
+                            about: 'Balance adjustment',
+                            target: {
+
+                            }
+                        },
+                        {
+                            amount: 1211,
+                            stamp: '2024-03-13T02:15:15.086Z',
+                            about: 'Student joined the course',
+                            target: {
+
+                            }
+                        },
+                    ]
+                },
+                "_id": "65ed16442490e6fec45c24c6",
+                "role": "student",
+                "avatar": {
+                    "original": "https://res.cloudinary.com/dl8gweeqh/image/upload/v1710103942/j3c7qzctvh9caaiyjlyl.jpg",
+                    "frames": [
+                        {
+                            "width": 64,
+                            "height": 40,
+                            "url": "https://res.cloudinary.com/dl8gweeqh/image/upload/c_limit,w_64/v1710103942/j3c7qzctvh9caaiyjlyl.jpg"
+                        },
+                        {
+                            "width": 256,
+                            "height": 160,
+                            "url": "https://res.cloudinary.com/dl8gweeqh/image/upload/c_limit,w_256/v1710103942/j3c7qzctvh9caaiyjlyl.jpg"
+                        }
+                    ]
+                },
+                "id": "65ed16442490e6fec45c24c6"
+            }
+            this.notifications = [
+                {
+                    target: 'personal',
+                    viewed: false,
+                    type: 'message',
+                    data: {
+                        text: 'Hello here!'
+                    }
+                },
+                {
+                    target: 'global',
+                    viewed: true,
+                    type: 'message',
+                    data: {
+                        text: 'Hello here!'
+                    }
+                },
+            ]
         }
     },
 })

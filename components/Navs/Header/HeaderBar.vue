@@ -1,5 +1,5 @@
 <template>
-    <div class="sticky right-0 top-0 z-[9999] flex h-16 items-center bg-gray-100 pl-4 pr-10 left-0">
+    <div class="sticky right-0 top-0 z-[1000] flex h-16 items-center bg-gray-100 pl-4 pr-10 left-0">
         <nuxt-link :to="{name: 'dashboard'}">
             <img
                 class="ml-6 h-10"

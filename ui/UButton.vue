@@ -3,21 +3,28 @@
         :style="styles"
         @click="handleClick"
         :class="{
-            'u-button-bg': !plain && !text,
             'cursor-not-allowed': disabled,
         }"
-        class="relative overflow-hidden selection:bg-none z-10 u-button duration-150 transition-colors"
+        class="u-button-bg relative overflow-hidden selection:bg-none z-10 u-button duration-150 transition-colors"
     >
         <div v-if="!iconStyle" class="flex items-center justify-center">
-            <div class="mr-2" v-if="leftIcon || slots.leftIcon">
+            <div
+                v-if="leftIcon || slots.leftIcon"
+                class="u-button-left-icon-wrapper"
+                :class="[
+                    text ? 'mr-1.5' : 'mr-2'
+                ]"
+            >
                 <slot name="leftIcon" :color="activeTextColor" :disabled="disabled">
                     <UIcon
                         v-if="leftIcon"
-                        v-bind="leftIconProps"
                         :value="leftIcon"
-                        :size="sizeFrames.iconSize"
-                        :color="activeTextColor"
-                        stroke-width="2.5"
+                        v-bind="{
+                            size: sizeFrames.iconSize,
+                            color: activeTextColor,
+                            'stroke-width': '2.5',
+                            ...leftIconProps
+                        }"
                     />
                 </slot>
             </div>
@@ -28,15 +35,23 @@
                     </span>
                 </slot>
             </div>
-            <div class="ml-2" v-if="rightIcon || slots.rightIcon">
+            <div
+                v-if="rightIcon || slots.rightIcon"
+                class="u-button-right-icon-wrapper"
+                :class="[
+                    text ? 'ml-1.5' : 'ml-2'
+                ]"
+            >
                 <slot name="rightIcon" :color="activeTextColor" :disabled="disabled">
                     <UIcon
                         v-if="rightIcon"
-                        v-bind="rightIconProps"
                         :value="rightIcon"
-                        :size="sizeFrames.iconSize"
-                        :color="activeTextColor"
-                        stroke-width="2.5"
+                        v-bind="{
+                            size: sizeFrames.iconSize,
+                            color: activeTextColor,
+                            'stroke-width': '2.5',
+                            ...rightIconProps
+                        }"
                     />
                 </slot>
             </div>
@@ -61,37 +76,65 @@ import { useColor } from '~/ui/composables/useColor'
 import { useRounded } from '~/ui/composables/useRounded'
 import LoaderIcon from '~/ui/icons/LoaderIcon.vue'
 
+
 export interface Props {
+    /* Basic */
     color?: string
     textColor?: string
     fontWeight?: number | string
-    fontSize?: number
-    plain?: boolean
-    borderWidth?: string | number
-    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+    fontSize?: number,
+    borderWidth?: string | number,
     rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
+
+    /* Sizing */
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+
+    /* Types */
+    plain?: boolean
+    text?: boolean,
+
+    /* Content */
+    label?: any
+
+    /* States */
     loading?: boolean
     disabled?: boolean | number
     inactive?: boolean
+
+    /* States Styles */
     disabledTextColor?: string
     disabledColor?: string
+
+    /* Other */
     rightIcon?: string
     leftIcon?: string
     rightIconProps?: any
     leftIconProps?: any
-    label?: any
     iconStyle?: boolean,
     icon?: string,
     iconProps?: any,
-    text?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    color: 'primary-700',
+const defaults = {
+    color: '#49BBBD',
     borderWidth: 1,
-    size: 'md',
+    size: 'sm',
     rounded: 'xl',
-    textColor: 'white',
+    textColor: '#ffffff',
+    fontWeight: 500,
+    loading: false,
+    disabled: false,
+    disabledColor: '#E6E6E6',
+    disabledTextColor: '#8A8A8A',
+}
+
+
+const props = withDefaults(defineProps<Props>(), {
+    color: '#49BBBD',
+    borderWidth: 1,
+    size: 'sm',
+    rounded: 'xl',
+    textColor: '#ffffff',
     fontWeight: 500,
     loading: false,
     disabled: false,
@@ -116,10 +159,16 @@ const handleClick = () => {
 
 const { color: _color } = useColor(props.color)
 const { color: _textColor } = useColor(props.textColor)
-const { rounded } = useRounded(props.rounded)
+const { rounded: _rounded } = useRounded(props.rounded)
 
 const activeColor = computed(() => props.disabled ? props.disabledColor : _color.value)
-const activeTextColor = computed(() => props.disabled ? props.disabledTextColor : props.text && props.textColor === 'white' ? '#000000' : _textColor.value)
+const activeTextColor = computed(() =>
+    props.disabled ?
+        props.disabledTextColor :
+        (props.text || props.plain) ?
+            (props.color === defaults.color) ? '#49BBBD' : _color.value
+            : _textColor.value
+)
 
 const sizeFrames = computed(() => {
     switch (props.size) {
@@ -137,21 +186,22 @@ const sizeFrames = computed(() => {
 })
 
 const styles = computed(() => ({
-    border: props.plain ? `${props.borderWidth}px solid ${activeColor.value}` : '',
-    padding: props.iconStyle ? sizeFrames.value.iconStylePadding : sizeFrames.value.padding,
-    borderRadius: props.iconStyle ? '50%' : rounded.value,
-    color: activeTextColor.value,
-    fontWeight: props.text ? 400 : props.fontWeight,
-    fontSize: `${props.fontSize || sizeFrames.value.fontSize}px`,
-    filter: props.loading ? 'grayscale(0.3)' : '',
+    'border': props.plain ? `${props.borderWidth}px solid ${activeColor.value}` : '',
+    'padding': props.iconStyle ? sizeFrames.value.iconStylePadding : sizeFrames.value.padding,
+    'borderRadius': props.iconStyle ? '50%' : _rounded.value,
+    'color': activeTextColor.value,
+    'fontWeight': props.text ? 400 : props.fontWeight,
+    'fontSize': `${props.fontSize || sizeFrames.value.fontSize}px`,
+    'filter': props.loading ? 'grayscale(0.3)' : '',
     '--u-button-background-color': props.text ? 'transparent' : activeColor.value,
-    '--u-button-hover-opacity': props.disabled || props.loading ? '1' : '0.8',
+    '--u-button-background-hover-opacity': (props.disabled || props.loading) ? '1' : props.plain ? '0.1' : '0.8',
+    '--u-button-background-opacity': (props.plain || props.text) ? '0' : '1',
     '--u-button-hover-color': props.text ? activeColor.value : activeTextColor.value,
 }))
 </script>
 
 <style scoped lang="scss">
-.u-button:hover{
+.u-button:hover {
     color: var(--u-button-hover-color) !important;
 }
 
@@ -165,6 +215,7 @@ const styles = computed(() => ({
     left: 0;
     z-index: -1;
     background: var(--u-button-background-color);
+    opacity: var(--u-button-background-opacity);
 }
 
 .u-button-bg::before {
@@ -181,7 +232,7 @@ const styles = computed(() => ({
 .u-button-bg:hover::after {
     content: '';
     position: absolute;
-    opacity: var(--u-button-hover-opacity);
+    opacity: var(--u-button-background-hover-opacity);
 }
 
 .u-button-loading::after {

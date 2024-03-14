@@ -45,7 +45,3 @@ const { size } = useSize(props.size)
 const shortcut = computed(() => props.shortcut || ((props.firstName ? props.firstName[0] : '') + (props.lastName ? props.lastName[0] : '')))
 
 </script>
-
-<style scoped>
-
-</style>

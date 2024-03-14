@@ -38,6 +38,7 @@
                     v-else-if="type === 'email'"
                     class="[&_svg]:!text-[var(--u-input-text-color)]"
                     value="Envelope"
+                    :size="sizeFrames.iconSizes.default"
                 />
                 <slot name="prefix" v-else></slot>
             </template>
@@ -61,7 +62,7 @@
                 <div v-else-if="type === 'number' && numberAppearance" class="flex flex-col">
                     <UIcon
                         value="Plus"
-                        class="rounded border"
+                        class="rounded border hover:!border-green-700 hover:[&_svg]:!text-green-700 [&_svg]:stroke-[3px]"
                         :style="{ border: `1px solid ${color}` }"
                         tag="button"
                         :size="sizeFrames.iconSizes.plus"
@@ -70,7 +71,7 @@
                     />
                     <UIcon
                         value="Minus"
-                        class="mt-[2px] rounded border"
+                        class="mt-[2px] rounded border hover:!border-red-700 hover:[&_svg]:!text-red-700 [&_svg]:stroke-[3px]"
                         :style="{ border: `1px solid ${color}` }"
                         tag="button"
                         :size="sizeFrames.iconSizes.plus"
@@ -212,10 +213,10 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '1px' : '2px'} 0 ${
                     isPrefixed.value ? '1px' : '2px'
                 }`,
-                labelStyles: { marginBottom: '3px' },
+                labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 iconSizes: {
-                    default: 24,
-                    plus: 15,
+                    default: 18,
+                    plus: 9,
                 },
                 iconMargin: 3
             }
@@ -226,10 +227,10 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '2px' : '4px'} 0 ${
                     isPrefixed.value ? '2px' : '4px'
                 }`,
-                labelStyles: { marginBottom: '6px' },
+                labelStyles: { marginBottom: '4px', fontSize: '15px' },
                 iconSizes: {
-                    default: 24,
-                    plus: 15,
+                    default: 20,
+                    plus: 11,
                 },
                 iconMargin: 4
             }
@@ -240,7 +241,7 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '3px' : '6px'} 0 ${
                     isPrefixed.value ? '3px' : '6px'
                 }`,
-                labelStyles: { marginBottom: '6px' },
+                labelStyles: { marginBottom: '5px', fontSize: '16px' },
                 iconSizes: {
                     default: 24,
                     plus: 13,
@@ -254,7 +255,7 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '4px' : '8px'} 0 ${
                     isPrefixed.value ? '4px' : '8px'
                 }`,
-                labelStyles: { marginBottom: '10px' },
+                labelStyles: { marginBottom: '7px', fontSize: '16px' },
                 iconSizes: {
                     default: 24,
                     plus: 15,
@@ -268,7 +269,7 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '5px' : '10px'} 0 ${
                     isPrefixed.value ? '5px' : '10px'
                 }`,
-                labelStyles: { marginBottom: '12px' },
+                labelStyles: { marginBottom: '9px', fontSize: '16px' },
                 iconSizes: {
                     default: 24,
                     plus: 15,

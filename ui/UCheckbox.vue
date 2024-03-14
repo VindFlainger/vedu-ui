@@ -1,6 +1,6 @@
 <template>
     <label class="flex items-center" :class="{ 'prevent-select': !selection }">
-        <div :style="checkboxStyles" class="rounded-sm outline outline-1 relative"
+        <div :style="checkboxStyles" class="u-checkbox-box rounded-sm outline outline-1 relative"
              :class="{'!rounded-full': radioStyle}">
             <UIcon
                 v-if="checked && !solid && !radioStyle"
@@ -65,8 +65,8 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 
-const { color } = useColor(props.color)
-const { color: markerColor } = useColor(props.markerColor)
+const { color } = useColor(() => props.color)
+const { color: markerColor } = useColor(() => props.markerColor)
 
 
 const checked = computed({
@@ -108,6 +108,6 @@ const checkboxStyles = computed(() => ({
     height: `${checkboxMetrics.value.wh}px`,
     minWidth: `${checkboxMetrics.value.wh}px`,
     width: `${checkboxMetrics.value.wh}px`,
-    outlineColor: color,
+    outlineColor: color.value,
 }))
 </script>

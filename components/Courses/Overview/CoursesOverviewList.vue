@@ -20,7 +20,6 @@
 
 <script setup lang="ts">
 import { CoursesCourse } from "~/types/courses";
-import Popper from '@popperjs/core/dist/esm'
 
 export interface Props {
     courses?: CoursesCourse[]

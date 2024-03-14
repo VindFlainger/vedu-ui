@@ -5,7 +5,6 @@
         <p class="font-bold mb-2">
             {{ name }}
         </p>
-        <p>{{ category.name }}</p>
         <img
             class="rounded"
             :src="img"

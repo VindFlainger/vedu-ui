@@ -8,7 +8,7 @@
             </div>
         </teleport>
         <div v-else-if="$slots.default && !active">
-            <div class="pt-3 pb-5 z-[9999]">
+            <div class="pt-3 pb-5 z-[1000]">
                <slot></slot>
             </div>
         </div>
