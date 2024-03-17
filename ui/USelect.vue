@@ -243,7 +243,7 @@ watch(() => props.modelValue, (v: Props['modelValue']) => {
     } else {
         lazyValue.value = v
     }
-}, {immediate: true})
+}, { immediate: true })
 
 const isPrefixed = computed(() => slots.prefix || props.leftIcon)
 

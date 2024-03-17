@@ -187,7 +187,6 @@
 
 <script setup lang="ts">
 import { number } from "yup";
-import { useRouteQuery } from "@vueuse/router";
 
 const { $api } = useNuxtApp()
 const intercomStore = useIntercomStore()

@@ -1,7 +1,10 @@
 <template>
-    <label class="flex items-center" :class="{ 'prevent-select': !selection }">
-        <div :style="checkboxStyles" class="u-checkbox-box rounded-sm outline outline-1 relative"
-             :class="{'!rounded-full': radioStyle}">
+    <label class="flex items-center cursor-pointer" :class="{ 'prevent-select': !selection }">
+        <div
+            :style="[checkboxStyles, checked ? selectedCheckboxStyles : null]"
+            class="u-checkbox-box rounded-sm outline outline-1 relative"
+            :class="{'!rounded-full': radioStyle}"
+        >
             <UIcon
                 v-if="checked && !solid && !radioStyle"
                 :color="color"
@@ -27,7 +30,7 @@
             :checked="checked"
             @change="checked = $event"
         />
-        <span class="ml-2" :class="labelClass" v-if="label || $slots.default">
+        <span class="ml-2 text-gray-800" :class="labelClass" v-if="label || $slots.default">
             <slot>
                 <span>{{ label }}</span>
             </slot>
@@ -50,7 +53,8 @@ export interface Props {
     color?: string
     markerColor?: string
     radioStyle?: boolean,
-    returnValue?: boolean
+    returnValue?: boolean,
+    sameCheckedOutline?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -110,4 +114,9 @@ const checkboxStyles = computed(() => ({
     width: `${checkboxMetrics.value.wh}px`,
     outlineColor: color.value,
 }))
+
+const selectedCheckboxStyles = computed(() => ({
+    outlineColor: props.sameCheckedOutline ? markerColor.value : color.value,
+}))
+
 </script>

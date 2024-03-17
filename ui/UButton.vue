@@ -4,6 +4,8 @@
         @click="handleClick"
         :class="{
             'cursor-not-allowed': disabled,
+            'u-button-solid-bg': !text && !plain,
+            'u-button-plain': text || plain
         }"
         class="u-button-bg relative overflow-hidden selection:bg-none z-10 u-button duration-150 transition-colors"
     >
@@ -194,6 +196,7 @@ const styles = computed(() => ({
     'fontSize': `${props.fontSize || sizeFrames.value.fontSize}px`,
     'filter': props.loading ? 'grayscale(0.3)' : '',
     '--u-button-background-color': props.text ? 'transparent' : activeColor.value,
+    '--u-button-text-color': activeTextColor.value,
     '--u-button-background-hover-opacity': (props.disabled || props.loading) ? '1' : props.plain ? '0.1' : '0.8',
     '--u-button-background-opacity': (props.plain || props.text) ? '0' : '1',
     '--u-button-hover-color': props.text ? activeColor.value : activeTextColor.value,
@@ -201,11 +204,24 @@ const styles = computed(() => ({
 </script>
 
 <style scoped lang="scss">
-.u-button:hover {
+.u-button-solid-bg:hover {
     color: var(--u-button-hover-color) !important;
 }
 
-.u-button-bg::after {
+.u-button-plain:hover:after {
+    content: '';
+    position: absolute;
+    transition-duration: 0.1s;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: var(--u-button-text-color);
+    opacity: 0.2;
+}
+
+.u-button-solid-bg::after {
     content: '';
     position: absolute;
     transition-duration: 0.1s;
@@ -218,7 +234,7 @@ const styles = computed(() => ({
     opacity: var(--u-button-background-opacity);
 }
 
-.u-button-bg::before {
+.u-button-solid-bg::before {
     content: '';
     position: absolute;
     height: 100%;
@@ -229,7 +245,7 @@ const styles = computed(() => ({
     background: white;
 }
 
-.u-button-bg:hover::after {
+.u-button-solid-bg:hover::after {
     content: '';
     position: absolute;
     opacity: var(--u-button-background-hover-opacity);

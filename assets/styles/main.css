@@ -25,6 +25,7 @@ button:focus{
     border-radius: 5px;
 }
 
+
 body::-webkit-scrollbar{
     width: 8px;
     background: #f3f4f6;
@@ -35,6 +36,34 @@ body::-webkit-scrollbar-thumb {
     margin-top: 56px;
     width: 8px;
     background: #9ca3af;
+}
+
+.thinner-scrollbar::-webkit-scrollbar{
+    width: 8px;
+    background: #f3f4f6;
+    border-radius: 5px;
+}
+
+.thinner-scrollbar::-webkit-scrollbar-thumb {
+    margin-top: 56px;
+    width: 8px;
+    background: #9ca3af;
+}
+
+.inner-scrollbar::-webkit-scrollbar {
+    width: 23px;
+}
+
+.inner-scrollbar::-webkit-scrollbar-thumb {
+    border: 10px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #d2cece;
+    border-radius: 9999px;
+}
+
+.inner-scrollbar::-webkit-scrollbar-track{
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 #hubspot-messages-iframe-container{

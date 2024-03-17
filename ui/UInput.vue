@@ -26,6 +26,8 @@
             @keypress="handleKeypress"
             @blur="handleBlur"
             @keydown.enter="emit('enter')"
+            v-maska
+            :data-maska="mask"
         >
             <template #prefix>
                 <UIcon
@@ -163,7 +165,8 @@ export interface Props {
     infoLine?: boolean,
     fontSize?: string | number,
     description?: string,
-    labelProps?: any
+    labelProps?: any,
+    mask?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -180,7 +183,7 @@ const props = withDefaults(defineProps<Props>(), {
     color: 'gray-400',
     textColor: 'black',
     rounded: 'lg',
-    fontSize: 14
+    fontSize: 14,
 })
 
 const attrs = useAttrs()

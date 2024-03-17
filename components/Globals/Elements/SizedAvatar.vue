@@ -46,6 +46,8 @@ const src = computed(()=> {
 const styles = computed(() => ({
     minWidth: _size.value,
     minHeight: _size.value,
+    maxWidth: _size.value,
+    maxHeight: _size.value,
     borderRadius: props.rounded ? '50%' : _borderRadius.value
 }))
 

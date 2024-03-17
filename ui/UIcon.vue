@@ -1,6 +1,10 @@
 <template>
     <component :is="tag">
+        <svg v-if="value.startsWith('mdi')" :style="styles" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke-width="1">
+            <path :d="mdijs[value]" />
+        </svg>
         <component
+            v-else
             :is="solid ? Solid[value + 'Icon'] : Outline[value  + 'Icon']"
             :style="styles"
         />
@@ -10,6 +14,8 @@
 <script setup lang="ts">
 import * as Solid from '@heroicons/vue/24/solid'
 import * as Outline from '@heroicons/vue/24/outline'
+import * as mdijs from '@mdi/js'
+
 import {parseColor} from "~/ui/utils/parsers";
 
 export interface Props {
@@ -18,7 +24,7 @@ export interface Props {
     size?: string | number
     color?: string
     strokeWidth?: string | number
-    tag?: string
+    tag?: string,
 }
 
 const props = withDefaults(defineProps<Props>(), {

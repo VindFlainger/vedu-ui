@@ -23,13 +23,13 @@ export const useAccountStore = defineStore('Account', {
             if (remember) localStorage.setItem('refresh_token', refreshToken)
             else sessionStorage.setItem('refresh_token', refreshToken)
         },
-        async clearAuth(){
+        async clearAuth() {
             localStorage.removeItem('refresh_token')
             sessionStorage.removeItem('refresh_token')
             await this.logoutHubspotChat()
             await window.open('http://localhost:8080/auth', '_self')
         },
-        async logoutHubspotChat(){
+        async logoutHubspotChat() {
             if (window.HubSpotConversations) {
                 window.HubSpotConversations.clear()
                 window.HubSpotConversations.widget.remove()
@@ -65,6 +65,7 @@ export const useAccountStore = defineStore('Account', {
                     notifications_count: 12
                 },
                 "billing": {
+                    "plan": "professional",
                     "balance": 1231,
                     "frozen": 12,
                     "month_income": 122,
@@ -73,33 +74,25 @@ export const useAccountStore = defineStore('Account', {
                             amount: -121,
                             stamp: '2024-03-13T02:15:15.086Z',
                             about: 'Payment for course',
-                            target: {
-
-                            }
+                            target: {}
                         },
                         {
                             amount: 121,
                             stamp: '2024-03-13T02:15:15.086Z',
                             about: 'Student joined the course',
-                            target: {
-
-                            }
+                            target: {}
                         },
                         {
                             amount: 0,
                             stamp: '2024-03-13T02:15:15.086Z',
                             about: 'Balance adjustment',
-                            target: {
-
-                            }
+                            target: {}
                         },
                         {
                             amount: 1211,
                             stamp: '2024-03-13T02:15:15.086Z',
                             about: 'Student joined the course',
-                            target: {
-
-                            }
+                            target: {}
                         },
                     ]
                 },
@@ -124,13 +117,56 @@ export const useAccountStore = defineStore('Account', {
             }
             this.notifications = [
                 {
-                    target: 'personal',
+                    receiver: {
+                        first_name: 'Alex',
+                        last_name: 'Hirzhon',
+                        "avatar": {
+                            "original": "https://res.cloudinary.com/dl8gweeqh/image/upload/v1710103942/j3c7qzctvh9caaiyjlyl.jpg",
+                            "frames": [
+                                {
+                                    "width": 64,
+                                    "height": 40,
+                                    "url": "https://res.cloudinary.com/dl8gweeqh/image/upload/c_limit,w_64/v1710103942/j3c7qzctvh9caaiyjlyl.jpg"
+                                },
+                                {
+                                    "width": 256,
+                                    "height": 160,
+                                    "url": "https://res.cloudinary.com/dl8gweeqh/image/upload/c_limit,w_256/v1710103942/j3c7qzctvh9caaiyjlyl.jpg"
+                                }
+                            ]
+                        },
+                    },
                     viewed: false,
+                    type: 'message',
+                    data: {
+                        text: 'This error most likely means you are trying to do something from the client-side that needs to be done on the server-side. If MongoDB module can\'t find the DNS component, it\'s running on the client-side.'
+                    }
+                },
+                {
+                    group: 'global',
+                    viewed: true,
                     type: 'message',
                     data: {
                         text: 'Hello here!'
                     }
                 },
+                {
+                    group: 'global',
+                    viewed: true,
+                    type: 'message',
+                    data: {
+                        text: 'This error most likely means you are trying to do something from the client-side that needs to be done on the server-side. If MongoDB module can\'t find the DNS component, it\'s running on the client-side.'
+                    }
+                },
+                {
+                    group: 'global',
+                    viewed: true,
+                    type: 'message',
+                    data: {
+                        text: 'Hello here!'
+                    }
+                },
+
                 {
                     target: 'global',
                     viewed: true,
