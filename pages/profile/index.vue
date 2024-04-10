@@ -10,26 +10,19 @@
 
         <div class="w-full h-full basis-3/12 shrink-0 flex flex-col gap-6">
             <ProfileBillingPlate/>
+            <FundsPlate/>
             <ProfileNotifications/>
         </div>
-
-<!--        <AddPaymentMethodModal
-            model-value=""
-        />-->
-
-        <FundsModal model-value=""/>
 
     </div>
 </template>
 
 <script setup lang="ts">
 
-
-import AddPaymentMethodModal from "~/components/Globals/Modals/AddPaymentMethodModal.vue";
-import FundsModal from "~/components/Globals/Modals/FundsModal.vue";
-
 const accountStore = useAccountStore()
 const { user } = storeToRefs(accountStore)
+
+const {$emitter} = useNuxtApp()
 
 
 </script>

@@ -5,7 +5,6 @@ module.exports = {
     tabWidth: 4,
     plugins: [require('prettier-plugin-tailwindcss')],
     extends: ['plugin:prettier-vue/recommended'],
-    printWidth: 100,
-    wrapAttributes: true,
+    printWidth: 200,
     bracketSpacing: true
 }

@@ -1,7 +1,5 @@
 import { Question, QuestionAnswers, QuestionTag } from "~/models/QuestionModel";
 
-
-
 import api from '~/api/index'
 import { GetQuestionsPayload } from "~/api/questions";
 

@@ -12,6 +12,7 @@
                 color="green-600"
                 border-width="2"
                 plain
+                @click="$emitter.emit('open:funds-modal')"
             />
         </p>
 

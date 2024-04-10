@@ -69,3 +69,8 @@ body::-webkit-scrollbar-thumb {
 #hubspot-messages-iframe-container{
     z-index: 100 !important;
 }
+
+.break-words-text {
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+}

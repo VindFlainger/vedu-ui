@@ -1,5 +1,3 @@
-import { vMaska } from "maska"
-
 export interface ResizedOptions {
     styles?: Record<string, [string, string?]>
     classes?: [string, string?]
@@ -41,8 +39,6 @@ const handleResize = (el: HTMLElement, orientation: string = 'width', resizedOpt
 }
 
 export default defineNuxtPlugin((nuxt) => {
-
-    nuxt.vueApp.directive("maska", vMaska)
     nuxt.vueApp.directive('scroll',  {
         mounted(el, binding){
             if (ResizeObserver) {

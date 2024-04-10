@@ -11,7 +11,7 @@
         <ElInput
             class="u-input [&>div]:!shadow-[inset_0_0_0_1px_var(--u-input-color)] [&_input]:text-base
                 [&_input]:text-[var(--u-input-text-color)] [&_.el-input\_\_prefix-inner>:last-child]:mr-[var(--u-input-icon-margin)]
-                [&_.el-input\_\_suffix-inner>:first-child]:!ml-[var(--u-input-icon-margin)]
+                [&_.el-input\_\_suffix-inner>:first-child]:!ml-[var(--u-input-icon-margin)] [&_textarea]:!shadow-[inset_0_0_0_1px_var(--u-input-color)]
             "
             :model-value="modelValue"
             v-bind="{ ...attrs, class: inputClass }"
@@ -141,7 +141,7 @@ export interface Props {
     label?: string
     inputClass?: string
     labelClass?: string
-    type?: 'text' | 'email' | 'password' | 'number'
+    type?: 'text' | 'email' | 'password' | 'number' | 'textarea'
     passwordAppearance?: boolean
     numberAppearance?: boolean
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -315,7 +315,7 @@ const { size: fontSize } = useSize(props.size)
 
 
 const styles = computed(() => ({
-    'height': `${sizeFrames.value.height}px`,
+    'height': props.type !== 'textarea' ? `${sizeFrames.value.height}px` : 'auto',
     '--u-input-padding': sizeFrames.value.padding,
     '--u-input-padding-content': sizeFrames.value.paddingContent,
     '--u-input-color': color.value,
@@ -407,6 +407,13 @@ defineExpose({
 .u-input :deep(> div) {
     padding: var(--u-input-padding-content);
     border-radius: var(--u-input-rounded);
+}
+
+.u-input :deep(> textarea) {
+    padding: var(--u-input-padding-content) !important;
+    padding-top: 6px !important;
+    border-radius: var(--u-input-rounded);
+    resize: none;
 }
 
 .u-input :deep(.el-input__wrapper) {

@@ -12,4 +12,5 @@ export interface GetUserData {
 
 export default {
     GET_USER: (data?: null, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question[]>('GET', `/user/info`, data, options, controls),
+
 }

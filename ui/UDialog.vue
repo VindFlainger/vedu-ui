@@ -61,13 +61,14 @@ export interface Props {
     icon?: string,
     modelValue: boolean,
     hideHeader?: boolean
+    freeze?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
     alignCenter: true,
     maxWidth: 450,
     width: '80%',
-    padding: '24px'
+    padding: '24px',
 })
 
 const emit = defineEmits<{
@@ -99,13 +100,15 @@ const stylesFooter = computed(() => ({
 const showContent = ref(false)
 const hidden = ref(false)
 
-const handleClose = ($emit?: string, $data?: any) => {
-    showContent.value = false
-    setTimeout(()=> {
-        hidden.value = true
-        if ($emit) emit($emit, $data)
-        else emit('close')
-    }, 150)
+const handleClose = ($emit?: string, $data?: any, force?: boolean) => {
+    if (!props.freeze || force){
+        showContent.value = false
+        setTimeout(()=> {
+            hidden.value = true
+            if ($emit) emit($emit, $data)
+            else emit('close')
+        }, 150)
+    }
 }
 
 const handleEsc = (e: KeyboardEvent) => {

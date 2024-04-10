@@ -16,6 +16,12 @@ export const useAccountStore = defineStore('Account', {
     getters: {
         role: (state): string | undefined => {
             return state.user?.role
+        },
+        isInstructor: (state): boolean => {
+            return state.user.role === 'instructor'
+        },
+        isStudent: (state): boolean => {
+            return state.user.role === 'student'
         }
     },
     actions: {
@@ -94,10 +100,16 @@ export const useAccountStore = defineStore('Account', {
                             about: 'Student joined the course',
                             target: {}
                         },
-                    ]
+                    ],
+                    credit_card: {
+                        number: '#### #### #### 4444',
+                        expires: '12/22',
+                        cvv: '232',
+                        fund_limit: 912
+                    }
                 },
                 "_id": "65ed16442490e6fec45c24c6",
-                "role": "student",
+                "role": "instructor",
                 "avatar": {
                     "original": "https://res.cloudinary.com/dl8gweeqh/image/upload/v1710103942/j3c7qzctvh9caaiyjlyl.jpg",
                     "frames": [

@@ -4,13 +4,22 @@
         <div class="py-4 flex justify-center grow bg-sky-50">
             <div class="max-sm:px-3 sm:w-[95%] lg:w-[90%] max-w-[1600px] min-h-[100%]">
                 <NotFoundStub v-if="accessDenied"/>
-                <NuxtPage v-else :class="{'hidden': !hydratated}"/>
+                <NuxtPage v-else :class="[
+                        {
+                          'hidden': !hydratated
+                        },
+                        (route.meta.layoutClass)
+                    ]"/>
+                <ModalsBlock/>
+                {{}}
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+const route: any = useRoute()
+
 export interface Props {
     maintenance?: boolean,
     accessDenied?: boolean,
@@ -25,7 +34,6 @@ const { contentHeight, contentWidth } = storeToRefs(layoutStore)
 
 
 const content = ref<HTMLElement>()
-
 
 
 const handleResize = () => {

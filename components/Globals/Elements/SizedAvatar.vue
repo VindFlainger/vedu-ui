@@ -1,7 +1,7 @@
 <template>
     <div>
         <img
-            class="object-cover"
+            class="object-cover select-none"
             :style="styles"
             :src="src"
             alt=""

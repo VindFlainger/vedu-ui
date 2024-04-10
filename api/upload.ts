@@ -1,10 +1,10 @@
 import { Controls } from "~/api/handler";
 import _fetch from '~/api/handler'
 import { NitroFetchOptions } from "nitropack";
-import { Question } from "~/models/QuestionModel";
 
 
 
 export default {
-    UPLOAD_IMAGES: (data: any, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question[]>('POST', `/upload/images`, data, options, controls),
+    UPLOAD_IMAGES: (data: any, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<any>('POST', `/upload/images`, data, options, controls),
+    UPLOAD_FILES: (data: any, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<any>('POST', `/upload/files`, data, options, controls),
 }
