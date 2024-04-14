@@ -11,6 +11,8 @@
             <AssignmentItem
                 v-for="(assignment, i) in assignments"
                 :key="assignment.id"
+                :course-id="route.params.course"
+                :lesson-id="route.params.lesson"
                 :assignment="assignment"
                 :index="i"
                 @delete="handleDelete(assignment.id)"

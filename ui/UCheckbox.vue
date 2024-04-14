@@ -1,5 +1,11 @@
 <template>
-    <label class="flex items-center cursor-pointer" :class="{ 'prevent-select': !selection }">
+    <label
+        class="flex items-center cursor-pointer"
+        :class="{
+            'prevent-select': !selection,
+            '!cursor-not-allowed': disabled
+        }"
+    >
         <div
             :style="[checkboxStyles, checked ? selectedCheckboxStyles : null]"
             class="u-checkbox-box rounded-sm outline outline-1 relative"
@@ -28,6 +34,7 @@
             type="checkbox"
             :class="checkboxClass"
             :checked="checked"
+            :disabled="disabled"
             @change="checked = $event"
         />
         <span class="ml-2 text-gray-800" :class="labelClass" v-if="label || $slots.default">
@@ -54,7 +61,8 @@ export interface Props {
     markerColor?: string
     radioStyle?: boolean,
     returnValue?: boolean,
-    sameCheckedOutline?: boolean
+    sameCheckedOutline?: boolean,
+    disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

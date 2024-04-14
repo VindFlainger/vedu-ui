@@ -64,7 +64,7 @@
                 <div v-else-if="type === 'number' && numberAppearance" class="flex flex-col">
                     <UIcon
                         value="Plus"
-                        class="rounded border hover:!border-green-700 hover:[&_svg]:!text-green-700 [&_svg]:stroke-[3px]"
+                        class="rounded border hover:!border-green-700 [&:hover_svg]:!text-green-700 [&_svg]:stroke-[3px]"
                         :style="{ border: `1px solid ${color}` }"
                         tag="button"
                         :size="sizeFrames.iconSizes.plus"
@@ -73,7 +73,7 @@
                     />
                     <UIcon
                         value="Minus"
-                        class="mt-[2px] rounded border hover:!border-red-700 hover:[&_svg]:!text-red-700 [&_svg]:stroke-[3px]"
+                        class="mt-[2px] rounded border hover:!border-red-700 [&:hover_svg]:!text-red-700 [&_svg]:stroke-[3px]"
                         :style="{ border: `1px solid ${color}` }"
                         tag="button"
                         :size="sizeFrames.iconSizes.plus"

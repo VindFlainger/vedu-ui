@@ -1,7 +1,7 @@
 import { NitroFetchOptions } from 'nitropack'
 import _fetch, { Controls } from '~/api/handler'
 import { CourseAccess, CoursePreview, FoundCourse } from '~/types/courses'
-import { LessonAssignment, LessonMaterial, LessonPreview } from "~/types/lesson";
+import { LessonAssignment, LessonAssignmentResponse, LessonMaterial, LessonPreview, LessonTest } from "~/types/lesson";
 
 
 export interface GetLessonPayload {
@@ -76,6 +76,52 @@ export interface EditLessonAssignmentPayload {
 }
 export type EditLessonAssignmentData = LessonAssignment
 
+
+export interface GetLessonAssignmentResponsesPayload {
+    course_id: string
+    lesson_id: string
+    assignment_id: string
+}
+export type GetLessonAssignmentResponsesData =  LessonAssignmentResponse[]
+
+export interface ResolveLessonAssignmentResponsePayload {
+    course_id: string
+    lesson_id: string
+    assignment_id: string
+    response_id: string
+    status: string
+    points?: number
+    message?: string
+    extra_attempt?: boolean
+}
+export type ResolveLessonAssignmentResponseData = LessonAssignmentResponse
+
+export interface AddLessonTestPayload{
+    course_id: string
+    lesson_id: string
+    title: string
+    questions: {
+        score: number
+        id: string
+    }[],
+    admission: string
+    report: string
+    hidden: boolean
+    score_mode: string
+    max_attempts: number
+    start?: string
+    end?: string
+    time_limit: number
+}
+export type AddLessonTestData = LessonTest
+
+export interface GetLessonTestsPayload {
+    course_id: string
+    lesson_id: string
+}
+
+export type GetLessonTestsData = LessonTest[]
+
 export default {
     FIND_LESSON: (
         data: GetLessonPayload,
@@ -138,4 +184,27 @@ export default {
         controls?: Controls
     ) => _fetch<EditLessonAssignmentData>('PATCH', `/courses/${data.course_id}/lessons/${data.lesson_id}/assignments/${data.assignment_id}`, data, options, controls),
 
+    GET_LESSON_ASSIGNMENT_RESPONSES: (
+        data: GetLessonAssignmentResponsesPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetLessonAssignmentResponsesData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/assignments/${data.assignment_id}/responses`, data, options, controls),
+
+    RESOLVE_LESSON_ASSIGNMENT_RESPONSE: (
+        data: ResolveLessonAssignmentResponsePayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<ResolveLessonAssignmentResponseData>('PATCH', `/courses/${data.course_id}/lessons/${data.lesson_id}/assignments/${data.assignment_id}/responses/${data.response_id}/resolve`, data, options, controls),
+
+    ADD_TEST: (
+        data: AddLessonTestPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<AddLessonTestData>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/test`, data, options, controls),
+
+    GET_TESTS: (
+        data: GetLessonTestsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetLessonTestsData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests`, data, options, controls),
 }

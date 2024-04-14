@@ -1,19 +1,24 @@
 <template>
-    <div class="flex justify-start">
-        <div class="flex gap-3">
-            <nuxt-link
-                v-for="tab in tabs"
-                class="py-2 px-6 bg-white rounded-t-2xl min-w-[130px] text-center"
-                :key="tab.value"
-                :to="{ name: tab.value ? `courses-course-lessons-lesson-${tab.value}` : `courses-course-lessons-lesson` }"
-            >
-                {{ tab.label }}
-            </nuxt-link>
+    <template v-if="showTabsLayout">
+        <div  class="flex justify-start">
+            <div class="flex gap-3">
+                <nuxt-link
+                    v-for="tab in tabs"
+                    class="py-2 px-6 bg-white rounded-t-2xl min-w-[130px] text-center"
+                    :key="tab.value"
+                    :to="{ name: tab.value ? `courses-course-lessons-lesson-${tab.value}` : `courses-course-lessons-lesson` }"
+                >
+                    {{ tab.label }}
+                </nuxt-link>
+            </div>
         </div>
-    </div>
-    <div class="bg-white p-8 h-full rounded-3xl rounded-tl-none">
+        <div class="bg-white p-8 h-full rounded-3xl rounded-tl-none">
+            <nuxt-page/>
+        </div>
+    </template>
+    <template v-else>
         <nuxt-page/>
-    </div>
+    </template>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +44,10 @@ const tabs = [
         label: 'Tests'
     },
 ]
+
+const showTabsLayout = computed(()=> {
+    return ['courses-course-lessons-lesson', 'courses-course-lessons-tests', 'courses-course-lessons-lesson-assignments', 'courses-course-lessons-lesson-materials'].includes(route.name as string)
+})
 
 
 const { loading, addLoading, removeLoading } = useLoading()

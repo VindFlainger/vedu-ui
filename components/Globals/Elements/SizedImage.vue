@@ -4,29 +4,31 @@
             class="object-cover select-none"
             :style="styles"
             :src="src"
-            alt=""
+            :alt="alt"
         >
     </div>
 </template>
 
 <script setup lang="ts">
 import { useSize } from "~/ui/composables/useSize";
-import noAvatar from "~/assets/images/no-image/no-avatar.png"
 
 export interface Props {
-    avatar: {
+    image: {
         original: string,
         frames?: {
             width: number,
             height: number,
             url: string
         }[]
-    },
-    frameWidth: number,
-    size: number | string,
+    } | string,
+    frameWidth?: number,
+    width?: number | string,
+    height?: number | string,
     original: boolean,
-    rounded: boolean,
-    borderRadius: number | string
+    rounded?: boolean,
+    borderRadius: number | string,
+    emptyImage?: string,
+    alt?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,21 +37,23 @@ const props = withDefaults(defineProps<Props>(), {
     borderRadius: 4
 })
 
-const { size: _size } = useSize(props.size)
+const { size: _width } = useSize(props.width)
+const { size: _height } = useSize(props.height)
 const { size: _borderRadius } = useSize(props.borderRadius)
 
 
 const src = computed(()=> {
-    if (!props.avatar) return noAvatar
-    if (props.original) return props.avatar.original
-    if (props.avatar.frames) props.avatar.frames.find(frame => frame.width === props.frameWidth)
+    if (!props.image) return props.emptyImage
+    if (typeof props.image === 'string') return props.image
+    if (props.original) return props.image.original
+    if (props.image.frames) props.image.frames.find(frame => frame.width === props.frameWidth)
 })
 
 const styles = computed(() => ({
-    minWidth: _size.value,
-    minHeight: _size.value,
-    maxWidth: _size.value,
-    maxHeight: _size.value,
+    minWidth: _width.value,
+    minHeight: _height.value,
+    maxWidth: _width.value,
+    maxHeight: _height.value,
     borderRadius: props.rounded ? '50%' : _borderRadius.value
 }))
 </script>

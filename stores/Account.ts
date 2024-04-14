@@ -51,7 +51,8 @@ export const useAccountStore = defineStore('Account', {
         },
         async getUserData() {
             const res = await api.account.GET_USER()
-            this.user = {
+            this.user = res
+         /*   this.user = {
                 "personal_data": {
                     "first_name": "Alex",
                     "last_name": "Hirzhon",
@@ -126,7 +127,7 @@ export const useAccountStore = defineStore('Account', {
                     ]
                 },
                 "id": "65ed16442490e6fec45c24c6"
-            }
+            }*/
             this.notifications = [
                 {
                     receiver: {

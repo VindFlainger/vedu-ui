@@ -187,6 +187,14 @@ export interface CourseEventLesson {
 
 export type CourseEvents = CourseEventTest | CourseEventAssignment | CourseEventMaterial | CourseEventComment | CourseEventLesson
 
+
+export interface CourseLessonPreview {
+    id: string,
+    name: string,
+    image?: string,
+    content: string
+}
+
 export interface CourseAccess {
     id: string
     owner: {
@@ -221,9 +229,7 @@ export interface CourseAccess {
         test_count: number,
         assignments_count: number
     },
-    lessons: {
-        name: string
-    }[]
+    lessons: CourseLessonPreview[]
     students: {
         total: number
         preview: UserPreview[]

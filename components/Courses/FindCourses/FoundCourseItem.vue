@@ -1,11 +1,7 @@
 <template>
-    <div class="p-4 border">
-        <SizedAvatar
-            v-if="course.image"
-            :avatar="course.image"
-            size="100%"
-        />
-        <nuxt-link :to="{name: 'course-id', params: {id: course.id}}">
+    <div class="border p-4">
+        <SizedAvatar v-if="course.image" :avatar="course.image" size="100%" />
+        <nuxt-link :to="{ name: 'courses-course', params: { course: course.id } }">
             <p>{{ course.name }}</p>
         </nuxt-link>
         <p>
@@ -13,9 +9,7 @@
         </p>
         <div v-if="course.start">Start: {{ course.start }}</div>
         <div v-if="course.end">End: {{ course.end }}</div>
-        <div>
-
-        </div>
+        <div></div>
     </div>
 </template>
 

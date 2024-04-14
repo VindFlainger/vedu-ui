@@ -138,7 +138,7 @@
             </ElSelect>
             <div class="flex">
                 <ul class="h-6" v-if="infoLine"></ul>
-                <ul v-if="!props.hideErrors" class="mt-1 pl-2 text-sm text-red-500">
+                <ul v-if="!props.hideErrors && errors.length" class="mt-1 pl-2 text-sm text-red-500">
                     <li
                         v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
                         :key="error"

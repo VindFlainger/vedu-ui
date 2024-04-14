@@ -2,6 +2,7 @@ import { Controls } from "~/api/handler";
 import _fetch from '~/api/handler'
 import { NitroFetchOptions } from "nitropack";
 import { Question, QuestionAnswers, QuestionTag } from "~/models/QuestionModel";
+import { QuestionFindResult } from "~/types/questions";
 
 
 export interface GetQuestionsPayload {
@@ -49,6 +50,22 @@ export interface UpdateQuestionPayload {
     content: string
 }
 
+
+export interface SearchQuestionsPayload {
+    page: number
+    per_page: number
+    search: string
+}
+
+export interface SearchQuestionsData {
+    data: QuestionFindResult[]
+    meta: {
+        page: number
+        per_page: number
+        total: number
+    }
+}
+
 export default {
     GET_QUESTIONS: (data: GetQuestionsPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<GetQuestionsData>('GET', `/questions`, data, options, controls),
     CREATE_QUESTION: (data: CreateQuestionsPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question>('POST', `/questions/question`, data, options, controls),
@@ -56,4 +73,10 @@ export default {
     UPDATE_QUESTION: (data: UpdateQuestionPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question>('PUT', `/questions/${data.id}`, data, options, controls),
     GET_TAGS: (data?: null, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<QuestionTag[]>('GET', `/questions/tags`, data, options, controls),
     CREATE_TAG: (data: CreateTagPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<CreateTagData>('POST', `/questions/tag`, data, options, controls),
+
+    SEARCH_QUESTIONS: (
+        data: SearchQuestionsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<SearchQuestionsData>('GET', `/search-questions`, data, options, controls),
 }

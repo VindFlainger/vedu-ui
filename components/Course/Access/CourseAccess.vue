@@ -1,24 +1,27 @@
 <template>
-    <div v-if="showTabsLayout">
-        <div class="flex justify-start">
-            <div class="flex gap-3 ">
-                <nuxt-link
-                    v-for="tab in tabs"
-                    class="py-2 px-6 bg-white rounded-t-2xl min-w-[130px] text-center"
-                    :key="tab.value"
-                    :to="{ name: tab.value ? `courses-course-${tab.value}` : `courses-course` }"
-                >
-                    {{ tab.label }}
-                </nuxt-link>
+    <div v-if="course">
+        <div v-if="showTabsLayout">
+            <div class="flex justify-start">
+                <div class="flex gap-3 ">
+                    <nuxt-link
+                        v-for="tab in tabs"
+                        class="py-2 px-6 bg-white rounded-t-2xl min-w-[130px] text-center"
+                        :key="tab.value"
+                        :to="{ name: tab.value ? `courses-course-${tab.value}` : `courses-course`, params: { course : course.id} }"
+                    >
+                        {{ tab.label }}
+                    </nuxt-link>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-3xl rounded-tl-none flex-grow">
+                <nuxt-page />
             </div>
         </div>
-        <div class="bg-white p-4 rounded-3xl rounded-tl-none flex-grow">
+        <div v-else>
             <nuxt-page />
         </div>
     </div>
-    <div v-else>
-        <nuxt-page />
-    </div>
+
 </template>
 
 <script setup lang="ts">
@@ -38,7 +41,7 @@ const route = useRoute()
 const studentsTabs = [
     {
         label: 'Activity',
-        value: 'activity'
+        value: ''
     },
     {
         label: 'Lessons',

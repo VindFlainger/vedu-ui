@@ -17,7 +17,7 @@
             }"
         >
         <p v-if="!hideName" class="mt-1 line-clamp-2 text-sm text-center break-words-text leading-[16px]">
-            {{ name && name.replace(/.\w+$/, '') }}asdasdasdasdasd
+            {{ name && name.replace(/\.\w+$/, '') }}
         </p>
     </component>
 </template>
@@ -47,7 +47,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 
 const previewImage = computed(() => {
-    const ext = props.name.match(/\.\w+$/)?.[0]
+    const ext = props.name.match(/\.\w+$/)?.[0] || props.url.match(/\.\w+$/)?.[0]
     const formattedExt = ext ? ext.replace('.', '') : null
     if (formattedExt === 'pdf') return pdf;
     else if (formattedExt === 'doc' || formattedExt === 'docx') return doc;

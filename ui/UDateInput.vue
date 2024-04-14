@@ -76,7 +76,6 @@ export interface Props {
     label?: string
     inputClass?: string
     labelClass?: string
-    type?: 'text' | 'email' | 'password' | 'number'
     passwordAppearance?: boolean
     numberAppearance?: boolean
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -102,7 +101,6 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     inputClass: '',
-    type: 'text',
     size: 'sm',
     passwordAppearance: true,
     numberAppearance: true,
@@ -137,7 +135,7 @@ const sizeFrames = computed(() => {
         case 'xs':
             return {
                 height: 32,
-                labelStyles: { marginBottom: '3px' },
+                labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 iconSizes: {
                     calendar: 16,
                 },
@@ -145,7 +143,7 @@ const sizeFrames = computed(() => {
         case 'sm':
             return {
                 height: 36,
-                labelStyles: { marginBottom: '6px' },
+                labelStyles: { marginBottom: '4px', fontSize: '15px' },
                 iconSizes: {
                     calendar: 20,
                 },
@@ -153,7 +151,7 @@ const sizeFrames = computed(() => {
         case 'md':
             return {
                 height: 48,
-                labelStyles: { marginBottom: '6px' },
+                labelStyles: { marginBottom: '5px', fontSize: '16px' },
                 iconSizes: {
                     calendar: 22,
                 },
@@ -161,7 +159,7 @@ const sizeFrames = computed(() => {
         case 'lg':
             return {
                 height: 56,
-                labelStyles: { marginBottom: '10px' },
+                labelStyles: { marginBottom: '7px', fontSize: '16px' },
                 iconSizes: {
                     calendar: 24,
                 },
@@ -169,7 +167,7 @@ const sizeFrames = computed(() => {
         case 'xl':
             return {
                 height: 64,
-                labelStyles: { marginBottom: '12px' },
+                labelStyles: { marginBottom: '9px', fontSize: '16px' },
                 iconSizes: {
                     calendar: 28,
                 },

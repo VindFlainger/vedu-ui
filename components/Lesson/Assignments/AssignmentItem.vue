@@ -55,6 +55,10 @@
 
         <AssignmentResponsesModal
             v-if="showAssignmentResponsesModal"
+            :lesson-id="lessonId"
+            :course-id="courseId"
+            :assignment-id="assignment.id"
+            @close="showAssignmentResponsesModal = false"
         />
 
     </div>
@@ -64,6 +68,8 @@
 import { LessonAssignment } from "~/types/lesson";
 
 export interface Props {
+    courseId: string
+    lessonId: string,
     assignment: LessonAssignment,
     index: number
 }
