@@ -46,7 +46,7 @@ const tabs = [
 ]
 
 const showTabsLayout = computed(()=> {
-    return ['courses-course-lessons-lesson', 'courses-course-lessons-tests', 'courses-course-lessons-lesson-assignments', 'courses-course-lessons-lesson-materials'].includes(route.name as string)
+    return ['courses-course-lessons-lesson', 'courses-course-lessons-lesson-tests', 'courses-course-lessons-lesson-assignments', 'courses-course-lessons-lesson-materials'].includes(route.name as string)
 })
 
 

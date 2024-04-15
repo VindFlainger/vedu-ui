@@ -1,7 +1,14 @@
 import { NitroFetchOptions } from 'nitropack'
 import _fetch, { Controls } from '~/api/handler'
 import { CourseAccess, CoursePreview, FoundCourse } from '~/types/courses'
-import { LessonAssignment, LessonAssignmentResponse, LessonMaterial, LessonPreview, LessonTest } from "~/types/lesson";
+import {
+    LessonAssignment,
+    LessonAssignmentResponse,
+    LessonMaterial,
+    LessonPreview,
+    LessonTest,
+    LessonTestAttempt, LessonTestQuestionNoAnswers
+} from "~/types/lesson";
 
 
 export interface GetLessonPayload {
@@ -106,7 +113,6 @@ export interface AddLessonTestPayload{
     }[],
     admission: string
     report: string
-    hidden: boolean
     score_mode: string
     max_attempts: number
     start?: string
@@ -115,12 +121,35 @@ export interface AddLessonTestPayload{
 }
 export type AddLessonTestData = LessonTest
 
+
 export interface GetLessonTestsPayload {
     course_id: string
     lesson_id: string
 }
-
 export type GetLessonTestsData = LessonTest[]
+
+
+export interface StartTestAttemptPayload {
+    course_id: string
+    lesson_id: string
+    test_id: string
+}
+export interface StartTestAttemptData {
+    attempt: LessonTestAttempt
+    questions: LessonTestQuestionNoAnswers
+}
+
+export interface GetTestAttemptPayload {
+    course_id: string
+    lesson_id: string
+    test_id: string
+    attempt_id: string
+}
+export interface GetTestAttemptData {
+    attempt: LessonTestAttempt
+    questions: LessonTestQuestionNoAnswers[]
+}
+
 
 export default {
     FIND_LESSON: (
@@ -207,4 +236,16 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<GetLessonTestsData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests`, data, options, controls),
+
+    START_TEST_ATTEMPT: (
+        data: StartTestAttemptPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<StartTestAttemptData>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/start`, data, options, controls),
+
+    GET_TEST_ATTEMPT: (
+        data: GetTestAttemptPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetTestAttemptData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}`, data, options, controls),
 }

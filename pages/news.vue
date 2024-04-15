@@ -1,12 +1,5 @@
 <template>
-    <div>
-        <u-button
-            label="asdasd"
-            size="xs"
-            plain
-            color="red-500"
-        />
-    </div>
+
 </template>
 
 <script setup lang="ts">
@@ -17,7 +10,10 @@ definePageMeta({
 })
 
 useSeoMeta({
-    title: () => 'Dashboard'
+    title: () => 'News'
 })
 </script>
 
+<style scoped>
+
+</style>

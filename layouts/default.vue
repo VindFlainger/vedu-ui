@@ -5,7 +5,7 @@
         <MaintenanceStub v-if="maintenance"/>
         <ContentBlock
             v-if="!maintenance"
-            :access-denied="accessDenied"
+            :access-denied="!layoutStore.accessToPage"
             :hydratated="hydratated"
             :maintenance="maintenance"
         />
@@ -20,25 +20,18 @@ useSeoMeta({
     titleTemplate: title => `Vedu! | ${title}`
 })
 const accountStore = useAccountStore()
-const route = useRoute()
+
+const layoutStore = useLayoutStore()
 
 const { user, maintenance, role } = storeToRefs(accountStore)
-
-const accessDenied = computed(()=>{
-    return route.meta.roles && role.value && !(route.meta.roles as string[]).includes(role.value)
-})
 
 const account = useAccountStore()
 const setAuth = () => {
     if (account.user) {
         const _hsq = window._hsq = window._hsq || [];
-        console.log({
-            email: account.user.auth.email,
-            id: account.user.id
-        })
 
         window._hsq.push(["identify",{
-            email: account.user.auth.email,
+            email: account.user?.auth?.email,
             id: account.user.id
         }]);
 

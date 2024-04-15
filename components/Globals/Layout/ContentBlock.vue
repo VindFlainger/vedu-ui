@@ -11,7 +11,6 @@
                         (route.meta.layoutClass)
                     ]"/>
                 <ModalsBlock/>
-                {{}}
             </div>
         </div>
     </div>

@@ -1,15 +1,15 @@
 <template>
     <div class="rounded-2xl border border-gray-200 p-4 outline outline-1 outline-offset-2 outline-gray-200">
         <template v-if="isInstructor">
-            <p class="font-medium">{{test.title}}</p>
+            <p class="font-medium">{{ test.title }}</p>
             <p>Report Type: {{ test.report }}</p>
             <p>Admission Type: {{ test.admission }}</p>
             <p>Score Mode: {{ test.score_mode }}</p>
             <p>Max Attempts: {{ test.max_attempts }}</p>
             <p>Full Score: {{ test.full_score }}</p>
             <p>Questions Count: {{ test.questions.length }}</p>
-            <p v-if="test.start">Start: {{$luxon.fromISO(test.start).toFormat('LLL d, yyyy')}}</p>
-            <p v-if="test.end">End: {{$luxon.fromISO(test.end).toFormat('LLL d, yyyy')}}</p>
+            <p v-if="test.start">Start: {{ $luxon.fromISO(test.start).toFormat('LLL d, yyyy') }}</p>
+            <p v-if="test.end">End: {{ $luxon.fromISO(test.end).toFormat('LLL d, yyyy') }}</p>
             <div class="mt-3 flex justify-between">
                 <span></span>
                 <u-button
@@ -18,38 +18,48 @@
             </div>
         </template>
         <template v-else>
-            <p class="font-medium">{{test.title}}</p>
+            <p class="font-medium">{{ test.title }}</p>
             <p>Report Type: {{ test.report }}</p>
             <p>Admission Type: {{ test.admission }}</p>
             <p>Score Mode: {{ test.score_mode }}</p>
             <p>Max Attempts: {{ test.max_attempts }}</p>
             <p>Full Score: {{ test.full_score }}</p>
             <p>Questions Count: {{ test.questions.length }}</p>
-            <p v-if="test.start">Start: {{$luxon.fromISO(test.start).toFormat('LLL d, yyyy')}}</p>
-            <p v-if="test.end">End: {{$luxon.fromISO(test.end).toFormat('LLL d, yyyy')}}</p>
+            <p v-if="test.start">Start: {{ $luxon.fromISO(test.start).toFormat('LLL d, yyyy') }}</p>
+            <p v-if="test.end">End: {{ $luxon.fromISO(test.end).toFormat('LLL d, yyyy') }}</p>
             <div class="mt-3 flex justify-between">
                 <span></span>
-                <nuxt-link>
-                    <u-button
-                        label="Open"
-                    />
-                </nuxt-link>
+                <u-button
+                    label="Open"
+                    @click="showStartAttemptModal = true"
+                />
             </div>
         </template>
+        <StartAttemptModal
+            v-if="showStartAttemptModal"
+            :course-id="route.params.course"
+            :lesson-id="route.params.lesson"
+            :test-id="test.id"
+            @close="showStartAttemptModal = false"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 import { LessonTest } from '~/types/lesson'
+import StartAttemptModal from "~/components/Lesson/Tests/StartAttemptModal.vue";
+
+const route = useRoute()
 
 export interface Props {
-    test: LessonTest
+    test: LessonTest,
 }
 
 const props = withDefaults(defineProps<Props>(), {})
 
 const accountStore = useAccountStore()
 const { isInstructor } = storeToRefs(accountStore)
+
+const showStartAttemptModal = ref(false)
 </script>
 
-<style scoped></style>

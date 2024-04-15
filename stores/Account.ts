@@ -22,6 +22,9 @@ export const useAccountStore = defineStore('Account', {
         },
         isStudent: (state): boolean => {
             return state.user.role === 'student'
+        },
+        isNewUser: (state): boolean => {
+            return !!state.user.role
         }
     },
     actions: {

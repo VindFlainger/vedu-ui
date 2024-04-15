@@ -280,9 +280,9 @@ const submit = async () => {
             lesson_id: props.lessonId,
             questions: selectedQuestions.value.map(question => ({id: question.id, score: question.score})),
             admission: admission.value,
-            hidden: true,
             max_attempts: maxAttempts.value,
             report: report.value,
+            time_limit: timeLimit.value,
             score_mode: scoreMode.value,
             start: start.value && $luxon.fromJSDate(start.value).toISO(),
             end: start.value && $luxon.fromJSDate(end.value).toISO()

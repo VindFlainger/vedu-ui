@@ -1,6 +1,6 @@
 import { SizedImage } from "~/types/global";
 import { PersonalData } from "~/types/account";
-import { QuestionFindResult } from "~/types/questions";
+import { QuestionFindResult, QuestionType, TextQuestionOption } from "~/types/questions";
 
 export interface LessonPreview {
     id: string
@@ -76,10 +76,58 @@ export interface LessonTest {
     max_attempts: number
     score_mode: string
     full_score: number
-    hidden: boolean
     id: string
     attempts: string[]
     start: string
     questions: QuestionFindResult[]
     end: string
+}
+
+export interface LessonTestAttempt {
+    id: string
+    test: string,
+    student: string,
+    secret_key: string,
+    started_at: string,
+    submitted_at: string | null,
+    checked: {
+        total_score: string | null,
+        checked_at: string | null
+    },
+    answers: [],
+    created_at: string,
+    updated_at: string,
+}
+
+export interface SingleQuestionNoAnswersOption {
+    label: string
+    value: string
+    correct?: boolean
+}
+export interface MultipleQuestionNoAnswersOption {
+    label: string
+    value: string
+    correct?: boolean
+}
+export interface OrderQuestionNoAnswersOption {
+    label: string
+    value: string
+    order: number
+}
+
+export type QuestionNoAnswersOptions<T extends QuestionType> =
+    T extends 'text' ? TextQuestionOption[] :
+        T extends 'single' ? SingleQuestionOption[] :
+            T extends 'multiple' ? MultipleQuestionOption[] :
+                T extends 'order' ? OrderQuestionOption[] :
+                    never;
+
+
+export interface LessonTestQuestionNoAnswers<T extends QuestionType = any> {
+    id: string
+    source: string
+    type: T
+    score: number
+    options: QuestionNoAnswersOptions<T>
+    content: string
 }

@@ -19,10 +19,10 @@ export default defineNuxtConfig({
         ],
         dirs: ['stores']
     },
-
+    ssr: false,
     routeRules: {
-        '/auth': { ssr: true },
-        '/**': { ssr: false }
+     /*   '/auth': { ssr: true },
+        '/!**': { ssr: false }*/
     },
     // @ts-ignore
     colorMode: {

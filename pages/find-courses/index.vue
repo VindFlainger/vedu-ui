@@ -15,6 +15,15 @@
 <script setup lang="ts">
 import { FoundCourse } from '~/types/courses'
 import FoundCourseItem from '~/components/Courses/FindCourses/FoundCourseItem.vue'
+import { definePageMeta } from "#imports";
+
+definePageMeta({
+    roles: ['public', 'student', 'instructor'],
+})
+
+useSeoMeta({
+    title: () => 'Courses'
+})
 
 const { $api } = useNuxtApp()
 
