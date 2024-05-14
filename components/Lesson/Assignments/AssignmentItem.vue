@@ -32,6 +32,11 @@
                 label="Show Responses"
                 @click="showAssignmentResponsesModal = true"
             />
+            <u-button
+                v-else
+                :label="assignment.response ? 'Show Response' : 'Add Response'"
+                @click="showAddResponseModal = true"
+            />
         </div>
 
         <div v-if="isInstructor" class="flex gap-1 absolute -right-2 -top-3">
@@ -61,16 +66,25 @@
             @close="showAssignmentResponsesModal = false"
         />
 
+        <AddResponseModal
+            v-if="showAddResponseModal"
+            :course-id="courseId"
+            :lesson-id="lessonId"
+            :assignment-id="assignment.id"
+            :response="assignment.response"
+            @close="showAddResponseModal = false"
+        />
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { LessonAssignment } from "~/types/lesson";
+import { LessonAssignment, LessonAssignmentResponse } from "~/types/lesson";
 
 export interface Props {
     courseId: string
     lessonId: string,
-    assignment: LessonAssignment,
+    assignment: LessonAssignment & { response?: null | LessonAssignmentResponse },
     index: number
 }
 
@@ -94,4 +108,5 @@ const handleEdit = async () => {
 }
 
 const showAssignmentResponsesModal = ref(false)
+const showAddResponseModal = ref(false)
 </script>

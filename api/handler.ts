@@ -53,6 +53,7 @@ export default async <DataT>(
         path,
         {
             ...options,
+            retry: false,
             credentials: 'include',
             method,
             ...data ? ['POST', 'PUT', 'PATCH'].includes(method) ? { body: data } : { query: data } : {},

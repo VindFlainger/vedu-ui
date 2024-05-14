@@ -29,6 +29,7 @@ export interface SignInPayload {
     email: string,
     password: string,
     remember: boolean
+    fingerprint: string
 }
 
 export interface SignInData {

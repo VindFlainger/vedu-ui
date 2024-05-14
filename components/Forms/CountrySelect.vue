@@ -1,5 +1,5 @@
 <template>
-    <USelect :options="countries" label="Country" hide-checkbox-style/>
+    <USelect :options="countries" label="Страна" hide-checkbox-style placeholder="Выбрать страну"/>
 </template>
 
 <script setup lang="ts">
@@ -10,12 +10,12 @@ const countries = ref([
     {
         img: by,
         value: 'by',
-        label: 'Belarus',
+        label: 'Беларусь',
     },
     {
         img: pl,
         value: 'pl',
-        label: 'Poland',
+        label: 'Польша',
     },
 ])
 </script>

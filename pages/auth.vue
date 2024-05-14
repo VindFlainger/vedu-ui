@@ -50,11 +50,11 @@ definePageMeta({
 
 const actions = [
     {
-        label: 'Login',
+        label: 'Войти',
         value: 'login',
     },
     {
-        label: 'Register',
+        label: 'Регистрация',
         value: 'register',
     },
 ]
@@ -63,11 +63,11 @@ const action = useRouteQuery('action', 'login')
 
 const roles = [
     {
-        label: 'Student',
+        label: 'Студент',
         value: 'student',
     },
     {
-        label: 'Instructor',
+        label: 'Преповадатель',
         value: 'instructor',
     },
 ]

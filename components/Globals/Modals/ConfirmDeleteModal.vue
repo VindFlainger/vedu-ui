@@ -5,9 +5,7 @@
         max-width="400"
     >
         <template #default="{ close }">
-            <p class="text-red-500 text-lg font-bold">
-                {{ props.title }}
-            </p>
+            <p class="text-red-500 text-lg font-bold" v-html="props.title"/>
             <p class="mt-2 text-gray-900">
                 {{ props.text }}
             </p>

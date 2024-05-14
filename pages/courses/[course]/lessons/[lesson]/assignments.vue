@@ -39,14 +39,15 @@
 </template>
 
 <script setup lang="ts">
-import { LessonAssignment } from '~/types/lesson'
+import { LessonAssignment, LessonAssignmentResponse } from '~/types/lesson'
+
 const { $api } = useNuxtApp()
 const route = useRoute()
 
 const accountStore = useAccountStore()
 const { isInstructor } = storeToRefs(accountStore)
 
-const assignments = ref<LessonAssignment[] | null>(null)
+const assignments = ref<(LessonAssignment & { response: null | LessonAssignmentResponse })[] | null>(null)
 
 const { loading, addLoading, removeLoading } = useLoading()
 const fetch = async () => {
@@ -81,7 +82,7 @@ const handleDelete = async (id: string) => {
             lesson_id: route.params.lesson as string,
             assignment_id: id
         })
-    } catch (err){
+    } catch (err) {
         console.log(err)
     } finally {
 

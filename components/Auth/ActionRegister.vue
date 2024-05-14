@@ -1,35 +1,38 @@
 <template>
     <div>
-        <USimpleStepper
+        <u-simple-stepper
             v-model="slot"
             :slots="slots"
             class="mt-6"
             :next-disabled="nextDisabled"
             :next-loading="nextLoading"
+            next-label="Далее"
+            back-label="Назад"
+            finish-label="Создать аккаунт"
             @step-next="handleStep"
             slots-class="overflow-y-auto max-h-[calc(100vh-100px-24px-44px-140px)] p-1 pr-2 main-scrollbar"
         >
             <template #identification>
-                <UInput
+                <u-input
                     class="w-full"
                     v-model="email.value.value"
                     :errors="invalidIdentification?email.errors.value:[]"
                     :conditions="[
-                        ['The user with this email is already registered', 'error', emailStatus === 'duplicated'],
-                        ['Email is available', 'success', emailStatus === 'available']
+                        ['Пользователь с такой электронной почтой уже зарегистрирован', 'error', emailStatus === 'duplicated'],
+                        ['Электронная почта не занята', 'success', emailStatus === 'available']
                     ]"
                     right-icon-button
                     size="md"
                     rounded="full"
                     color="primary-700"
                     type="email"
-                    label="Email"
+                    label="Эл. почта"
                     :right-icon="email.value.value && email.meta.valid?'ArrowPath':''"
                     required
                     @click:right-icon="handleCheckEmail"
                     @input="emailStatus = null"
                 />
-                <UInput
+                <u-input
                     class="mt-4 w-full"
                     v-model="password.value.value"
                     :errors="invalidIdentification?password.errors.value:[]"
@@ -39,10 +42,10 @@
                     color="primary-700"
                     type="password"
                     left-icon="Key"
-                    label="Password"
+                    label="Пароль"
                     required
                 />
-                <UTransitionExpand>
+                <u-transition-expand>
                     <div
                         v-if="password.value.value && passwordChecks.some(check => !check.status)"
                         class="mt-6 border p-1 rounded-lg"
@@ -51,14 +54,14 @@
                         <ul v-for="check in passwordChecks" :key="check.label">
                             <li :class="[check.status?'text-green-500':'text-red-500']">
                                 <p class="flex">
-                                    <UIcon
+                                    <u-icon
                                         v-if="check.status"
                                         value="CheckCircle"
                                         color="green-500"
                                         size="16"
                                         class="relative top-px"
                                     />
-                                    <UIcon
+                                    <u-icon
                                         v-else
                                         value="ExclamationCircle"
                                         color="red-500"
@@ -70,8 +73,8 @@
                             </li>
                         </ul>
                     </div>
-                </UTransitionExpand>
-                <UInput
+                </u-transition-expand>
+                <u-input
                     class="mt-4 w-full"
                     v-model="repeatedPassword.value.value"
                     :errors="invalidIdentification?repeatedPassword.errors.value:[]"
@@ -80,41 +83,41 @@
                     rounded="full"
                     color="primary-700"
                     type="password"
-                    label="Repeat password"
+                    label="Повторите пароль"
                     left-icon="Key"
                     required
                 />
             </template>
             <template #personal_data>
                 <div class="grid grid-cols-2 gap-4">
-                    <UInput
+                    <u-input
                         class="col-span-2"
                         v-model="firstName.value.value"
                         :errors="firstName.errors.value"
                         :hide-errors="!invalidPersonalData"
-                        label="First name"
+                        label="Имя"
                         size="md"
                         rounded="full"
                         color="primary-700"
                         required
                     />
-                    <UInput
+                    <u-input
                         class="col-span-2"
                         v-model="lastName.value.value"
                         :errors="lastName.errors.value"
                         :hide-errors="!invalidPersonalData"
-                        label="Last name"
+                        label="Фамилия"
                         size="md"
                         rounded="full"
                         color="primary-700"
                         required
                     />
-                    <UInput
+                    <u-input
                         class="w-full"
                         v-model.number="age.value.value"
                         :errors="age.errors.value"
                         :hide-errors="!invalidPersonalData"
-                        label="Age"
+                        label="Возраст"
                         size="md"
                         rounded="full"
                         color="primary-700"
@@ -123,15 +126,16 @@
                         :min="role === 'instructor'?18:6"
                         required
                     />
-                    <USelect
+                    <u-select
                         v-model="gender.value.value"
                         :options="genderOptions"
                         :errors="gender.errors.value"
                         :hide-errors="!invalidPersonalData"
                         rounded="full"
                         color="primary-700"
-                        label="Gender"
+                        label="Пол"
                         required
+                        placeholder="Выбрать пол"
                         size="md"
                     />
                     <CountrySelect
@@ -147,41 +151,39 @@
                 </div>
             </template>
             <template #completion>
-                <UInput
+                <u-input
                     v-model="inviteCode"
-                    label="Invite code"
+                    label="Пригласительный код"
                     left-icon="Star"
-                    hint="With the help of an invitation code, we will automatically add you to the necessary courses
-                        and give you the appropriate privileges. You can get an invitation code from your teacher or organization."
+                    hint="С помощью пригласительного кода мы автоматически добавим вас на необходимые курсы и предоставим вам соответствующие привилегии. Вы можете получить пригласительный код у своего преподавателя или организации."
                     size="md"
                     rounded="full"
                     color="primary-700"
                 >
-                </UInput>
+                </u-input>
                 <div class="mt-6">
-                    <UCheckbox v-model="agreement">
+                    <u-checkbox v-model="agreement">
                         <p>
-                            I agree to the <a href="https://test.com" class="text-primary-700 underline">license
-                            agreement</a> and <a href="https://test.com" class="text-primary-700 underline">privacy
-                            policy</a>.
+                            Я согласен с <a href="https://test.com" class="text-primary-700 underline"> лицензионным соглашением
+                            </a> и <a href="https://test.com" class="text-primary-700 underline">политикой конфиденциальности</a>.
                         </p>
-                    </UCheckbox>
+                    </u-checkbox>
                 </div>
-                <UTransitionExpand>
+                <u-transition-expand>
                     <div
                         v-if="registerErrorList.length"
                         class="mt-6 flex gap-2 items-center text-sm text-red-500 border-2 border-dashed border-red-500 rounded-lg p-2 mb-4 bg-red-50"
                     >
-                        <UIcon value="ExclamationCircle" color="red-500"/>
+                        <u-icon value="ExclamationCircle" color="red-500"/>
                         <ul :class="{'list-disc pl-3': registerErrorList.length > 1}">
                             <li v-for="error in registerErrorList" :key="error">
                                 <span>{{ error }}</span>;
                             </li>
                         </ul>
                     </div>
-                </UTransitionExpand>
+                </u-transition-expand>
             </template>
-        </USimpleStepper>
+        </u-simple-stepper>
     </div>
 </template>
 
@@ -203,16 +205,16 @@ const props = withDefaults(defineProps<Props>(), {})
 const slots = ref([
     {
         value: "identification",
-        name: "Identification",
+        name: "Индентификация",
         disabledNext: true,
     },
     {
         value: "personal_data",
-        name: "Personal Data",
+        name: "Персональные данные",
     },
     {
         value: "completion",
-        name: "Completion",
+        name: "Завершение",
     },
 ]);
 const slot = ref("identification");
@@ -223,40 +225,40 @@ const emit = defineEmits<{
 
 
 const genderOptions = ref([
-    { label: 'Male', value: 'male' },
-    { label: 'Female', value: 'female' },
+    { label: 'Мужской', value: 'male' },
+    { label: 'Женский', value: 'female' },
 ])
 
 
 const { meta } = useForm({
     validationSchema: object({
-        email: string().required("Email is required").email("Invalid email"),
-        password: string().required("Password is required")
+        email: string().required("Введите эл. почту").email("Неверный формат эл. почты"),
+        password: string().required("Введите пароль")
             .test(
                 'password-test',
-                'The password entered is too simple',
+                'Введенный пароль слишком простой',
                 () => passwordChecks.value.every(check => check.status)
             ),
-        repeatedPassword: string().required("You should repeat password")
+        repeatedPassword: string().required("Вы должны повторить пароль")
             .test(
                 'repeated-passport-test',
-                'Passwords don\'t match',
+                'Пароли не совпадают',
                 () => repeatedPassword.value.value === password.value.value,
             )
         ,
-        age: number().required("Age is required"),
+        age: number().required("Введите возраст"),
         firstName: string()
-            .required("First name is required")
-            .min(2, 'First name must contain from 2 to 20 characters')
-            .max(20, 'First name must contain from 2 to 20 characters')
+            .required("Введите имя")
+            .min(2, 'Имя пользователя должно содержать от 2 до 20 символов')
+            .max(20, 'Имя пользователя должно содержать от 2 до 20 символов')
         ,
         lastName: string()
-            .required("Last name is required")
-            .min(2, 'Last name must contain from 2 to 20 characters')
-            .max(20, 'Last name must contain from 2 to 20 characters')
+            .required("Введите фамилию")
+            .min(2, 'Фамилия пользователя должно содержать от 2 до 20 символов')
+            .max(20, 'Фамилия пользователя должно содержать от 2 до 20 символов')
         ,
-        gender: string().required("Gender is required"),
-        country: string().required("Gender is required")
+        gender: string().required("Введите пол"),
+        country: string().required("Введите страну")
     }),
 });
 
@@ -305,8 +307,8 @@ const register = async () => {
         if (res.user_id) {
             intercomStore.addNotification({
                 type: 'success',
-                title: 'Account created',
-                text: `The ${props.role}\'s account was successfully created. You are redirected to the sign in page`
+                title: 'Аккаунт создан',
+                text: `Аккаунт ${props.role} был успешно создан. Вы будуте перенаправлены на страницу входа`
             })
             emit('registered', { email: email.value.value, password: password.value.value })
         }
@@ -348,15 +350,15 @@ const handleCheckEmail = async () => {
 const passwordChecks = computed(() => {
     return [
         {
-            label: 'Contain at least 8 characters',
+            label: 'Содержит минимум 8 символов (букв, цифр, спец. знаков)',
             status: password.value.value?.length > 8
         },
         {
-            label: 'Contain at least one special symbol [!@#$%^&*()_+]',
+            label: 'Содержит хотя бы один специальный символ [!@#$%^&*()_+]',
             status: /[!@#$%^&*()_+]/.test(password.value.value)
         },
         {
-            label: 'Contains at least one uppercase letter',
+            label: 'Содержит хотя бы 1 символ в верхенм регистре',
             status: password.value.value
                 ?.split('')
                 ?.some(x => x === x.toUpperCase() && x.toLowerCase() !== x.toUpperCase())

@@ -287,7 +287,7 @@ const plansData: {
         key: 'professional',
         quota: {
             courses: 5,
-            questions: 200,
+            questions: 500,
         },
         access: {
             course_tags: 20,

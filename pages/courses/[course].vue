@@ -5,7 +5,7 @@
             :course="course"
         />
         <CourseAccess
-            class=" flex flex-col h-full"
+            class="flex flex-col h-full"
             v-else
             :course="course"
         />

@@ -1,6 +1,6 @@
 import { SizedImage } from "~/types/global";
 import { PersonalData } from "~/types/account";
-import { QuestionFindResult, QuestionType, TextQuestionOption } from "~/types/questions";
+import { QuestionFindResult, QuestionOptions, QuestionType, TextQuestionOption } from "~/types/questions";
 
 export interface LessonPreview {
     id: string
@@ -78,6 +78,7 @@ export interface LessonTest {
     full_score: number
     id: string
     attempts: string[]
+    time_limit: number
     start: string
     questions: QuestionFindResult[]
     end: string
@@ -91,10 +92,14 @@ export interface LessonTestAttempt {
     started_at: string,
     submitted_at: string | null,
     checked: {
-        total_score: string | null,
+        total_score: number | null,
         checked_at: string | null
     },
-    answers: [],
+    answers: {
+        question_id: string,
+        passed_score: number | null
+        value: null | string | string[]
+    }[],
     created_at: string,
     updated_at: string,
 }
@@ -102,25 +107,22 @@ export interface LessonTestAttempt {
 export interface SingleQuestionNoAnswersOption {
     label: string
     value: string
-    correct?: boolean
 }
 export interface MultipleQuestionNoAnswersOption {
     label: string
     value: string
-    correct?: boolean
 }
 export interface OrderQuestionNoAnswersOption {
     label: string
     value: string
-    order: number
 }
 
 export type QuestionNoAnswersOptions<T extends QuestionType> =
-    T extends 'text' ? TextQuestionOption[] :
-        T extends 'single' ? SingleQuestionOption[] :
-            T extends 'multiple' ? MultipleQuestionOption[] :
-                T extends 'order' ? OrderQuestionOption[] :
-                    never;
+    T extends 'text' ? undefined :
+        T extends 'single' ? SingleQuestionNoAnswersOption[] :
+            T extends 'multiple' ? MultipleQuestionNoAnswersOption[] :
+                T extends 'order' ? OrderQuestionNoAnswersOption[] :
+                    any;
 
 
 export interface LessonTestQuestionNoAnswers<T extends QuestionType = any> {

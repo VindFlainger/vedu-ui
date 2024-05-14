@@ -174,7 +174,3 @@ const handleDelete = (ids: string[]) => {
 }
 
 </script>
-
-<style scoped>
-
-</style>

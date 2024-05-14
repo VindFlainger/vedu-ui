@@ -11,4 +11,5 @@ export interface SizedImage {
 export interface AnyFile {
     id: string
     name: string
+    [key: string]: any
 }

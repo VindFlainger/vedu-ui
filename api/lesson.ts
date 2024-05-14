@@ -15,6 +15,7 @@ export interface GetLessonPayload {
     course_id: string
     lesson_id: string
 }
+
 export type GetLessonData = LessonPreview
 
 
@@ -22,6 +23,7 @@ export interface GetLessonMaterialsPayload {
     course_id: string
     lesson_id: string
 }
+
 export type GetLessonMaterialsData = LessonMaterial[]
 
 
@@ -29,7 +31,8 @@ export interface GetLessonAssignmentsPayload {
     course_id: string
     lesson_id: string
 }
-export type GetLessonAssignmentsData = LessonAssignment[]
+
+export type GetLessonAssignmentsData = (LessonAssignment & { response: null | LessonAssignmentResponse })[]
 
 
 export interface DeleteLessonMaterialPayload {
@@ -37,6 +40,7 @@ export interface DeleteLessonMaterialPayload {
     lesson_id: string
     material_id: string
 }
+
 export type DeleteLessonMaterialData = boolean
 
 
@@ -46,6 +50,7 @@ export interface AddLessonMaterialPayload {
     file_id: string
     description: string
 }
+
 export type AddLessonMaterialData = LessonMaterial
 
 
@@ -55,6 +60,7 @@ export interface EditLessonMaterialPayload {
     material_id: string
     description: string
 }
+
 export type EditLessonMaterialData = LessonMaterial
 
 
@@ -64,6 +70,7 @@ export interface AddLessonAssignmentPayload {
     files: string[]
     description: string
 }
+
 export type AddLessonAssignmentData = LessonAssignment
 
 
@@ -72,6 +79,7 @@ export interface DeleteLessonAssignmentPayload {
     lesson_id: string
     assignment_id: string
 }
+
 export type DeleteLessonAssignmentData = boolean
 
 
@@ -81,6 +89,7 @@ export interface EditLessonAssignmentPayload {
     assignment_id: string
     description: string
 }
+
 export type EditLessonAssignmentData = LessonAssignment
 
 
@@ -89,7 +98,8 @@ export interface GetLessonAssignmentResponsesPayload {
     lesson_id: string
     assignment_id: string
 }
-export type GetLessonAssignmentResponsesData =  LessonAssignmentResponse[]
+
+export type GetLessonAssignmentResponsesData = LessonAssignmentResponse[]
 
 export interface ResolveLessonAssignmentResponsePayload {
     course_id: string
@@ -101,9 +111,10 @@ export interface ResolveLessonAssignmentResponsePayload {
     message?: string
     extra_attempt?: boolean
 }
+
 export type ResolveLessonAssignmentResponseData = LessonAssignmentResponse
 
-export interface AddLessonTestPayload{
+export interface AddLessonTestPayload {
     course_id: string
     lesson_id: string
     title: string
@@ -119,6 +130,7 @@ export interface AddLessonTestPayload{
     end?: string
     time_limit: number
 }
+
 export type AddLessonTestData = LessonTest
 
 
@@ -126,6 +138,7 @@ export interface GetLessonTestsPayload {
     course_id: string
     lesson_id: string
 }
+
 export type GetLessonTestsData = LessonTest[]
 
 
@@ -134,6 +147,7 @@ export interface StartTestAttemptPayload {
     lesson_id: string
     test_id: string
 }
+
 export interface StartTestAttemptData {
     attempt: LessonTestAttempt
     questions: LessonTestQuestionNoAnswers
@@ -147,19 +161,97 @@ export interface GetTestAttemptPayload {
 }
 export interface GetTestAttemptData {
     attempt: LessonTestAttempt
-    questions: LessonTestQuestionNoAnswers[]
+    questions: LessonTestQuestionNoAnswers[],
+    test: Omit<LessonTest, "questions" | "attempts">
 }
 
 
+export interface GetTestAttemptsPayload {
+    course_id: string
+    lesson_id: string
+    test_id: string
+}
+export interface GetTestAttemptsData {
+    attempts: Omit<LessonTestAttempt, 'answers'>[],
+    test: Omit<LessonTest, "questions" | "attempts">
+}
+
+
+export interface SaveTestAttemptPayload {
+    course_id: string
+    lesson_id: string
+    test_id: string
+    attempt_id: string
+    answers: {
+        question_id: string
+        value: string | string[]
+    }[]
+    finish?: boolean
+}
+
+
+export interface SaveTestAttemptData {
+
+}
+
+
+export interface AddAssignmentResponsePayload{
+    course_id: string
+    lesson_id: string
+    assignment_id: string
+    files: string[]
+    text?: string
+}
+export type AddAssignmentResponseData = LessonAssignmentResponse
+
+export interface CreateLessonPayload {
+    course_id: string
+    name: string
+    content: string
+    image: string
+    order?: number
+}
+export interface CreateLessonData {
+
+}
+
+export interface GetLessonsPayload {
+    course_id: string
+}
+export type GetLessonsData = LessonPreview[]
+
+export interface DeleteLessonPayload {
+    course_id: string
+    lesson_id: string
+}
+export interface DeleteLessonData {
+
+}
+
 export default {
+    CREATE_LESSON: (
+        data: CreateLessonPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<CreateLessonData>('POST', `/courses/${data.course_id}/lesson`, data, options, controls),
+
+    DELETE_LESSON: (
+        data: DeleteLessonPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<DeleteLessonData>('DELETE', `/courses/${data.course_id}/lessons/${data.lesson_id}`, data, options, controls),
+
+    GET_LESSONS: (
+        data: GetLessonsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetLessonsData>('GET', `/courses/${data.course_id}/lessons`, null, options, controls),
+
     FIND_LESSON: (
         data: GetLessonPayload,
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<GetLessonData>('GET', `/course/${data.course_id}/lessons/${data.lesson_id}`, null, options, controls),
-
-
-
 
     /* MATERIALS */
     GET_LESSON_MATERIALS: (
@@ -187,7 +279,6 @@ export default {
     ) => _fetch<DeleteLessonMaterialData>('DELETE', `/course/${data.course_id}/lessons/${data.lesson_id}/materials/${data.material_id}`, null, options, controls),
 
 
-
     /* ASSIGNMENTS */
     GET_LESSON_ASSIGNMENTS: (
         data: GetLessonAssignmentsPayload,
@@ -212,6 +303,12 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<EditLessonAssignmentData>('PATCH', `/courses/${data.course_id}/lessons/${data.lesson_id}/assignments/${data.assignment_id}`, data, options, controls),
+
+    ADD_ASSIGNMENT_RESPONSE: (
+        data: AddAssignmentResponsePayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<AddAssignmentResponseData>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/assignments/${data.assignment_id}/response`, data, options, controls),
 
     GET_LESSON_ASSIGNMENT_RESPONSES: (
         data: GetLessonAssignmentResponsesPayload,
@@ -248,4 +345,16 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<GetTestAttemptData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}`, data, options, controls),
+
+    GET_TEST_ATTEMPTS: (
+        data: GetTestAttemptsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetTestAttemptsData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts`, data, options, controls),
+
+    SAVE_TEST_ATTEMPT: (
+        data: SaveTestAttemptPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<SaveTestAttemptPayload>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}/save`, data, options, controls),
 }

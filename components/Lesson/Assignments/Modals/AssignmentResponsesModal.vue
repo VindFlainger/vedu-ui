@@ -54,7 +54,8 @@ const { $api } = useNuxtApp()
 export interface Props {
     courseId: string
     lessonId: string,
-    assignmentId: string
+    assignmentId: string,
+    response?: LessonAssignmentResponse
 }
 
 const props = withDefaults(defineProps<Props>(), {})
