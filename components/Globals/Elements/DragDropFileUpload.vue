@@ -6,82 +6,87 @@
             @drop.prevent="handleDrop"
             @dragover.prevent
         >
-            <div
-                v-if="computedFiles.length && !multiple"
-                class="relative flex items-center p-4 h-[160px] group rounded-lg overflow-hidden"
-            >
-                <img class="object-cover rounded-lg max-h-full" :src="computedFiles[0].image" alt="">
+            <template v-if="!multiple">
                 <div
-                    :class="{
-                        'opacity-0': computedFiles[0].status === 'success',
+                    v-if="computedValue"
+                    class="relative flex items-center p-4 h-[160px] group rounded-lg overflow-hidden"
+                >
+                    <img class="object-cover rounded-lg max-h-full" :src="(computedValue as AnyFile).image" alt="">
+                    <div
+                        :class="{
+                        'opacity-0': ['success', 'preview'].includes((computedValue as AnyFile).status),
                         'hover:bg-black/60': !readonly
                     }"
-                    class="flex items-center justify-center absolute inset-0 bg-black/50 group-hover:opacity-100 duration-150 "
-                >
-                    <ULoading
-                        v-if="computedFiles[0].status === 'pending'"
-                        size="40"
-                    />
-                    <div
-                        v-else-if="computedFiles[0].status === 'error'"
-                        class="flex flex-col items-center justify-center gap-2"
+                        class="flex items-center justify-center absolute inset-0 bg-black/50 group-hover:opacity-100 duration-150 "
                     >
-                        <UIcon
-                            class="group-hover:hidden"
-                            value="ExclamationTriangle"
-                            size="36"
-                            color="red-600"
+                        <ULoading
+                            v-if="(computedValue as AnyFile).status === 'pending'"
+                            size="40"
                         />
+                        <div
+                            v-else-if="(computedValue as AnyFile).status === 'error'"
+                            class="flex flex-col items-center justify-center gap-2"
+                        >
+                            <UIcon
+                                class="group-hover:hidden"
+                                value="ExclamationTriangle"
+                                size="36"
+                                color="red-600"
+                            />
+                            <UButton
+                                class="hidden group-hover:block"
+                                icon-style
+                                icon="ArrowPath"
+                                plain
+                                text-color="primary-600"
+                                color="primary-600"
+                                @click="handleReupload((computedValue as AnyFile).id)"
+                            />
+                        </div>
                         <UButton
-                            class="hidden group-hover:block"
+                            v-else-if="['success', 'preview'].includes((computedValue as AnyFile).status) && !readonly"
                             icon-style
-                            icon="ArrowPath"
+                            icon="XMark"
                             plain
-                            text-color="primary-600"
-                            color="primary-600"
-                            @click="handleReupload(computedFiles[0].id)"
+                            text-color="red-600"
+                            color="red-600"
+                            @click="handleDelete()"
                         />
                     </div>
-                    <UButton
-                        v-else-if="computedFiles[0].status === 'success' && !readonly"
-                        icon-style
-                        icon="XMark"
-                        plain
-                        text-color="red-600"
-                        color="red-600"
-                        @click="handleDelete(computedFiles[0].id)"
-                    />
                 </div>
-            </div>
-            <input ref="fileInput" type="file" class="hidden" @change="handleChange">
-            <div v-if="multiple || !computedFiles.length" class="flex flex-col items-center text-center">
-                <UIcon value="CloudArrowDown" size="40"/>
-                <p class="font-bold">Drag and Drop</p>
-                <p class="text-sm text-gray-400 after:content-[''] after:">
-                    or
-                </p>
-                <UButton class="mt-0.5" label="Browse Files" @click="handleOpen" size="xs"/>
-            </div>
+                <div v-else class="flex flex-col items-center text-center">
+                    <UIcon value="CloudArrowDown" size="40"/>
+                    <p class="font-bold">Drag and Drop</p>
+                    <p class="text-sm text-gray-400 after:content-[''] after:">
+                        or
+                    </p>
+                    <UButton class="mt-0.5" label="Browse Files" @click="handleOpen" size="xs"/>
+                </div>
+                <input ref="fileInput" type="file" class="hidden" @change="handleChange">
+            </template>
         </div>
-        <div v-if="multiple" class="flex flex-wrap gap-5 py-2 px-1 mt-2">
-            <div v-for="file in computedFiles">
-                <img class="object-cover rounded-lg" :src="file.original.src" alt="" style="aspect-ratio: 16/12">
-            </div>
-        </div>
+        <!--        <div v-if="multiple" class="flex flex-wrap gap-5 py-2 px-1 mt-2">
+                    <div v-for="file in computedFiles">
+                        <img class="object-cover rounded-lg" :src="file.original.src" alt="" style="aspect-ratio: 16/12">
+                    </div>
+                </div>-->
     </div>
 </template>
 
 <script setup lang="ts">
 import upload from "~/api/upload";
 import { v4 } from "uuid";
+import { AnyFile } from "~/types/global";
+
+export interface UploadFile {
+    id: string
+    [key: string]: string
+}
 
 export interface Props {
     multiple?: boolean
-    files: {
-        name: string
-        id: string
-        [key: string]: string
-    }[],
+    modelValue?: UploadFile[] | UploadFile | null,
+    previewValue?: string | string[]
     loading: number
     readonly: boolean
     relation: string
@@ -90,12 +95,13 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
     multiple: false,
     loading: 0,
-    files: () => []
 })
 
+
 const emit = defineEmits<{
-    'update:files': [v: Props['files']]
+    'update:modelValue': [v: Props['modelValue']]
     'update:loading': [v: Props['loading']]
+    'preview-removed': []
 }>()
 
 const fileInput = ref<any>(null)
@@ -103,15 +109,27 @@ const fileZone = ref<any>(null)
 
 const uploadingFiles = ref<any[]>([])
 
-const computedFiles = computed(() => {
-    return [
-        ...uploadingFiles.value,
-        ...props.files.map(file => ({
-            ...file,
-            status: 'success',
-        }))
-    ]
+const computedValue = computed(() => {
+    if (props.multiple) {
+        return [
+            ...uploadingFiles.value,
+            ...Array.isArray(props.modelValue) ?
+                (props.modelValue as UploadFile[]).map(file => ({
+                    ...file,
+                    status: 'success'
+                })) : []
+        ]
+    } else {
+        return props.modelValue ? {
+            ...props.modelValue,
+            status: 'success'
+        } : uploadingFiles.value[0] || (props.previewValue ? {
+            image: props.previewValue,
+            status: 'preview'
+        } : null)
+    }
 })
+
 
 const handleOpen = () => {
     fileInput.value.click()
@@ -151,11 +169,19 @@ const handleUpload = async (fileList: FileList) => {
 
 
         const files = await upload.UPLOAD_IMAGES(formData)
-        emit('update:files', [...props.files, ...files.map((file: any) => ({
-            name: file.name,
-            id: file.id,
-            image: file.original.url
-        }))])
+
+        if (props.multiple) {
+            emit('update:modelValue', [...Array.isArray(props.modelValue) ? props.modelValue : [], ...files.map((file: any) => ({
+                id: file.id,
+                image: file.original.url
+            }))])
+        } else {
+            emit('update:modelValue', {
+                id: files[0].id,
+                image: files[0].original.url
+            })
+        }
+
         uploadingFiles.value = uploadingFiles.value.filter(filter => !ids.includes(filter.id))
     } catch (e) {
         uploadingFiles.value = uploadingFiles.value.map(filter => !ids.includes(filter.id) ? filter : {
@@ -171,158 +197,14 @@ const handleReupload = (id: string) => {
 
 }
 
-const handleDelete = (ids: string[]) => {
-    emit('update:files', props.files.filter(file => !ids.includes(file.id)))
-}
-
-</script>
-
-<!--
-
-<template>
-    <div>
-        <div
-            class="relative py-6 border-2 border-gray-400 border-dashed rounded-lg flex items-center justify-center select-none"
-            ref="fileZone"
-            @drop.prevent="handleDrop"
-            @dragover.prevent
-        >
-            <div v-if="computedFiles.length && !multiple" class="relative h-[160px] group rounded-lg overflow-hidden">
-                <img class="object-cover rounded-lg max-h-full" :src="computedFiles[0].src" alt="">
-                <div
-                    :class="{'opacity-0': computedFiles[0].status === 'success'}"
-                    class="flex items-center justify-center absolute inset-0 group-hover:opacity-100 bg-black/50 hover:bg-black/60 duration-150 "
-                >
-                    <ULoading
-                        v-if="computedFiles[0].status === 'pending'"
-                        size="40"
-                    />
-                    <div v-else-if="computedFiles[0].status === 'error'" class="flex flex-col items-center justify-center gap-2">
-                        <UIcon
-                            class="group-hover:hidden"
-                            value="ExclamationTriangle"
-                            size="36"
-                            color="red-600"
-                        />
-                        <UButton
-                            class="hidden group-hover:block"
-                            icon-style
-                            icon="ArrowPath"
-                            plain
-                            text-color="primary-600"
-                            color="primary-600"
-                            @click="handleReupload(computedFiles[0].id)"
-                        />
-                    </div>
-                    <UButton
-                        v-else-if="computedFiles[0].status === 'success'"
-                        icon-style
-                        icon="XMark"
-                        plain
-                        text-color="red-600"
-                        color="red-600"
-                        @click="handleDelete(computedFiles[0].id)"
-                    />
-                </div>
-                <p v-if="!images"></p>
-            </div>
-            <input ref="fileInput" type="file" class="hidden" @change="handleChange">
-            <div v-if="multiple || !computedFiles.length" class="flex flex-col items-center text-center" >
-                <UIcon value="CloudArrowDown" size="40"/>
-                <p class="font-bold">Drag and Drop</p>
-                <p class="text-sm text-gray-400 after:content-[''] after:">
-                    or
-                </p>
-                <UButton class="mt-0.5" label="Browse Files"  @click="handleOpen" size="xs"/>
-            </div>
-        </div>
-        <div v-if="multiple" class="grid grid-cols-4 gap-3 py-2 px-1 mt-2">
-            <div v-for="file in computedFiles">
-                <img class="object-cover rounded-lg" :src="file.src" alt="" style="aspect-ratio: 16/12">
-                <p v-if="!images"></p>
-            </div>
-        </div>
-    </div>
-</template>
-
-<script setup lang="ts">
-import upload from "~/api/upload";
-import { v4 } from "uuid";
-
-export interface Props {
-    images?: boolean,
-    multiple?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    images: false,
-    multiple: false
-})
-
-const fileInput = ref<any>(null)
-const fileZone = ref<any>(null)
-
-const files = ref<any[]>([])
-
-const computedFiles = computed(()=>{
-    return files.value.map(file => ({
-        ...file,
-        src: URL.createObjectURL(file.file)
-    }))
-})
-
-const handleOpen = () => {
-    fileInput.value.click()
-}
-
-const handleDrop = (e: any) => {
-    handleUpload(e.dataTransfer.files)
-}
-
-const handleChange = () => {
-    handleUpload(fileInput.value.files)
-    fileInput.value.value = null
-}
-
-const handleUpload = async (fileList: FileList) => {
-    const ids: string[] = []
-    files.value.push(...[...fileList].map(file => {
-        const id = v4()
-        ids.push(id)
-        return {
-            file,
-            status: 'pending',
-            id
-        }
-    }))
-
-    const formData = new FormData();
-
-    [...fileList].map(file => {
-        formData.append('images', file)
-    })
-
-    formData.append('target', 'course-cover')
-
-    try {
-        await upload.UPLOAD_IMAGES(formData)
-        files.value = files.value.map(file => ({...file, status: 'success'}))
-    } catch (e){
-        console.log(e)
-        files.value = files.value.map(file => ({...file, status: 'error'}))
+const handleDelete = (ids?: string[]) => {
+    if (props.previewValue) emit('preview-removed')
+    if (ids && Array.isArray(props.modelValue)) {
+        emit('update:modelValue', props.modelValue.filter(file => !ids.includes(file.id)))
+    } else {
+        emit('update:modelValue', null)
     }
-}
 
-const handleReupload = (id: string) => {
-
-}
-
-const handleDelete = (id: string) => {
-    files.value = files.value.filter(file => file.id !== id)
 }
 
 </script>
-
-<style scoped>
-
-</style>-->

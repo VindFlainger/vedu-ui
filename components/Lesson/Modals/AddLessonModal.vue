@@ -24,7 +24,9 @@
             </div>
             <drag-drop-file-upload
                 v-model:loading="loadingFiles"
-                v-model:files="files"
+                v-model="image"
+                :preview-value="imagePreview"
+                @preview-removed="imagePreview = null"
                 relation="lesson-cover"
                 class="mt-"
             />
@@ -41,9 +43,9 @@
                     :disabled="loading"
                 />
                 <u-button
-                    :disabled="loading || submitDisabled"
+                    :disabled="submitDisabled"
                     :loading="loading"
-                    label="Save"
+                    :label="lesson ? 'Save' : 'Add'"
                     @click="submit"
                 />
             </div>
@@ -66,32 +68,49 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-    'action': []
+    'added': []
+    'edited': []
 }>()
 
 const modal = ref<any>()
 
 const name = ref("")
 const content = ref("")
-const files = ref<AnyFile[]>([])
+const image = ref<AnyFile>()
+const imagePreview = ref<string | null>(null)
 const loadingFiles = ref(0)
 
 const submitDisabled = computed(()=> {
-    return !name.value || !content.value || !files.value[0]
+    return !name.value
+        || !content.value
+        || (!image.value && !imagePreview.value)
+        || (props.lesson && props.lesson.name === name.value && props.lesson.content === content.value && !image.value)
 })
 
 const { loading, addLoading, removeLoading } = useLoading()
 const submit = async () => {
     try {
         addLoading()
-        const lesson = await $api.lesson.CREATE_LESSON({
-            course_id: props.courseId,
-            content: content.value,
-            name: name.value,
-            image: files.value?.[0]?.id as any
-        })
+        if (!props.lesson) {
+            await $api.lesson.CREATE_LESSON({
+                course_id: props.courseId,
+                content: content.value,
+                name: name.value,
+                image: (image.value as AnyFile).id
+            })
+            emit('added')
+        }
+        else {
+            await $api.lesson.EDIT_LESSON({
+                course_id: props.courseId,
+                lesson_id: props.lesson.id,
+                content: content.value,
+                name: name.value,
+                image: image.value?.id
+            })
+            emit('edited')
+        }
 
-        emit('action')
         modal.value.close()
     } catch (err) {
         console.log(err)
@@ -103,7 +122,7 @@ const submit = async () => {
 if (props.lesson) {
     name.value = props.lesson.name
     content.value = props.lesson.content
-    files.value
+    if (props.lesson.image) imagePreview.value = props.lesson.image
 }
 
 

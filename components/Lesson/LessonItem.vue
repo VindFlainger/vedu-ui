@@ -38,17 +38,17 @@
                 icon="Pencil"
                 icon-style
                 color="blue-500"
-                @click="$emitter.emit('open:confirm-delete', {
-                    title: $notifications.DELETE_LESSON_REQUEST.title(lesson.name),
-                    text: $notifications.DELETE_LESSON_REQUEST.message,
-                    cb: () => emit('delete')
-                })"
+                @click="emit('edit')"
             />
             <u-button
                 icon="Trash"
                 icon-style
                 color="red-500"
-                @click="emit('edit')"
+                @click="$emitter.emit('open:confirm-delete', {
+                    title: $notifications.DELETE_LESSON_REQUEST.title(lesson.name),
+                    text: $notifications.DELETE_LESSON_REQUEST.message,
+                    cb: () => emit('delete')
+                })"
             />
         </div>
     </div>

@@ -1,5 +1,7 @@
 const dayFormat = 'DD'
+const dateTimeFormat = 'ff'
 
 export default {
-    dayFormat
+    dayFormat,
+    dateTimeFormat
 }

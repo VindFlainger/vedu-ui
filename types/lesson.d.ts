@@ -84,6 +84,12 @@ export interface LessonTest {
     end: string
 }
 
+export interface LessonTestAttemptAnswer {
+    question_id: string,
+    passed_score: number | null
+    value: null | string | string[]
+}
+
 export interface LessonTestAttempt {
     id: string
     test: string,
@@ -95,13 +101,16 @@ export interface LessonTestAttempt {
         total_score: number | null,
         checked_at: string | null
     },
-    answers: {
-        question_id: string,
-        passed_score: number | null
-        value: null | string | string[]
-    }[],
+    answers: LessonTestAttemptAnswer[],
     created_at: string,
     updated_at: string,
+}
+
+export interface LessonTestAttemptFullData extends LessonTestAttempt{
+    student: {
+        personal_data: PersonalData,
+        avatar: SizedImage
+    }
 }
 
 export interface SingleQuestionNoAnswersOption {
@@ -127,7 +136,6 @@ export type QuestionNoAnswersOptions<T extends QuestionType> =
 
 export interface LessonTestQuestionNoAnswers<T extends QuestionType = any> {
     id: string
-    source: string
     type: T
     score: number
     options: QuestionNoAnswersOptions<T>

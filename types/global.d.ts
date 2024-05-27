@@ -13,3 +13,10 @@ export interface AnyFile {
     name: string
     [key: string]: any
 }
+
+export interface BaseError {
+    code: number
+    fields?: Record<string, string[]>
+    message: string
+    data?: any
+}

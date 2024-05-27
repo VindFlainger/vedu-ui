@@ -211,7 +211,7 @@ const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
             return {
-                height: 32,
+                height: 27,
                 paddingContent: '1px 6px',
                 padding: `0 ${isSuffixed.value ? '1px' : '2px'} 0 ${
                     isPrefixed.value ? '1px' : '2px'
@@ -219,7 +219,7 @@ const sizeFrames = computed(() => {
                 labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 iconSizes: {
                     default: 18,
-                    plus: 9,
+                    plus: 8,
                 },
                 iconMargin: 3
             }

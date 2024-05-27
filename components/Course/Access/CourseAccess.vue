@@ -30,7 +30,7 @@
                 <nuxt-page />
             </div>
         </div>
-        <div v-else>
+        <div v-else class="h-full">
             <nuxt-page />
         </div>
     </template>

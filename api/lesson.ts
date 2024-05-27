@@ -7,7 +7,7 @@ import {
     LessonMaterial,
     LessonPreview,
     LessonTest,
-    LessonTestAttempt, LessonTestQuestionNoAnswers
+    LessonTestAttempt, LessonTestAttemptFullData, LessonTestQuestionNoAnswers
 } from "~/types/lesson";
 
 
@@ -159,10 +159,16 @@ export interface GetTestAttemptPayload {
     test_id: string
     attempt_id: string
 }
-export interface GetTestAttemptData {
+
+export interface GetTestAttemptStudentData {
     attempt: LessonTestAttempt
     questions: LessonTestQuestionNoAnswers[],
     test: Omit<LessonTest, "questions" | "attempts">
+}
+
+export interface GetTestAttemptInstructorData {
+    attempt: LessonTestAttempt
+    test: Omit<LessonTest, "attempts">
 }
 
 
@@ -171,9 +177,30 @@ export interface GetTestAttemptsPayload {
     lesson_id: string
     test_id: string
 }
+
 export interface GetTestAttemptsData {
     attempts: Omit<LessonTestAttempt, 'answers'>[],
     test: Omit<LessonTest, "questions" | "attempts">
+}
+
+export interface GetTestStudentsAttemptsPayload {
+    course_id: string
+    lesson_id: string
+    test_id: string
+    page: string | number
+    per_page: string | number
+    students?: string[],
+    sort?: Record<string, any>
+}
+
+export interface GetTestStudentsAttemptsData {
+    attempts: Omit<LessonTestAttemptFullData, 'answers'>[]
+    test: Omit<LessonTest, "attempts">
+    meta: {
+        page: number
+        per_page: number
+        total: number
+    }
 }
 
 
@@ -195,13 +222,14 @@ export interface SaveTestAttemptData {
 }
 
 
-export interface AddAssignmentResponsePayload{
+export interface AddAssignmentResponsePayload {
     course_id: string
     lesson_id: string
     assignment_id: string
     files: string[]
     text?: string
 }
+
 export type AddAssignmentResponseData = LessonAssignmentResponse
 
 export interface CreateLessonPayload {
@@ -211,22 +239,67 @@ export interface CreateLessonPayload {
     image: string
     order?: number
 }
+
 export interface CreateLessonData {
+
+}
+
+
+export interface EditLessonPayload {
+    course_id: string
+    lesson_id: string
+    name?: string
+    content?: string
+    image?: string
+    order?: number
+}
+
+export interface EditLessonData {
 
 }
 
 export interface GetLessonsPayload {
     course_id: string
 }
+
 export type GetLessonsData = LessonPreview[]
 
 export interface DeleteLessonPayload {
     course_id: string
     lesson_id: string
 }
+
 export interface DeleteLessonData {
 
 }
+
+export interface ForceFinishTestAttemptPayload {
+    force_zero?: boolean
+    reason: string
+    course_id: string
+    lesson_id: string
+    test_id: string
+    attempt_id: string
+}
+
+export type  ForceFinishTestAttemptData = LessonTestAttempt
+
+
+
+export interface ChangeCheckResultsAttemptPayload {
+    course_id: string
+    lesson_id: string
+    test_id: string
+    attempt_id: string
+    answers?: {
+        question_id: string
+        passed_score: number
+    }[]
+    total_score?: number
+}
+
+export type ChangeCheckResultsAttemptData = LessonTestAttempt
+
 
 export default {
     CREATE_LESSON: (
@@ -234,6 +307,12 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<CreateLessonData>('POST', `/courses/${data.course_id}/lesson`, data, options, controls),
+
+    EDIT_LESSON: (
+        data: EditLessonPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<EditLessonData>('PATCH', `/courses/${data.course_id}/lessons/${data.lesson_id}`, data, options, controls),
 
     DELETE_LESSON: (
         data: DeleteLessonPayload,
@@ -344,7 +423,7 @@ export default {
         data: GetTestAttemptPayload,
         options?: NitroFetchOptions<any>,
         controls?: Controls
-    ) => _fetch<GetTestAttemptData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}`, data, options, controls),
+    ) => _fetch<GetTestAttemptStudentData | GetTestAttemptInstructorData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}`, data, options, controls),
 
     GET_TEST_ATTEMPTS: (
         data: GetTestAttemptsPayload,
@@ -352,9 +431,27 @@ export default {
         controls?: Controls
     ) => _fetch<GetTestAttemptsData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts`, data, options, controls),
 
+    GET_TEST_STUDENTS_ATTEMPTS: (
+        data: GetTestStudentsAttemptsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetTestStudentsAttemptsData>('GET', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/students-attempts`, data, options, controls),
+
     SAVE_TEST_ATTEMPT: (
         data: SaveTestAttemptPayload,
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<SaveTestAttemptPayload>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}/save`, data, options, controls),
+
+    FORCE_FINISH_TEST_ATTEMPT: (
+        data: ForceFinishTestAttemptPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<ForceFinishTestAttemptData>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}/force-finish`, data, options, controls),
+
+    CHANGE_CHECK_RESULTS_ATTEMPT: (
+        data: ChangeCheckResultsAttemptPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<ChangeCheckResultsAttemptData>('POST', `/courses/${data.course_id}/lessons/${data.lesson_id}/tests/${data.test_id}/attempts/${data.attempt_id}/recheck`, data, options, controls),
 }

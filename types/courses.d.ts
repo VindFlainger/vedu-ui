@@ -1,6 +1,7 @@
 import { SizedImage } from '~/types/global'
 import { PersonalData } from '~/types/accout'
 import { UserPreview } from "~/types/account";
+import { LessonPreview } from "~/types/lesson";
 
 export interface CoursesCourse {
     name: string
@@ -229,7 +230,7 @@ export interface CourseAccess {
         test_count: number,
         assignments_count: number
     },
-    lessons: CourseLessonPreview[]
+    lessons: LessonPreview[]
     students: {
         total: number
         preview: UserPreview[]

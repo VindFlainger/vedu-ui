@@ -132,6 +132,21 @@
         @confirm="finishAttempt"
         @close="showAttentionModal = false"
     />
+
+    <AttemptForceFinishedModal
+        v-if="forceFinished"
+        :date="forceFinished.data"
+        :reason="forceFinished.reason"
+        @back="router.push({
+            name: 'courses-course-lessons-lesson-tests',
+            params: {
+                course: route.params.course as string,
+                lesson: route.params.lesson as string
+            }
+        })"
+        @results="fetchAttempt"
+        @close="forceFinished = null"
+    />
 </template>
 
 <script setup lang="ts">
@@ -139,9 +154,13 @@ import { LessonTest, LessonTestAttempt, LessonTestQuestionNoAnswers } from "~/ty
 import AttemptTextQuestion from "~/components/Lesson/Tests/Attempt/Questions/AttemptTextQuestion.vue";
 import AttemptSingleQuestion from "~/components/Lesson/Tests/Attempt/Questions/AttemptSingleQuestion.vue";
 import TestAttentionModal from "~/components/Lesson/Tests/Modals/TestAttentionModal.vue";
+import { BaseError } from "~/types/global";
+import AttemptForceFinishedModal from "~/components/Lesson/Tests/Modals/AttemptForceFinishedModal.vue";
+import { string } from "yup";
 
 const { $api } = useNuxtApp()
 const route = useRoute()
+const router = useRouter()
 
 const showAttentionModal = ref(false)
 const finished = ref(false)
@@ -174,6 +193,8 @@ const finishedData = computed(() => {
 })
 
 
+const forceFinished = ref<null | { data: string, reason: string}>(null)
+
 const saveInterval = ref()
 const { loading: saveLoading, addLoading: addSaveLoading, removeLoading: removeSaveLoading } = useLoading()
 const saveAttempt = async (finish?: boolean) => {
@@ -195,8 +216,17 @@ const saveAttempt = async (finish?: boolean) => {
             if (finish) {
                 saveInterval.value
             }
-        } catch (err) {
-            console.log(err)
+        } catch (err: any) {
+            if (err?.data) {
+                switch (err.data.code) {
+                    case (7005):
+                        forceFinished.value = {
+                            reason: err.data.data.reason,
+                            data: err.data.data.forced_at
+                        }
+                        break
+                }
+            }
         } finally {
             removeSaveLoading()
         }

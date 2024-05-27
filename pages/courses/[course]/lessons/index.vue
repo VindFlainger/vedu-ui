@@ -7,17 +7,19 @@
                 :lesson="lesson"
                 :course-id="course.id"
                 @delete="handleDelete(lesson.id)"
-                @edit=""
+                @edit="handleEdit(lesson)"
             />
         </div>
         <div v-else class="flex flex-col gap-3">
-            <LessonItemSkeleton v-for="(_, i) in 5" :key="i"/>
+            <LessonItemSkeleton v-for="(_, i) in 8" :key="i"/>
         </div>
         <AddLessonModal
             v-if="showAddLessonModal"
             :course-id="course.id"
-            @close="showAddLessonModal = false"
-            @action="refetchLessons"
+            :lesson="selectedLesson"
+            @close="showAddLessonModal = false; selectedLesson = null"
+            @added="refetchLessons"
+            @edited="refetchLessons"
         />
         <nuxt-page/>
     </div>
@@ -66,13 +68,14 @@ const handleDelete = async (lessonId: string) => {
     }
 }
 
-const selectedLesson = mdiCreditCardRefresh
-const handleEdit = async (lesson: LessonPreview) => {
 
+const selectedLesson = ref()
+const handleEdit = async (lesson: LessonPreview) => {
+    selectedLesson.value = lesson
+    showAddLessonModal.value = true
 }
 
 </script>
 
 <style scoped>
-
 </style>

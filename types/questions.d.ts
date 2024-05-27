@@ -21,21 +21,22 @@ export type QuestionOptions<T extends QuestionType> =
         T extends 'single' ? SingleQuestionOption[] :
             T extends 'multiple' ? MultipleQuestionOption[] :
                 T extends 'order' ? OrderQuestionOption[] :
-                    never;
+                    any;
 
 
 export interface QuestionFindResult<T extends QuestionType = any> {
     id: string
     options: QuestionOptions<T>
     title: string
-    owner: string,
-    type: T,
-    content: string,
+    owner: string
+    type: T
+    content: string
     tags: {
-        id: string,
-        name: string,
+        id: string
+        name: string
         owner: string
-    },
-    created_at: string,
-    updated_at: string,
+    }
+    created_at: string
+    updated_at: string
+    score: number
 }
