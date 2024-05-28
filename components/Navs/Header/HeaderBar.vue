@@ -50,7 +50,7 @@ const newUsersLinks = [
 
 const studentLinks = [
     {
-        label: 'Dashboard',
+        label: 'Панель управления',
         pathName: 'dashboard'
     },
     {
@@ -69,19 +69,19 @@ const studentLinks = [
 
 const instructorLinks = [
     {
-        label: 'Dashboard',
+        label: 'Панель управления',
         pathName: 'dashboard'
     },
     {
-        label: 'News',
+        label: 'Новости',
         pathName: 'news'
     },
     {
-        label: 'Questions',
+        label: 'База вопросов',
         pathName: 'questions'
     },
     {
-        label: 'My Courses',
+        label: 'Мои курсы',
         pathName: 'courses'
     }
 ]

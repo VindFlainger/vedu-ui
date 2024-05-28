@@ -5,6 +5,7 @@ import global from '~/api/global'
 import billing from '~/api/billing'
 import courses from '~/api/courses'
 import lesson from '~/api/lesson'
+import news from '~/api/news'
 
 export default {
     auth,
@@ -13,5 +14,6 @@ export default {
     global,
     billing,
     courses,
-    lesson
+    lesson,
+    news
 }
