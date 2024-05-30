@@ -1,14 +1,14 @@
 <template>
     <u-dialog
         ref="modal"
-        title="Assignment Responses"
+        title="Ответы на задание"
         icon="Plus"
         max-width="800"
     >
         <div>
             <div>
                 <p class="font-bold text-gray-900 text-lg">
-                    Relevant
+                    Ожидают
                 </p>
                 <div class="mt-2">
                     <AssignmentResponse
@@ -26,7 +26,7 @@
 
             <div class="mt-5">
                 <p class="font-bold text-gray-900 text-lg">
-                    Viewed
+                    Просмотренные
                 </p>
                 <div class="mt-2">
                     <AssignmentResponse

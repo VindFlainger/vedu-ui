@@ -26,6 +26,6 @@ export interface Question {
     content: string,
     tags: QuestionTag[],
     options: QuestionAnswers
-    updatedAt: string,
-    createdAt: string
+    updated_at: string,
+    created_at: string
 }

@@ -12,7 +12,7 @@
                 @update:model-value="handlePerPageChange"
             />
             <p class="text-gray-500 text-sm ml-4">
-                Showing {{ from }} to {{ to }} of {{ count }}
+                Показано {{ from }} до {{ to }} из {{ count }}
             </p>
             <div class="mr-0 ml-auto flex items-center gap-2">
                 <UButton icon-style icon="ArrowLeft" @click="handlePageChange(-1)"></UButton>

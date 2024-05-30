@@ -122,7 +122,7 @@
                         <div class="px-2 py-3">
                             <div class="flex items-center  text-sm text-gray-600">
                                 <UIcon value="Funnel" size="18" color="gray-600"/>
-                                <p class="ml-[6px]">No items matching query</p>
+                                <p class="ml-[6px]">{{ noItemsFoundText }}</p>
                             </div>
                             <button
                                 v-if="addable"
@@ -190,7 +190,8 @@ export interface Props {
     hideSelected?: boolean,
     filterable?: boolean,
     multiple?: boolean,
-    returnObject?: boolean
+    returnObject?: boolean,
+    noItemsFoundText?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -210,7 +211,8 @@ const props = withDefaults(defineProps<Props>(), {
     color: 'gray-400',
     addableLabel: 'Add new',
     returnObject: false,
-    multiple: false
+    multiple: false,
+    noItemsFoundText: 'No items matching query'
 })
 
 const attrs = useAttrs()

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col min-h-[100%] relative">
+    <div class="py-4 flex flex-col min-h-[100%] relative">
         <div
             v-if="loading && questions.length"
             class="absolute z-20 -inset-3 rounded-xl bg-gray-100/50 shadow-[0_0_15px_#f3f4f6]"

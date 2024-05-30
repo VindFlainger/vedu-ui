@@ -3,31 +3,31 @@
         <p class="font-bold text-lg text-primary-900"> {{ question.title }} </p>
         <div>
             <div class="mt-3 text-sm">
-                <p class="capitalize">
-                    <span class="font-bold">Type:</span>
-                    {{ question.type }}
+                <p>
+                    <span class="font-bold">Тип:</span>
+                    {{ typeOptions.find(option => option.value === question.type)?.label }}
                 </p>
             </div>
             <div class="mt-3 text-sm">
                 <p class="capitalize">
-                    <span class="font-bold">Created:</span>
-                    {{ $luxon.fromISO(question.createdAt).toFormat($dateFormats.dayFormat) }}
+                    <span class="font-bold">Создан:</span>
+                    {{ $luxon.fromISO(question.created_at).toFormat($dateFormats.dayFormat) }}
                 </p>
             </div>
             <div class="mt-3 text-sm">
                 <p class="capitalize">
-                    <span class="font-bold">Updated:</span>
-                    {{ $luxon.fromISO(question.updatedAt).toFormat($dateFormats.dayFormat) }}
+                    <span class="font-bold">Изменен:</span>
+                    {{ $luxon.fromISO(question.updated_at).toFormat($dateFormats.dayFormat) }}
                 </p>
             </div>
             <div class="mt-3 text-sm">
-                <span class="font-bold">Content:</span>
+                <span class="font-bold">Текстовое содержание:</span>
                 <client-only>
                     <p class="line-clamp-3 question-content h-[60px]" v-html="question.content"></p>
                 </client-only>
             </div>
             <div class="text-sm mt-3">
-                <span class="font-bold">Tags:</span>
+                <span class="font-bold">Теги:</span>
                 <div class="flex flex-wrap question-tags gap-[6px] mt-1 pb-1">
                     <UTag
                         v-for="tag in question.tags"
@@ -40,14 +40,16 @@
             </div>
         </div>
         <div class="flex mt-auto mb-0 items-center justify-between pt-6">
-            <UButton label="Edit" size="md" :font-size="14" class="text-sm" @click="emit('edit')"/>
+            <UButton label="Изменить" size="md" :font-size="14" class="text-sm" @click="emit('edit')"/>
             <UButton icon-style icon="Trash" color="red-400" size="lg" tag="button" @click="emit('remove')"/>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { Question, QuestionTag } from "~/models/QuestionModel";
+import { Question } from "~/models/QuestionModel";
+import { questionOptions } from "~/config/questions/params";
+const typeOptions = ref(questionOptions)
 
 defineOptions({
     inheritAttrs: false

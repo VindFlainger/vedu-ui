@@ -35,7 +35,7 @@
                 icon-style
                 color="red-500"
                 @click="$emitter.emit('open:confirm-delete', {
-                    title: `Delete ${material.file.name}?`,
+                    title: `Удалить урок ${material.file.name}?`,
                     text: 'This will make this material inaccessible to students and it will be impossible to restore it.',
                     cb: handleDelete
                 })"

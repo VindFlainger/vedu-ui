@@ -1,6 +1,6 @@
 export default {
     DELETE_LESSON_REQUEST: {
-        title: (v: string) => `Delete «${v}» ?`,
-        message: `This will make this material inaccessible to students and it will be impossible to restore it.`
+        title: (v: string) => `Удалить урок «${v}» ?`,
+        message: `Это сделает данный урок недоступным для учащихся, и восстановить его будет невозможно.`
     }
 }

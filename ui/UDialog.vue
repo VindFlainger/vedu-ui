@@ -9,7 +9,7 @@
         >
             <div
                 v-if="showContent"
-                class="content rounded-2xl overflow-hidden max-sm:!w-[90%]"
+                class="relative content rounded-2xl overflow-hidden max-sm:!w-[90%]"
                 :style="styles"
                 @click.stop
             >
@@ -28,11 +28,21 @@
                         @click="handleClose()"
                     />
                 </div>
+                <UIcon
+                    v-else
+                    class="absolute top-[10px] right-[10px] z-50 cursor-pointer hover:scale-110 duration-300"
+                    value="XMark"
+                    color="gray-800"
+                    @click="handleClose()"
+                />
                 <div class="max-h-[calc(100vh-100px)] flex flex-col z-10">
                     <div
-                        class="overflow-y-auto max-h-full pretty_scrollbar"
+                        class="overflow-y-auto max-h-full modal-scrollbar"
                         :style="stylesBody"
-                        :class="{'-mt-3': !hideHeader}"
+                        :class="{
+                            '-mt-3': !hideHeader,
+                            'modal-scrollbar-no-header': hideHeader
+                        }"
                     >
                         <slot :close="handleClose"></slot>
                     </div>
@@ -169,6 +179,26 @@ defineExpose({
     top: 0;
     left: 0;
     background: url("/ui/assets/images/layered-waves-haikei1.svg") 100% 100% / cover;
+}
+
+.modal-scrollbar::-webkit-scrollbar {
+    width: 16px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+    border: 7px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #d2cece;
+    border-radius: 9999px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track{
+    margin-top: 9px;
+    margin-bottom: 6px;
+}
+
+.modal-scrollbar-no-header::-webkit-scrollbar-track {
+    margin-top: 35px !important;
 }
 
 </style>

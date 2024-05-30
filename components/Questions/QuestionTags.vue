@@ -4,7 +4,7 @@
             <USelect
                 :model-value="modelValue"
                 class="max-w-xs grow"
-                placeholder="Tag Name"
+                placeholder="Имя тега"
                 filterable
                 hide-selected
                 hide-checkbox-style
@@ -13,7 +13,8 @@
                 value-name="id"
                 addable
                 multiple
-                addable-label="Add new Tag"
+                no-items-found-text="По вашему запросу ничего не найдено"
+                addable-label="Добавить новый тег"
                 :loading="createLoading"
                 @add="handleCreate"
                 @update:model-value="emit('update:modelValue', $event)"
@@ -33,7 +34,7 @@
                 />
             </div>
             <p v-else class="grow text-center text-gray-500 text-[15px]">
-                No Tags Added
+                Теги не найдены
             </p>
         </div>
     </div>

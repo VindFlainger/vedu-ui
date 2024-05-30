@@ -1,7 +1,7 @@
 <template>
     <u-dialog
         ref="modal"
-        :title="edit ? 'Edit Assignment' : 'Add Assignment'"
+        :title="edit ? 'Редактировать задание' : 'Добавить задание'"
         icon="Plus"
         max-width="800"
         :freeze="loading"
@@ -19,20 +19,19 @@
             />
         </template>
         <template #footer>
-            <div class="flex justify-between">
-                <u-button
-                    :label="edit ? 'Save' : 'Add'"
-                    :disabled="submitDisabled || loadingFiles"
-                    :loading="loading"
-                    @click="submit"
-                />
+            <div class="flex justify-end gap-3">
                 <u-button
                     class="font-bold"
-                    font-weight="600"
-                    label="Cancel"
+                    label="Отмена"
                     :disabled="loading"
                     text
                     color="red-500"
+                />
+                <u-button
+                    :label="edit ? 'Сохранить' : 'Добавить'"
+                    :disabled="submitDisabled || loadingFiles"
+                    :loading="loading"
+                    @click="submit"
                 />
             </div>
         </template>

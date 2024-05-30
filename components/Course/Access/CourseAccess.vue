@@ -19,7 +19,7 @@
                     <template v-if="route.name === 'courses-course-lessons'">
                         <u-button
                             v-if="isInstructor"
-                            label="Add Lesson"
+                            label="Добавить урок"
                             right-icon="Plus"
                             @click="$emitter.emit('open:add-lesson-modal')"
                         />
@@ -52,42 +52,42 @@ const route = useRoute()
 
 const studentsTabs = [
     {
-        label: 'Activity',
+        label: 'Активность',
         value: ''
     },
     {
-        label: 'Lessons',
+        label: 'Уроки',
         value: 'lessons'
     },
     {
-        label: 'Instructors',
+        label: 'Инструкторы',
         value: 'instructors'
     },
     {
-        label: 'Reviews',
+        label: 'Отзывы',
         value: 'reviews'
     },
 ]
 
 const instructorTabs = [
     {
-        label: 'Activity',
+        label: 'Активность',
         value: ''
     },
     {
-        label: 'Lessons',
+        label: 'Уроки',
         value: 'lessons'
     },
     {
-        label: 'Students',
+        label: 'Студенты',
         value: 'students'
     },
     {
-        label: 'Access',
+        label: 'Доступ',
         value: 'access'
     },
     {
-        label: 'Reviews',
+        label: 'Отзывы',
         value: 'reviews'
     },
 ]

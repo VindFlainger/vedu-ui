@@ -1,5 +1,9 @@
 <template>
-    <UDialog title="Create Question" icon="Plus" ref="dialog">
+    <u-dialog
+        title="Добавление вопроса"
+        icon="Plus"
+        ref="dialog"
+    >
         <template v-slot:default="{close}">
             <div>
                 <div class="flex gap-2 flex-col">
@@ -11,7 +15,7 @@
                         ]]"
                         info-line
                         maxlenght="30"
-                        label="Title"
+                        label="Название"
                         label-class="!font-bold"
                         required
                     />
@@ -23,13 +27,13 @@
                         v-model="type"
                         info-line
                         required
-                        label="Type"
+                        label="Тип"
                         label-class="!font-bold"
                     />
                 </div>
                 <div class="mt-3">
                     <p class="font-bold" :class="{'text-red-500': !content.length  && submitted}">
-                        Content <span class="text-red-500 -ml-[2px] inline-block">*</span>
+                        Содержание <span class="text-red-500 -ml-[2px] inline-block">*</span>
                     </p>
                     <client-only>
                         <QuestionEditor
@@ -52,17 +56,17 @@
                             class="text-[13px] mt-1 text-gray-600"
                             :class="{'text-red-500': contentOverflow}"
                         >
-                            This scale displays the allowable payload for the question. The payload includes not only
-                            symbols, but also decorations and media. To increase the limit upgrade your plan.
+                            Эта шкала отображает допустимую полезную нагрузку для вопроса. Полезная нагрузка включает в себя не только
+                            символы, а также украшения и средства массовой информации. Чтобы увеличить лимит, обновите свой тарифный план.
                         </p>
                     </div>
                 </div>
                 <div class="mt-5">
-                    <p class="font-bold ">Tags</p>
+                    <p class="font-bold ">Теги</p>
                     <QuestionTags class="mt-2" v-model="tags"/>
                 </div>
                 <div class="mt-6">
-                    <p class="font-bold ">Correct Answers <span class="text-red-500 -ml-[2px] inline-block">*</span></p>
+                    <p class="font-bold ">Правильные ответы <span class="text-red-500 -ml-[2px] inline-block">*</span></p>
                     <QuestionTSM
                         v-if="['text', 'single', 'multiple'].includes(type)"
                         class="mt-2"
@@ -91,26 +95,26 @@
             </UTransitionExpand>
             <div class="flex gap-4 justify-end">
                 <UButton
-                    label="Cancel"
+                    label="Отмена"
                     text
                     text-color="#6b7280"
                     color="#b91c1c"
-                    class="!font-light"
                     @click="close()"
                 />
                 <UButton
-                    label="Save"
+                    label="Сохранить"
                     :disabled="submitted && failedChecks.length"
                     @click="handleCreate"
                     :loading="createLoading"
                 />
             </div>
         </template>
-    </UDialog>
+    </u-dialog>
 </template>
 
 <script setup lang="ts">
 import { Question } from "~/models/QuestionModel";
+import { questionOptions } from "~/config/questions/params";
 
 const dialog = ref()
 
@@ -124,24 +128,7 @@ const props = withDefaults(defineProps<Props>(), {})
 
 
 const characterLimit = ref(500)
-const typeOptions = ref([
-    {
-        value: 'text',
-        label: 'Text'
-    },
-    {
-        value: 'single',
-        label: 'Single'
-    },
-    {
-        value: 'multiple',
-        label: 'Multiple'
-    },
-    {
-        value: 'order',
-        label: 'Order'
-    }
-])
+const typeOptions = ref(questionOptions)
 
 const title = ref<Question['title']>('')
 const type = ref<Question['type']>('text')

@@ -2,7 +2,6 @@
     <div>
         <div class="flex items-center">
             <UDropdown
-                label="asdasd"
                 width="300"
                 popper-class="!rounded-xl"
                 @visible-change="tagsDropdownVisible = $event"
@@ -55,14 +54,14 @@
                     class="self-start group-hover:after:!bg-primary-700"
                     color="primary-800"
                 />
-                <span class="ml-[6px] text-sm">Add Question</span>
+                <span class="ml-[6px] text-sm">Новый вопрос</span>
             </div>
             <UInput
                 :model-value="searchQuery"
                 class="ml-auto mr-0 [&_input]:text-sm [&_input::placeholder]:text-gray-400 [&_input::placeholder]:font-light"
                 right-icon="MagnifyingGlass"
                 color="primary-800"
-                placeholder="Name, content or tags..."
+                placeholder="Имя, содержание, теги..."
                 @update:model-value="emit('update:searchQuery', $event)"
             />
         </div>

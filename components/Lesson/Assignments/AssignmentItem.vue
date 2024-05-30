@@ -1,18 +1,18 @@
 <template>
     <div class="relative border border-gray-200 rounded-2xl p-4 outline outline-1 outline-offset-2 outline-gray-200">
         <p class="text-gray-900 font-bold text-lg">
-            Assignment #{{ index + 1 }}
+            Задание #{{ index + 1 }}
         </p>
         <div class="mt-2">
             <div v-if="assignment.description">
                 <p class="font-medium text-gray-900">
-                    Description:
+                    Описание:
                 </p>
                 <div v-html="assignment.description"/>
             </div>
             <div class="mt-1" v-if="assignment.files.length">
                 <p class="font-medium text-gray-900">
-                    Files:
+                    Файлы:
                 </p>
                 <div class="flex gap-3 mt-2">
                     <FilePreview
@@ -29,12 +29,12 @@
         <div class="mt-5">
             <u-button
                 v-if="isInstructor"
-                label="Show Responses"
+                label="Показать ответы"
                 @click="showAssignmentResponsesModal = true"
             />
             <u-button
                 v-else
-                :label="assignment.response ? 'Show Response' : 'Add Response'"
+                :label="assignment.response ? 'Показать ответы' : 'Прикрепить ответ'"
                 @click="showAddResponseModal = true"
             />
         </div>

@@ -58,11 +58,11 @@
             <input ref="fileInput" type="file" class="hidden" @change="handleChange">
             <div v-if="multiple || !computedFiles.length" class="flex flex-col items-center text-center">
                 <UIcon value="CloudArrowDown" size="40"/>
-                <p class="font-bold">Drag and Drop</p>
+                <p class="font-bold">Перетащите</p>
                 <p class="text-sm text-gray-400 after:content-[''] after:">
-                    or
+                    или
                 </p>
-                <UButton class="mt-0.5" label="Browse Files" @click="handleOpen" size="xs"/>
+                <UButton class="mt-0.5" label="Выберите файлы" @click="handleOpen" size="xs"/>
             </div>
         </div>
         <div v-if="multiple" class="flex flex-wrap gap-5 py-2 px-1 mt-2">

@@ -24,7 +24,7 @@
         </div>
         <div v-if="!showEvaluate" class="mt-3 flex justify-end">
             <u-button
-                :label="evaluated ? 'Show Evaluation' : 'Evaluate'"
+                :label="evaluated ? 'Показать оценку' : 'Оценить'"
                 @click="showEvaluate = true"
             />
         </div>
@@ -33,7 +33,7 @@
                 <u-select
                     required
                     v-model="status"
-                    label="Status"
+                    label="Статус"
                     :options="statusOptions"
                     placeholder=""
                     :disabled="evaluated && !editEvaluate"
@@ -41,7 +41,7 @@
                 <u-input
                     required
                     v-model="points"
-                    label="Points"
+                    label="Баллы"
                     type="number"
                     min="1"
                     max="100"
@@ -53,38 +53,38 @@
                 <u-checkbox
                     v-model="extraAttempt"
                     :disabled="evaluated && !editEvaluate"
-                    label="Extra Attempt"
+                    label="Еще попытка"
                     class="text-sm"
                 />
             </div>
             <div class="mt-3">
                 <u-input
                     v-model="message"
-                    label="Message"
+                    label="Сообщение"
                     type="textarea"
                     :autosize="{ minRows: 8, maxRows: 12 }"
                     :disabled="evaluated && !editEvaluate"
                 />
             </div>
-            <div class="mt-5 flex items-end">
+            <div class="mt-5 flex gap-3 items-end">
+                <u-button
+                    class="mr-0 ml-auto"
+                    text
+                    label="Отмена"
+                    color="red-500"
+                    @click="handleCancel"
+                />
                 <u-button
                     v-if="evaluated && !editEvaluate"
-                    label="Change"
+                    label="Изменить"
                     @click="editEvaluate = true"
                 />
                 <u-button
                     v-else
-                    label="Save"
+                    label="Сохранить"
                     :disabled="!status"
                     :loading="loading"
                     @click="resolve"
-                />
-                <u-button
-                    class="mr-0 ml-auto"
-                    text
-                    label="Cancel"
-                    color="red-500"
-                    @click="handleCancel"
                 />
             </div>
         </div>
@@ -111,11 +111,11 @@ const emit = defineEmits<{
 
 const statusOptions = [
     {
-        label: 'Resolved',
+        label: 'Выполнено',
         value: 'resolved'
     },
     {
-        label: 'Rejected',
+        label: 'Отклонено',
         value: 'rejected'
     },
 ]

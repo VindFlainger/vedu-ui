@@ -1,7 +1,7 @@
 <template>
     <u-dialog
         ref="modal"
-        title="Add Test"
+        title="Добавить тест"
         icon="Plus"
         max-width="800"
         :freeze="false"

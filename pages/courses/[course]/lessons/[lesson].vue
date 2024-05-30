@@ -12,7 +12,7 @@
                 stroke-width="3"
                 color="primary-900"
             />
-            <span class="font-medium text-sm text-primary-900 group-hover:text-primary-700">Course</span>
+            <span class="font-medium text-sm text-primary-900 group-hover:text-primary-700">Назад к курсу</span>
         </nuxt-link>
         <div class="flex justify-start items-center">
             <div class="relative flex border-2 border-gray-200 border-b-0  bg-white rounded-t-3xl pt-3 pb-[3px] px-5
@@ -29,14 +29,6 @@
                 </nuxt-link>
             </div>
             <div class="ml-auto mr-0 mb-2" id="lesson-menu">
-                <!--                <template v-if="route.name === 'courses-course-lessons'">
-                                    <u-button
-                                        v-if="isInstructor"
-                                        label="Add Lesson"
-                                        right-icon="Plus"
-                                        @click="$emitter.emit('open:add-lesson-modal')"
-                                    />
-                                </template>-->
             </div>
         </div>
         <div class="bg-white p-6 rounded-3xl rounded-tl-none flex-grow border-2 border-gray-200">
@@ -56,19 +48,19 @@ const route = useRoute()
 const tabs = [
     {
         value: '',
-        label: 'Progress'
+        label: 'Прогресс'
     },
     {
         value: 'materials',
-        label: 'Materials'
+        label: 'Материалы'
     },
     {
         value: 'assignments',
-        label: 'Assignments'
+        label: 'Задания'
     },
     {
         value: 'tests',
-        label: 'Tests'
+        label: 'Тесты'
     },
 ]
 

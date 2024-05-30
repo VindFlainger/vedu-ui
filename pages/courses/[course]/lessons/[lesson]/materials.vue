@@ -3,7 +3,7 @@
         <div v-if="isInstructor" class="flex pb-6 -mt-3 ">
             <u-button
                 class="ml-auto mr-0"
-                label="Add Material"
+                label="Добавить материал"
                 @click="showMaterialModal = true"
             />
         </div>

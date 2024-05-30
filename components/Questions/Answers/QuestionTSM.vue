@@ -8,14 +8,14 @@
                 class="max-w-xs grow"
                 maxlenght="256"
                 :conditions="[
-                    ['Answers duplicated', 'error', duplicated],
-                    [`The maximum number of answers is ${answersLimit}`, 'error', limitExceeded && text.length],
-                    [`No more than one correct answer, uncheck the answer box below`, 'error', type === 'single' && hasCorrectAnswers && correct],
+                    ['Ответы повторяются', 'error', duplicated],
+                    [`Максимальное количество ответов ${answersLimit}`, 'error', limitExceeded && text.length],
+                    [`Вы не можете добавить более одного правильного ответа`, 'error', type === 'single' && hasCorrectAnswers && correct],
                 ]"
                 @enter="handleAdd"
             >
                 <template #suffix>
-                    <UTooltip content="Correct Mark" placement="top" v-if="type!=='text'">
+                    <UTooltip content="Правильная отметка" placement="top" v-if="type!=='text'">
                         <UCheckbox v-model="correct" size="lg" color="primary-700" class="mr-1"
                                    :radioStyle="type === 'single'"/>
                     </UTooltip>
@@ -23,7 +23,7 @@
             </UInput>
             <UButton
                 class="self-start shrink-0"
-                label="Add"
+                label="Добавить"
                 size="md"
                 :disabled="!text.length || duplicated || (type === 'single' && hasCorrectAnswers && correct)"
                 @click="handleAdd"
@@ -54,7 +54,7 @@
                 </UTag>
             </div>
             <p v-else class="grow text-center text-gray-500 text-[15px]">
-                No Answers Added
+                Вы еще не добавили ответы
             </p>
         </div>
     </div>
