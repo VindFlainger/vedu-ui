@@ -2,6 +2,7 @@
     <div class="flex flex-col gap-[6px]">
         <div v-for="option in computedOptions" :key="option.value">
             <UCheckbox
+                class="u-checkbox-group-checkbox text-[15px]"
                 :model-value="modelValue"
                 :label="option.label"
                 :value="option.value"

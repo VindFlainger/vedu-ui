@@ -83,7 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
     hoverColor: 'primary-700'
 })
 
-const root = ref(null)
+const root = ref<any>(null)
 
 const { size, number: sizeNumber } = useSize(props.size)
 const { size: spaceSize, number: spaceNumber } = useSize(props.spaceSize)
@@ -95,7 +95,7 @@ const variables = computed(() => ({
 }))
 
 const maxFit = ref(0)
-let observer = null
+let observer : any = null
 const manageFlexShow = () => {
     if (props.flexShow && !observer && root) {
         observer = new ResizeObserver(() => {
@@ -122,7 +122,3 @@ onMounted(() => {
 
 
 </script>
-
-<style scoped>
-
-</style>

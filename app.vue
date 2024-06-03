@@ -1,6 +1,6 @@
 <template>
     <div>
-        <NotificationBar class="z-[1000]"/>
+        <NotificationBar class="z-[10000]"/>
         <NuxtLayout>
 
         </NuxtLayout>

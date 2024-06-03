@@ -9,7 +9,7 @@
                         <div v-for="subcategory in category.children">
                             <div
                                 class="flex items-center gap-2 cursor-pointer group"
-                                @click="handleSelect(category.id, subcategory.id)"
+                                @click="handleSelect(category.id, subcategory, subcategory.id)"
                             >
                                 <u-checkbox
                                     :value="true"
@@ -30,7 +30,7 @@
                                     <div
                                         v-for="item in subcategory.children"
                                         class="flex items-center gap-2 cursor-pointer group"
-                                        @click="handleSelect(category.id, subcategory.id, item.id)"
+                                        @click="handleSelect(category.id, item, subcategory.id, item.id)"
                                     >
                                         <u-checkbox
                                             :value="true"
@@ -66,9 +66,13 @@
 </template>
 
 <script setup lang="ts">
+
+import { Category } from "~/stores/Global";
+
 export interface Props {
     categories: any[],
-    modelValue: any[]
+    modelValue: string[] | Omit<Category, 'children'>,
+    multiple: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -82,42 +86,67 @@ const emit = defineEmits<{
 }>()
 
 const computedCategories = computed(() => {
-    return props.categories.map(category => ({
-        ...category,
-        active: props.modelValue.includes(category.id),
-        ...category.children ? {
-            children: category.children.map((subcategory: any) => ({
-                ...subcategory,
-                active: props.modelValue.includes(subcategory.id),
-                ...subcategory.children ? {
-                    children: subcategory.children.map((item: any) => ({
-                        ...item,
-                        active: props.modelValue.includes(item.id)
-                    }))
-                } : null
-            }))
-        } : null
-    }))
+    if (props.multiple && Array.isArray(props.modelValue)){
+        return props.categories.map(category => ({
+            ...category,
+            active: (props.modelValue as string[]).includes(category.id),
+            ...category.children ? {
+                children: category.children.map((subcategory: any) => ({
+                    ...subcategory,
+                    active: (props.modelValue as string[]).includes(subcategory.id),
+                    ...subcategory.children ? {
+                        children: subcategory.children.map((item: any) => ({
+                            ...item,
+                            active: (props.modelValue as string[]).includes(item.id)
+                        }))
+                    } : null
+                }))
+            } : null
+        }))
+    } else {
+        return props.categories.map(category => ({
+            ...category,
+            active: (props.modelValue as Omit<Category, 'children'> | undefined)?.id === category.id,
+            ...category.children ? {
+                children: category.children.map((subcategory: any) => ({
+                    ...subcategory,
+                    active: (props.modelValue as Omit<Category, 'children'> | undefined)?.id === subcategory.id,
+                    ...subcategory.children ? {
+                        children: subcategory.children.map((item: any) => ({
+                            ...item,
+                            active: (props.modelValue as Omit<Category, 'children'> | undefined)?.id === item.id
+                        }))
+                    } : null
+                }))
+            } : null
+        }))
+    }
 })
 
 
-const handleSelect = (id: string, subcategoryId: string, itemId?: string) => {
-    if (!itemId) {
-        const subcategories = props.categories.find(category => category.id === id)?.children
-        let items : any[] = []
-        if (subcategories) items = subcategories.find((subcategory: any) => subcategory.id === subcategoryId)?.children || []
+const handleSelect = (id: string, item: { name: string, id: string }, subcategoryId: string, itemId?: string) => {
+    if (props.multiple && Array.isArray(props.modelValue)) {
+        if (!itemId) {
+            const subcategories = props.categories.find(category => category.id === id)?.children
+            let items : any[] = []
+            if (subcategories) items = subcategories.find((subcategory: any) => subcategory.id === subcategoryId)?.children || []
 
-        emit('update:modelValue', [
-            ...props.modelValue.filter(v => (v !== subcategoryId) && (!items.some((item: any) => item.id === v))),
-            ...props.modelValue.includes(subcategoryId) ? [] : [subcategoryId]
-        ])
+            emit('update:modelValue', [
+                ...props.modelValue.filter(v => (v !== subcategoryId) && (!items.some((item: any) => item.id === v))),
+                ...props.modelValue.includes(subcategoryId) ? [] : [subcategoryId]
+            ])
+        } else {
+            emit('update:modelValue', [
+                ...props.modelValue.filter(v => (v !== subcategoryId) && (v !== itemId)),
+                ...props.modelValue.includes(itemId) ? [] : [itemId]
+            ])
+        }
     } else {
-        emit('update:modelValue', [
-            ...props.modelValue.filter(v => (v !== subcategoryId) && (v !== itemId)),
-            ...props.modelValue.includes(itemId) ? [] : [itemId]
-        ])
+        emit('update:modelValue', {
+            id: item.id,
+            name: item.name
+        })
     }
-
 }
 
 </script>

@@ -12,14 +12,14 @@
             <div class="mt-5 flex justify-between">
                 <u-button
                     color="red-500"
-                    label="Delete"
+                    label="Удалить"
                     @click="handleClose"
                     :loading="loading"
                 />
                 <u-button
                     text
                     color="gray-900"
-                    label="Cancel"
+                    label="Отмена"
                     @click="close"
                 />
             </div>

@@ -1,7 +1,13 @@
 import api from '~/api'
 
+export interface Category {
+    id: string
+    name: string
+    children: Category[]
+}
+
 export interface State {
-    categories: []
+    categories: Category[]
 }
 
 

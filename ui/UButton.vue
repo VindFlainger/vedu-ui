@@ -4,10 +4,10 @@
         @click="handleClick"
         :class="{
             'cursor-not-allowed': disabled,
-            'u-button-solid-bg': !text && !plain,
-            'u-button-plain': text || plain
+            'u-button-solid-bg': !text && !plain && !iconStyle,
+            'u-button-plain': text || plain,
         }"
-        class="u-button-bg relative overflow-hidden selection:bg-none z-10 u-button duration-150 transition-colors"
+        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors shrink-0"
     >
         <div v-if="!iconStyle" class="flex items-center justify-center">
             <div
@@ -58,15 +58,26 @@
                 </slot>
             </div>
         </div>
-        <div v-else>
-            <UIcon
-                v-if="icon"
-                v-bind="iconProps"
-                :value="icon"
-                :size="sizeFrames.iconSize + 1"
-                :color="activeTextColor"
-                stroke-width="2.5"
-            />
+        <div v-else class="flex gap-[7px] items-center u-button-icon-style-solid-bg">
+            <div
+                class="u-button-icon-style-icon flex items-center justify-center relative "
+            >
+                <UIcon
+                    v-if="icon"
+                    v-bind="iconProps"
+                    :value="icon"
+                    :size="sizeFrames.iconSize + 1"
+                    :color="iconStyleIconTextColor"
+                    stroke-width="2.5"
+                />
+            </div>
+
+            <div
+                v-if="label"
+                class="u-button-icon-style-label"
+            >
+                {{label}}
+            </div>
         </div>
         <div v-if="loading && !disabled" class="u-button-loading"/>
     </button>
@@ -83,9 +94,10 @@ export interface Props {
     /* Basic */
     color?: string
     textColor?: string
+    iconStyleIconTextColor?: string
     fontWeight?: number | string
-    fontSize?: number,
-    borderWidth?: string | number,
+    fontSize?: number
+    borderWidth?: string | number
     rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
 
     /* Sizing */
@@ -112,13 +124,14 @@ export interface Props {
     leftIcon?: string
     rightIconProps?: any
     leftIconProps?: any
-    iconStyle?: boolean,
-    icon?: string,
-    iconProps?: any,
+    iconStyle?: boolean
+    icon?: string
+    iconProps?: any
 }
 
 const defaults = {
     color: '#49BBBD',
+    iconStyleIconTextColor: '#ffffff',
     borderWidth: 1,
     size: 'sm',
     rounded: 'xl',
@@ -137,6 +150,7 @@ const props = withDefaults(defineProps<Props>(), {
     size: 'sm',
     rounded: 'xl',
     textColor: '#ffffff',
+    iconStyleIconTextColor: '#ffffff',
     fontWeight: 500,
     loading: false,
     disabled: false,
@@ -167,7 +181,7 @@ const activeColor = computed(() => props.disabled ? props.disabledColor : _color
 const activeTextColor = computed(() =>
     props.disabled ?
         props.disabledTextColor :
-        (props.text || props.plain) ?
+        (props.text || props.plain || props.iconStyle) ?
             (props.color === defaults.color) ? '#49BBBD' : _color.value
             : _textColor.value
 )
@@ -189,8 +203,8 @@ const sizeFrames = computed(() => {
 
 const styles = computed(() => ({
     'border': props.plain ? `${props.borderWidth}px solid ${activeColor.value}` : '',
-    'padding': props.iconStyle ? sizeFrames.value.iconStylePadding : sizeFrames.value.padding,
-    'borderRadius': props.iconStyle ? '50%' : _rounded.value,
+    'padding': props.iconStyle ? '' : sizeFrames.value.padding,
+    'borderRadius': props.iconStyle ? '' : _rounded.value,
     'color': activeTextColor.value,
     'fontWeight': props.text ? 400 : props.fontWeight,
     'fontSize': `${props.fontSize || sizeFrames.value.fontSize}px`,
@@ -200,7 +214,9 @@ const styles = computed(() => ({
     '--u-button-background-hover-opacity': (props.disabled || props.loading) ? '1' : props.plain ? '0.1' : '0.8',
     '--u-button-background-opacity': (props.plain || props.text) ? '0' : '1',
     '--u-button-hover-color': props.text ? activeColor.value : activeTextColor.value,
+    '--u-button-padding': sizeFrames.value.iconStylePadding,
 }))
+
 </script>
 
 <style scoped lang="scss">
@@ -234,7 +250,36 @@ const styles = computed(() => ({
     opacity: var(--u-button-background-opacity);
 }
 
+.u-button-icon-style-solid-bg .u-button-icon-style-icon::after {
+    content: '';
+    position: absolute;
+    transition-duration: 0.1s;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: var(--u-button-background-color);
+    opacity: var(--u-button-background-opacity);
+}
+
 .u-button-solid-bg::before {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    background: white;
+}
+
+
+.u-button-icon-style-solid-bg:hover .u-button-icon-style-label {
+    opacity: var(--u-button-background-hover-opacity);
+}
+
+.u-button-icon-style-solid-bg .u-button-icon-style-icon::before {
     content: '';
     position: absolute;
     height: 100%;
@@ -251,6 +296,12 @@ const styles = computed(() => ({
     opacity: var(--u-button-background-hover-opacity);
 }
 
+.u-button-icon-style-solid-bg:hover .u-button-icon-style-icon::after {
+    content: '';
+    position: absolute;
+    opacity: var(--u-button-background-hover-opacity);
+}
+
 .u-button-loading::after {
     content: "";
     position: absolute;
@@ -262,6 +313,12 @@ const styles = computed(() => ({
     background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 49%, #FC4F4F 80%, #3268de 100%);
     opacity: 0.5;
     animation: slidebg 1s linear infinite alternate;
+}
+
+.u-button-icon-style-icon {
+    padding:  var(--u-button-padding);
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 @keyframes slidebg {

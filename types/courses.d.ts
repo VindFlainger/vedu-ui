@@ -128,6 +128,29 @@ export interface CoursePreview {
     is_participant: boolean
 }
 
+export interface CourseBasePreview {
+    id: string
+    owner: string
+    name: string
+    type: string
+    about: string
+    start: string
+    end: string
+    tags: string[]
+    category: string
+    image?: SizedImage
+    deleted_at: string | null
+    lessons_count: number
+    students_stats: {
+        total_count: number
+        preview: UserPreview[]
+    }
+    instructors_stats: {
+        total_count: number
+        preview: UserPreview[]
+    }
+}
+
 export interface CourseEventTest {
     type: 'test',
     lesson: {
@@ -240,6 +263,16 @@ export interface CourseAccess {
         preview: UserPreview[]
     }
     is_participant: boolean,
-    events: CourseEvents[]
+    events: CourseEvents[],
+    reviews: {
+        avg: number
+        total: number
+    }
+}
+
+export interface CourseAccessToken {
+    token: string
+    type: string
+    expires: string | null
 }
 

@@ -1,20 +1,20 @@
 <template>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <CoursesOverviewListItem
-            v-for="course in courses"
-            :key="course.id"
-            :name="course.name"
-            :type="course.type"
-            :category="course.category"
-            :end="course.end"
-            :start="course.start"
-            :img="course.img"
-            :instructors="course.instructors"
-            :students-preview="course.students_preview"
-            :total-students="course.total_students"
-            :tags="course.tags"
-            @manage="emit('manage', course.id)"
-        />
+        <template v-if="!loading">
+            <CoursesOverviewListItem
+                v-for="course in courses"
+                :key="course.id"
+                :course="course"
+                @manage="emit('manage', course.id as any)"
+                @delete="emit('delete', { name: course.name, id: course.id } as any)"
+            />
+        </template>
+        <template v-else>
+            <CoursesOverviewItemSkeleton
+                v-for="i in 15"
+                :key="i"
+            />
+        </template>
     </div>
 </template>
 
@@ -22,7 +22,8 @@
 import { CoursesCourse } from "~/types/courses";
 
 export interface Props {
-    courses?: CoursesCourse[]
+    courses: CoursesCourse[]
+    loading: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,12 +32,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
     'manage': [id: string]
+    'delete': [v: { name: string, id: string }]
 }>()
 
 
 </script>
-
-
-<style scoped>
-
-</style>

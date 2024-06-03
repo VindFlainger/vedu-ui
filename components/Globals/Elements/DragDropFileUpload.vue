@@ -37,7 +37,6 @@
                                 class="hidden group-hover:block"
                                 icon-style
                                 icon="ArrowPath"
-                                plain
                                 text-color="primary-600"
                                 color="primary-600"
                                 @click="handleReupload((computedValue as AnyFile).id)"
@@ -47,7 +46,6 @@
                             v-else-if="['success', 'preview'].includes((computedValue as AnyFile).status) && !readonly"
                             icon-style
                             icon="XMark"
-                            plain
                             text-color="red-600"
                             color="red-600"
                             @click="handleDelete()"
@@ -56,11 +54,11 @@
                 </div>
                 <div v-else class="flex flex-col items-center text-center">
                     <UIcon value="CloudArrowDown" size="40"/>
-                    <p class="font-bold">Drag and Drop</p>
+                    <p class="font-bold">Перетащите</p>
                     <p class="text-sm text-gray-400 after:content-[''] after:">
-                        or
+                        или
                     </p>
-                    <UButton class="mt-0.5" label="Browse Files" @click="handleOpen" size="xs"/>
+                    <UButton class="mt-0.5" label="Выберите изображение" @click="handleOpen" size="xs"/>
                 </div>
                 <input ref="fileInput" type="file" class="hidden" @change="handleChange">
             </template>

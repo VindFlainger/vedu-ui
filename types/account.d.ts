@@ -12,6 +12,6 @@ export interface PersonalData {
 
 export interface UserPreview {
     id: string,
-    avatar: SizedImage,
+    avatar?: SizedImage,
     personal_data: PersonalData
 }

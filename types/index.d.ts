@@ -6,6 +6,7 @@ import { NotificationsType } from "~/plugins/notifications";
 
 interface PluginsInjections {
     $luxon: typeof DateTime
+    $copy: (v: string) => void
     $api: typeof api
     $dateFormats: typeof DateFormats
     $emitter: Emitter<any>
@@ -20,6 +21,7 @@ declare module 'nuxt/dist/app/nuxt' {
     interface NuxtApp extends PluginsInjections {
         $luxon: typeof DateTime
         $api: typeof api
+        $copy: (v: string) => void
         $dateFormats: typeof DateFormats
         $emitter: Emitter<any>
         $notifications: NotificationsType
