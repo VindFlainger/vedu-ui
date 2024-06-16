@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="loaded">
         <div v-if="isInstructor" class="flex pb-6 -mt-3">
             <u-button
                 class="ml-auto mr-0"
@@ -14,14 +14,22 @@
                 :test="test"
             />
         </div>
-
-        <AddTestModal
-            v-if="showAddTestModal"
-            :course-id="route.params.course as string"
-            :lesson-id="route.params.lesson as string"
-            @close="showAddTestModal = false"
-        />
     </div>
+    <div v-else class="flex flex-col items-center">
+        <u-loading
+            size="42"
+        />
+        <p class="text-primary-700 text-[13px] ml-0.5">
+            Загрузка...
+        </p>
+    </div>
+
+    <AddTestModal
+        v-if="showAddTestModal"
+        :course-id="route.params.course as string"
+        :lesson-id="route.params.lesson as string"
+        @close="showAddTestModal = false"
+    />
 </template>
 
 <script setup lang="ts">
@@ -38,6 +46,7 @@ const showAddTestModal = ref(false)
 
 const tests = ref<LessonTest[]>([])
 const { loading, addLoading, removeLoading } = useLoading()
+const loaded = ref(false)
 const fetch = async () => {
     try {
         const res = await $api.lesson.GET_TESTS({
@@ -46,6 +55,7 @@ const fetch = async () => {
         })
 
         tests.value = res
+        loaded.value = true
 
     } catch (err) {
         console.log(err)

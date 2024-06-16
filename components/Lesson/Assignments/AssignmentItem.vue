@@ -1,5 +1,5 @@
 <template>
-    <div class="relative border border-gray-200 rounded-2xl p-4 outline outline-1 outline-offset-2 outline-gray-200">
+    <div class="relative border border-gray-200 rounded-2xl p-5 shadow-[0_0_3px_#e5e7eb]">
         <p class="text-gray-900 font-bold text-lg">
             Задание #{{ index + 1 }}
         </p>

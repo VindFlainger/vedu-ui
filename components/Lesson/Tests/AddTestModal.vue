@@ -11,32 +11,32 @@
                 v-model="title"
                 class="w-[300px]"
                 required
-                label="Title"
+                label="Имя"
             />
             <div class="mt-3 flex gap-5">
                 <u-select
                     v-model="admission"
                     required
-                    label="Admission Type"
+                    label="Тип выполнения"
                     :options="admissionOptions"
                 />
                 <u-select
                     v-model="report"
                     required
-                    label="Report Type"
+                    label="Тип отчета"
                     :options="reportOptions"
                 />
                 <u-select
                     v-model="scoreMode"
                     required
-                    label="Score Mode"
+                    label="Тип оценки"
                     :options="scoreModeOptions"
                 />
                 <u-input
                     class="shrink-0"
                     required
                     v-model="maxAttempts"
-                    label="Max Attempts"
+                    label="Всего попыток"
                     type="number"
                     min="1"
                     max="10"
@@ -47,24 +47,24 @@
                     class="shrink-0"
                     required
                     v-model="timeLimit"
-                    label="Time Limit (minutes)"
+                    label="Лимит времени выполнения (минуты)"
                     type="number"
                     min="1"
                     max="1440"
                 />
                 <u-date-input
                     v-model="start"
-                    label="Start"
+                    label="Начало"
                 />
                 <u-date-input
                     v-model="end"
-                    label="End"
+                    label="Окончание"
                 />
             </div>
             <div class="mt-8">
                 <u-input
                     v-model="searchQuery"
-                    placeholder="Start typing to search by title and tags"
+                    placeholder="Начните печатать для поиска по имени или тегам"
                     @input="searchQuestions"
                     @focusin="searchQuestions"
                 />
@@ -91,7 +91,7 @@
                                 </div>
                                 <div class="mt-3 flex justify-end">
                                     <u-button
-                                        label="Select"
+                                        label="Выбрать"
                                         @click="selectedQuestions.push({...question, score: 1})"
                                     />
                                 </div>
@@ -137,7 +137,7 @@
                                     min="1"
                                 />
                                 <u-button
-                                    label="Remove"
+                                    label="Убрать"
                                     @click="selectedQuestions = selectedQuestions.filter(v => v.id !== question.id)"
                                 />
                             </div>
@@ -150,26 +150,26 @@
             <div>
                 <div class="text-[15px]">
                     <p>
-                        <span class="font-medium">Total Questions:</span> {{selectedQuestions.length}}
+                        <span class="font-medium">Всего вопросов:</span> {{selectedQuestions.length}}
                     </p>
                     <p>
-                        <span class="font-medium">Total Score:</span> {{selectedQuestions.reduce((acc, v) => acc + v.score, 0)}}
+                        <span class="font-medium">Всего баллов:</span> {{selectedQuestions.reduce((acc, v) => acc + v.score, 0)}}
                     </p>
                 </div>
-                <div class="mt-4 flex justify-between">
-                    <u-button
-                        label="Save"
-                        :loading="loading"
-                        :disabled="submitDisabled"
-                        @click="submit"
-                    />
+                <div class="mt-4 flex gap-3 justify-end">
                     <u-button
                         class="font-bold"
                         font-weight="600"
-                        label="Cancel"
+                        label="Отмена"
                         :disabled="loading"
                         text
                         color="red-500"
+                    />
+                    <u-button
+                        label="Сохранить"
+                        :loading="loading"
+                        :disabled="submitDisabled"
+                        @click="submit"
                     />
                 </div>
             </div>
@@ -203,11 +203,11 @@ const timeLimit = ref(1440)
 const admissionOptions = [
     {
         value: 'entire',
-        label: 'Entire'
+        label: 'Тест целиком'
     },
     {
         value: 'phased',
-        label: 'Phased'
+        label: 'По одному вопросу'
     }
 ]
 
@@ -215,30 +215,30 @@ const admissionOptions = [
 const reportOptions = [
     {
         value: 'full',
-        label: 'Full'
+        label: 'Полный'
     },
     {
         value: 'detailed-score',
-        label: 'Detailed Score'
+        label: 'Баллы по вопросам'
     },
     {
         value: 'score',
-        label: 'Score'
+        label: 'Общий балл'
     },
     {
         value: 'accepted',
-        label: 'Accepted'
+        label: 'Принято'
     }
 ]
 
 const scoreModeOptions = [
     {
         value: 'last-attempt',
-        label: 'Last Attempt'
+        label: 'Последняя попытка'
     },
     {
         value: 'max-attempt',
-        label: 'Max Attempt'
+        label: 'Лучшая попытка'
     },
 ]
 

@@ -1,18 +1,18 @@
 <template>
     <u-dialog
         ref="modal"
-        title="Add Lesson"
+        title="Добавить урок"
         icon="Plus"
         max-width="560"
     >
         <div class="flex flex-col gap-5">
             <u-input
                 v-model="name"
-                label="Name"
+                label="Название"
             />
             <div>
                 <u-label
-                    label="Content"
+                    label="Описание"
                     text-color="gray-900"
                     class="!text-[15px]"
                 />
@@ -32,11 +32,11 @@
             />
         </div>
         <template #footer="{close}">
-            <div class="flex justify-between">
+            <div class="flex justify-end gap-3">
                 <u-button
                     class="font-bold"
                     font-weight="600"
-                    label="Cancel"
+                    label="Отмена"
                     text
                     color="red-500"
                     @click="close"
@@ -45,7 +45,7 @@
                 <u-button
                     :disabled="submitDisabled"
                     :loading="loading"
-                    :label="lesson ? 'Save' : 'Add'"
+                    :label="lesson ? 'Сохранить' : 'Добавить'"
                     @click="submit"
                 />
             </div>

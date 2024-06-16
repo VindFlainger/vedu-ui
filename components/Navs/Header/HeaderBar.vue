@@ -54,15 +54,15 @@ const studentLinks = [
         pathName: 'dashboard'
     },
     {
-        label: 'News',
+        label: 'Новости',
         pathName: 'news'
     },
     {
-        label: 'Courses',
+        label: 'Поиск курсов',
         pathName: 'find-courses'
     },
     {
-        label: 'My Courses',
+        label: 'Мои курсы',
         pathName: 'courses'
     }
 ]

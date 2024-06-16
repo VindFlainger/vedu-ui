@@ -1,5 +1,5 @@
 <template>
-    <ElTooltip popper-class="u-tooltip">
+    <ElTooltip  popper-class="u-tooltip">
         <slot></slot>
         <template #content>
             <div :style="{

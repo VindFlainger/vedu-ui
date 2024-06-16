@@ -9,8 +9,8 @@
             <a
                 :href="material.file.url"
                 :download="material.file.name"
-                class="flex h-[100px] w-[100px] items-center justify-center rounded-2xl border p-2 outline outline-1
-                outline-offset-2 outline-gray-200 relative group">
+                class="flex h-[100px] w-[100px] items-center justify-center rounded-2xl border border-gray-200 shadow-[0_0_3px_#e5e7eb] p-5 relative group"
+            >
                 <FilePreview
                     class="mt-2 shrink-0"
                     :url="material.file.url"
@@ -23,7 +23,7 @@
             </a>
         </u-tooltip>
 
-        <div v-if="isInstructor" class="flex gap-1 absolute -right-2 -top-3">
+        <div v-if="isInstructor" class="flex gap-1 absolute -right-1 -top-2.5">
             <u-button
                 icon="Pencil"
                 icon-style

@@ -4,7 +4,7 @@
             size="42"
         />
         <p class="text-primary-700 text-[13px] ml-0.5">
-            Loading...
+            Загрузка...
         </p>
     </div>
     <div v-else-if="tokens.length" class="grid gap-4 grid-cols-3">

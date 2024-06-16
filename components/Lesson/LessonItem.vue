@@ -1,5 +1,5 @@
 <template>
-    <div class="relative flex gap-5 p-5 border border-gray-200 rounded-2xl">
+    <div class="relative flex gap-5 p-5 border border-gray-200 shadow-[0_0_3px_#e5e7eb] rounded-2xl">
         <nuxt-link
             :to="{
                 name: 'courses-course-lessons-lesson',

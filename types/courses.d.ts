@@ -1,5 +1,5 @@
 import { SizedImage } from '~/types/global'
-import { PersonalData } from '~/types/accout'
+import { PersonalData } from '~/types/account'
 import { UserPreview } from "~/types/account";
 import { LessonPreview } from "~/types/lesson";
 
@@ -276,3 +276,23 @@ export interface CourseAccessToken {
     expires: string | null
 }
 
+export interface CourseStudent {
+    student: {
+        id: string
+        personal_data: PersonalData
+        avatar?: SizedImage
+    }
+    join_date: string
+}
+
+export interface CourseReview {
+    user: {
+        id: string
+        avatar?: SizedImage
+        personal_data: PersonalData
+    }
+    amount: number
+    text: string
+    created_at: string
+    updated_at: string
+}

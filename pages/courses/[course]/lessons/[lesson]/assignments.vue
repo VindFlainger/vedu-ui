@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="loaded">
         <div v-if="isInstructor" class="flex pb-6 -mt-3">
             <u-button
                 class="ml-auto mr-0"
@@ -19,23 +19,28 @@
                 @edit="handleShowEdit(assignment)"
             />
         </div>
-        <div v-else-if="loading">
-            Loading
-        </div>
-
-        <AddAssignmentModal
-            v-if="showAddAssignmentModal"
-            :edit="!!selectedAssignment"
-            :course-id="route.params.course"
-            :lesson-id="route.params.lesson"
-            :assignment-id="selectedAssignment?.id"
-            :description="selectedAssignment?.description"
-            :files="selectedAssignment?.files"
-            @assignment-added="handleAdd"
-            @assignment-edited="handleEdit"
-            @close="showAddAssignmentModal = false; selectedAssignment = null"
-        />
     </div>
+    <div v-else class="flex flex-col items-center">
+        <u-loading
+            size="42"
+        />
+        <p class="text-primary-700 text-[13px] ml-0.5">
+            Загрузка...
+        </p>
+    </div>
+
+    <AddAssignmentModal
+        v-if="showAddAssignmentModal"
+        :edit="!!selectedAssignment"
+        :course-id="route.params.course"
+        :lesson-id="route.params.lesson"
+        :assignment-id="selectedAssignment?.id"
+        :description="selectedAssignment?.description"
+        :files="selectedAssignment?.files"
+        @assignment-added="handleAdd"
+        @assignment-edited="handleEdit"
+        @close="showAddAssignmentModal = false; selectedAssignment = null"
+    />
 </template>
 
 <script setup lang="ts">
@@ -48,8 +53,9 @@ const accountStore = useAccountStore()
 const { isInstructor } = storeToRefs(accountStore)
 
 const assignments = ref<(LessonAssignment & { response: null | LessonAssignmentResponse })[] | null>(null)
-
 const { loading, addLoading, removeLoading } = useLoading()
+const loaded = ref(false)
+
 const fetch = async () => {
     try {
         addLoading()
@@ -58,6 +64,7 @@ const fetch = async () => {
             lesson_id: route.params.lesson as string
         })
         assignments.value = res
+        loaded.value = true
     } catch (err) {
         console.log(err)
     } finally {

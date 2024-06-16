@@ -33,7 +33,9 @@ export interface Props {
     size?: string | number
 }
 
-const props = withDefaults(defineProps<Props>(), {})
+const props = withDefaults(defineProps<Props>(), {
+    size: 25
+})
 
 const { color } = useColor(props.color)
 

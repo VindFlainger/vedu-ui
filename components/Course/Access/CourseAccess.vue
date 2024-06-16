@@ -36,6 +36,14 @@
                             @click="$emitter.emit('open:add-access-modal')"
                         />
                     </template>
+                    <template v-if="route.name === 'courses-course-reviews'">
+                        <u-button
+                            v-if="isStudent"
+                            label="Добавить"
+                            right-icon="Plus"
+                            @click="$emitter.emit('open:add-access-modal')"
+                        />
+                    </template>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-3xl rounded-tl-none flex-grow border-2 border-gray-200">
@@ -61,7 +69,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const accountStore = useAccountStore()
 const courseStore = useCourseStore()
 const { course } = storeToRefs(courseStore) as { course: Ref<CourseAccess> }
-const { user, isInstructor } = storeToRefs(accountStore)
+const { user, isInstructor, isStudent } = storeToRefs(accountStore)
 
 const route = useRoute()
 
@@ -120,7 +128,7 @@ const instructorTabs = computed(() => [
 
 const tabs = computed<any>(() => {
     if (user.value.role === 'instructor') return instructorTabs.value
-    else return studentsTabs
+    else return studentsTabs.value
 })
 
 

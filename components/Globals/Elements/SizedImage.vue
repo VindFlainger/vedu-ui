@@ -5,6 +5,7 @@
             :style="styles"
             :src="src"
             :alt="alt"
+            v-bind="$attrs"
         >
     </div>
 </template>

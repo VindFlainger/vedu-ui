@@ -2,7 +2,7 @@
     <client-only>
         <div class="flex items-center rounded-lg" v-bind="$attrs">
             <USelect
-                class="w-[58px] [&_input]:text-center"
+                class="w-[64px] [&_input]:text-center"
                 :options="perPageOptions"
                 :model-value="perPage"
                 placeholder=" "

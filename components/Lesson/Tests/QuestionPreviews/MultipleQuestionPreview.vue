@@ -1,7 +1,7 @@
 <template>
     <div>
         <p class="font-medium">
-            Answers:
+            Ответы:
         </p>
         <ul>
             <li
@@ -10,7 +10,7 @@
                 class="list-inside list-disc"
             >
                 <span>{{answer.label}}</span>
-                <span v-if="answer.correct" class="ml-1 text-green-700">(correct)</span>
+                <span v-if="answer.correct" class="ml-1 text-green-700">(правильный)</span>
             </li>
         </ul>
     </div>

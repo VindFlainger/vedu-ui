@@ -1,6 +1,6 @@
 <template>
     <div v-if="course">
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-4">
             <ActivityItem
                 v-for="event in course.events"
                 :event="event"

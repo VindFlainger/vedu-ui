@@ -1,6 +1,13 @@
 import { NitroFetchOptions } from 'nitropack'
 import _fetch, { Controls } from '~/api/handler'
-import { AccessToken, CourseAccess, CourseBasePreview, CoursePreview, FoundCourse } from '~/types/courses'
+import {
+    AccessToken,
+    CourseAccess,
+    CourseBasePreview,
+    CoursePreview, CourseReview,
+    CourseStudent,
+    FoundCourse
+} from '~/types/courses'
 
 export interface FindCoursesPayload {
     categories?: string[]
@@ -75,6 +82,44 @@ export interface GetCourseAccessTokensPayload {
 }
 export type GetCourseAccessTokensData = AccessToken[]
 
+
+export interface GetCourseStudentsPayload {
+    course_id: string
+    page?: number
+    per_page?: number
+    search?: string
+}
+export type GetCourseStudentsData = {
+    data: CourseStudent[],
+    meta: {
+        total: number
+        per_page: number
+        page: number
+    }
+}
+
+
+export interface GetCourseReviewsPayload {
+    course_id: string
+    page?: number
+    per_page?: number
+}
+export type GetCourseReviewsData = {
+    data: CourseReview[],
+    meta: {
+        total: number
+        per_page: number
+        page: number
+    }
+}
+
+
+export interface JoinCoursePayload {
+    course_id: string
+    token: string
+}
+export type JoinCourseData = boolean
+
 export default {
 
     CREATE_COURSE: (
@@ -101,6 +146,24 @@ export default {
         controls?: Controls
     ) => _fetch<GetCourseData>('GET', `/courses/${data.id}`, null, options, controls),
 
+    GET_COURSE_STUDENTS: (
+        data: GetCourseStudentsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetCourseStudentsData>('GET', `/courses/${data.course_id}/students`, data, options, controls),
+
+    GET_COURSE_REVIEWS: (
+        data: GetCourseReviewsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<GetCourseReviewsData>('GET', `/courses/${data.course_id}/reviews`, data, options, controls),
+
+    JOIN_COURSE: (
+        data: JoinCoursePayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<JoinCourseData>('POST', `/courses/${data.course_id}/join`, data, options, controls),
+
     GET_COURSES: (
         data: GetCoursesPayload,
         options?: NitroFetchOptions<any>,
@@ -112,7 +175,6 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<GenerateCourseTokenData>('POST', `/courses/${data.course_id}/generate-token`, data, options, controls),
-
 
     GET_COURSE_ACCESS_TOKENS: (
         data: GetCourseAccessTokensPayload,

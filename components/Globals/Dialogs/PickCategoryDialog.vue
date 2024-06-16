@@ -56,7 +56,7 @@
         <template #footer="{close}">
             <div class="flex justify-end">
                 <u-button
-                    label="Confirm"
+                    label="Подтвердить"
                     size="sm"
                     @click="close"
                 />

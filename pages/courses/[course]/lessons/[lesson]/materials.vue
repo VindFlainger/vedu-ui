@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="loaded">
         <div v-if="isInstructor" class="flex pb-6 -mt-3 ">
             <u-button
                 class="ml-auto mr-0"
@@ -16,22 +16,28 @@
                 @edit="handleShowEdit(material)"
             />
         </div>
-        <div v-else-if="loading">
-            Loading
-        </div>
-        <AddMaterialModal
-            v-if="showMaterialModal"
-            :edit="!!selectedMaterial"
-            :description="selectedMaterial?.description"
-            :file="selectedMaterial?.file"
-            :course-id="route.params.course"
-            :lesson-id="route.params.lesson"
-            :material-id="selectedMaterial?.id"
-            @close="showMaterialModal = false; selectedMaterial = null"
-            @material-added="handleAdd"
-            @material-edited="handleEdit"
-        />
     </div>
+    <div v-else class="flex flex-col items-center">
+        <u-loading
+            size="42"
+        />
+        <p class="text-primary-700 text-[13px] ml-0.5">
+            Загрузка...
+        </p>
+    </div>
+
+    <AddMaterialModal
+        v-if="showMaterialModal"
+        :edit="!!selectedMaterial"
+        :description="selectedMaterial?.description"
+        :file="selectedMaterial?.file"
+        :course-id="route.params.course"
+        :lesson-id="route.params.lesson"
+        :material-id="selectedMaterial?.id"
+        @close="showMaterialModal = false; selectedMaterial = null"
+        @material-added="handleAdd"
+        @material-edited="handleEdit"
+    />
 </template>
 
 <script setup lang="ts">
@@ -44,7 +50,7 @@ const { isInstructor } = storeToRefs(accountStore)
 
 const materials = ref<LessonMaterial[] | null>(null)
 const showMaterialModal = ref(false)
-
+const loaded = ref(false)
 const { loading, addLoading, removeLoading } = useLoading()
 const fetch = async () => {
     try {
@@ -54,6 +60,7 @@ const fetch = async () => {
             lesson_id: route.params.lesson as string
         })
         materials.value = res
+        loaded.value = true
     } catch (err) {
         console.log(err)
     } finally {

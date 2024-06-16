@@ -1,7 +1,7 @@
 <template>
     <div>
         <p>
-            <span class="font-medium">Answers:</span>
+            <span class="font-medium">Ответы:</span>
             <span class="ml-1">{{ question.options.map(option => `"${option}"`).join(', ') }}</span>
         </p>
     </div>
