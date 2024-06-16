@@ -12,6 +12,9 @@ let fetchError = false
 let expires = 0
 let queue: { id: string, handler: any, path: string }[] = []
 
+
+const baseUrl = process.dev ? 'http://localhost:3000' : 'https://vedu-api-16d642d4fe17.herokuapp.com'
+
 export default async <DataT>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
     path: string,
@@ -57,7 +60,7 @@ export default async <DataT>(
             credentials: 'include',
             method,
             ...data ? ['POST', 'PUT', 'PATCH'].includes(method) ? { body: data } : { query: data } : {},
-            baseURL: 'http://localhost:3000/',
+            baseURL: baseUrl,
             signal,
             onRequest: () => {
                 return new Promise<void>((resolve, reject) => {
@@ -67,7 +70,7 @@ export default async <DataT>(
                     else {
                         if (!tokenFetching) {
                             tokenFetching = true
-                            $fetch('http://localhost:3000/refresh', {
+                            $fetch(`${baseUrl}/refresh`, {
                                 method: 'POST',
                                 body: {
                                     'refresh_token': localStorage.getItem('refresh_token') || sessionStorage.getItem('refresh_token')
