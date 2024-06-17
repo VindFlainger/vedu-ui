@@ -6,6 +6,7 @@ import billing from '~/api/billing'
 import courses from '~/api/courses'
 import lesson from '~/api/lesson'
 import news from '~/api/news'
+import notifications from '~/api/notifications'
 
 export default {
     auth,
@@ -15,5 +16,6 @@ export default {
     billing,
     courses,
     lesson,
-    news
+    news,
+    notifications
 }

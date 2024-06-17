@@ -13,13 +13,20 @@
                 :key="link.pathName"
                 :to="{ name: link.pathName }"
             >
-                {{link.label}}
+                {{ link.label }}
             </nuxt-link>
         </div>
-<!--        <nuxt-link :to="{name: 'questions'}">Questions</nuxt-link>
-        <button @click="account.clearAuth()">Log Out</button>-->
         <div class="flex items-center">
-            <UIcon value="Bell" size="27" stroke-width="2" class="ml-6" color="white"/>
+            <u-button
+                icon-style
+                icon="Bell"
+                stroke-width="2"
+                class="ml-6"
+                size="lg"
+                @click="router.push({
+                    name: 'notifications'
+                })"
+            />
             <img
                 class="ml-6 h-10 w-10"
                 src="~/assets/images/previews/boy-large.png"
@@ -30,8 +37,9 @@
 
 <script setup lang="ts">
 const accountStore = useAccountStore()
+const router = useRouter()
 
-const {isInstructor, isStudent, isNewUser} = storeToRefs(accountStore)
+const { isInstructor, isStudent, isNewUser } = storeToRefs(accountStore)
 
 const newUsersLinks = [
     {
@@ -86,7 +94,7 @@ const instructorLinks = [
     }
 ]
 
-const activeLinks = computed(()=> {
+const activeLinks = computed(() => {
     if (isInstructor.value) return instructorLinks
     else if (isStudent.value) return studentLinks
     else return newUsersLinks
@@ -96,7 +104,7 @@ const activeLinks = computed(()=> {
 </script>
 
 <style scoped>
-.router-link-active{
+.router-link-active {
     @apply bg-primary-900
 }
 </style>

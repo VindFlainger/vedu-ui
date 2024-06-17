@@ -1,6 +1,6 @@
 <template>
     <component :is="tag">
-        <svg v-if="value.startsWith('mdi')" :style="styles" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke-width="1">
+        <svg v-if="value.startsWith('mdi')" :style="styles" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke-width="1" :class="svgClass">
             <path :d="mdijs[value]" />
         </svg>
         <component
@@ -25,6 +25,7 @@ export interface Props {
     color?: string
     strokeWidth?: string | number
     tag?: string,
+    svgClass?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -12,5 +12,15 @@ export default {
     ACCESS_TOKEN_LINK_COPIED: {
         title: `Ссылка скопирована`,
         message: `Ссылка для доступа к курсу помещена в буфер обмена`
+    },
+
+    JOINED_COURSE: {
+        title: `Новый курс`,
+        message: `Вы успешно присоединились к курсу`
+    },
+
+    REVIEW_ADDED: {
+        title: `Отзыв добавлен`,
+        message: `Отзыв на курс был успешно добавлен`
     }
 }

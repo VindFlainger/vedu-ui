@@ -36,14 +36,6 @@
                             @click="$emitter.emit('open:add-access-modal')"
                         />
                     </template>
-                    <template v-if="route.name === 'courses-course-reviews'">
-                        <u-button
-                            v-if="isStudent"
-                            label="Добавить"
-                            right-icon="Plus"
-                            @click="$emitter.emit('open:add-access-modal')"
-                        />
-                    </template>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-3xl rounded-tl-none flex-grow border-2 border-gray-200">
