@@ -1,39 +1,45 @@
 <template>
     <u-dialog
         ref="modal"
-        title="Add Response"
+        :title="response ? 'Просмотр результата' : 'Добавить ответ'"
         icon="Plus"
         max-width="500"
         :freeze="loading"
     >
         <div v-if="response">
             <div>
-                <div>
-                    <p class="font-bold">Added</p>
+                <div v-if="response.resolve.status !== 'waiting'">
+                    <p class="font-bold">Статус</p>
+                    <p class="text-[15px]">
+                        <span class="font-medium">Оценка:</span> {{ response.resolve.points }} %
+                    </p>
+                    <p class="text-[15px]">
+                        <span class="font-medium">Статус:</span> {{ response.resolve.status === 'resolved' ? 'Ответ защитан' : 'Ответ не защитан' }}
+                    </p>
+                </div>
+                <div v-else class="font-medium">
+                    <p class="font-bold">Статус</p>
+                    <p class="font-bold text-primary-900 text-[15px]">Задание еще не проверено</p>
+                </div>
+
+
+
+                <div class="mt-3">
+                    <p class="font-bold">Добавлен</p>
                     <p>
                         {{ $luxon.fromISO(response.created_at).toFormat($dateFormats.dayFormat) }}
                     </p>
                 </div>
 
-                <div class="mt-3">
-                    <p class="font-bold">Text</p>
+                <div class="mt-3" v-if="response.text">
+                    <p class="font-bold">Сообщение</p>
                     <p>
                         {{response.text}}
                     </p>
                 </div>
 
-                <div v-if="response.resolve.status !== 'waiting'" class="mt-4">
-                    <p class="font-bold">Resolved</p>
-                    <p class="text-[15px]">
-                        <span class="font-medium">Points:</span> {{ response.resolve.points }}
-                    </p>
-                    <p class="capitalize text-[15px]">
-                        <span class="font-medium">Status:</span> {{ response.resolve.status }}
-                    </p>
-                </div>
-
                 <div class="mt-3">
-                    <p class="font-bold">Files</p>
+                    <p class="font-bold">Файлы</p>
                     <div class="mt-2 flex gap-2">
                         <FilePreview
                             v-for="(file, i) in response.files"
@@ -54,26 +60,28 @@
                 multiple
             />
             <u-input
-                v-model.trim="text"
-                label="Text"
+                type="textarea"
+                :autosize="{ minRows: 8, maxRows: 12 }"
+                v-model="text"
+                label="Сообщение"
             />
         </div>
-        <template #footer="{close}">
-            <div class="flex justify-between">
-                <u-button
-                    label="Save"
-                    :loading="loading"
-                    :disabled="submitDisabled"
-                    @click="submit"
-                />
+        <template #footer="{close}" v-if="!response">
+            <div class="flex justify-end gap-3">
                 <u-button
                     class="font-bold"
                     font-weight="600"
-                    label="Cancel"
+                    label="Отмена"
                     :disabled="loading"
                     text
                     color="red-500"
                     @click="close"
+                />
+                <u-button
+                    label="Сохранить"
+                    :loading="loading"
+                    :disabled="submitDisabled"
+                    @click="submit"
                 />
             </div>
         </template>
@@ -95,6 +103,10 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 
+const emit = defineEmits<{
+    'added': []
+}>()
+
 const lazyFiles = ref<AnyFile[]>([])
 const loadingFiles = ref(0)
 const text = ref("")
@@ -115,6 +127,7 @@ const submit = async () => {
             files: lazyFiles.value.map(file => file.id),
             text: text.value
         })
+        emit('added')
         modal.value.close(null, null, true)
     } catch (err) {
         console.log(err)

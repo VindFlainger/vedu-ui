@@ -17,6 +17,7 @@
                 :index="i"
                 @delete="handleDelete(assignment.id)"
                 @edit="handleShowEdit(assignment)"
+                @action="fetch"
             />
         </div>
     </div>

@@ -73,6 +73,7 @@
             :assignment-id="assignment.id"
             :response="assignment.response"
             @close="showAddResponseModal = false"
+            @added="emit('action')"
         />
 
     </div>
@@ -92,7 +93,8 @@ const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits<{
     'delete': [],
-    'edit': []
+    'edit': [],
+    'action': []
 }>()
 
 
