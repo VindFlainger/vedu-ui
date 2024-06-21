@@ -62,6 +62,6 @@ export default {
 
 
 
-    RECOVERY_EMAIL: (options?: UseFetchOptions<RecoveryEmailData>, controls?: Controls) => useFetchData('POST', '/recovery-email', options, controls),
-    CHANGE_PASSWORD: (options?: UseFetchOptions<ChangePasswordData>, controls?: Controls) => useFetchData('POST', '/change-password', options, controls),
+    RECOVERY_EMAIL: (options?: UseFetchOptions<RecoveryEmailData>, controls?: Controls) => useFetchData('POST', '/recovery-email', options),
+    CHANGE_PASSWORD: (options?: UseFetchOptions<ChangePasswordData>, controls?: Controls) => useFetchData('POST', '/change-password', options),
 }
