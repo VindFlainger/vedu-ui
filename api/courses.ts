@@ -1,8 +1,8 @@
 import { NitroFetchOptions } from 'nitropack'
 import _fetch, { Controls } from '~/api/handler'
 import {
-    AccessToken,
     CourseAccess,
+    CourseAccessToken,
     CourseBasePreview,
     CoursePreview, CourseReview,
     CourseStudent,
@@ -80,7 +80,7 @@ export interface GenerateCourseTokenData {
 export interface GetCourseAccessTokensPayload {
     course_id: string
 }
-export type GetCourseAccessTokensData = AccessToken[]
+export type GetCourseAccessTokensData = CourseAccessToken[]
 
 
 export interface GetCourseStudentsPayload {
