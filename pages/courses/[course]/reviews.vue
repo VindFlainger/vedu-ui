@@ -8,12 +8,14 @@
         </p>
     </div>
     <div v-else-if="!loading && reviews.length" class="h-full flex flex-col">
-        <div v-if="userReview" class="mb-8">
+        <div v-if="course.reviews.review" class="mb-8">
             <p class="mb-2 font-medium text-primary-900 ml-1">
                 Ваш отзыв
             </p>
             <ReviewItem
-                :review="userReview"
+                :review="course.reviews.review"
+                editable
+                @edit="selectedReview = $event; showReviewModal = true"
             />
         </div>
         <div class="grow flex flex-col gap-4">
@@ -56,14 +58,15 @@
 
     <AddEditReviewModal
         v-if="showReviewModal"
-        :course-id="route.params.course"
+        :course-id="route.params.course as string"
+        :review="selectedReview"
         @added="fetch"
         @close="showReviewModal = false"
     />
 
     <teleport to="#lesson-menu">
         <u-button
-            v-if="isStudent && loaded && !userReview"
+            v-if="isStudent && loaded && !course.reviews.review"
             label="Добавить"
             right-icon="Plus"
             @click="showReviewModal = true"
@@ -73,15 +76,20 @@
 
 <script setup lang="ts">
 import { useRouteQuery } from "@vueuse/router";
-import { CourseReview } from "~/types/courses";
+import { CourseAccess, CourseReview } from "~/types/courses";
+import { Ref } from "vue";
+
 import ReviewItem from "~/components/Course/Access/Reviews/ReviewItem.vue";
 import ReviewItemSkeleton from "~/components/Course/Access/Reviews/ReviewItemSkeleton.vue";
 
-const accountStore = useAccountStore()
-
-const { $api, $luxon, $emitter } = useNuxtApp()
+const { $api, $emitter } = useNuxtApp()
 const route = useRoute()
 
+const accountStore = useAccountStore()
+const courseStore = useCourseStore()
+const { course } = storeToRefs(courseStore) as { course: Ref<CourseAccess> }
+
+const selectedReview = ref<CourseReview>()
 const showReviewModal = ref(false)
 $emitter.on('open:add-review-modal', () => {
     showReviewModal.value = true
@@ -95,7 +103,6 @@ const perPage = useRouteQuery('per_page', 100, { transform: v => Number(v) })
 const { loading, addLoading, removeLoading } = useLoading()
 const total = ref(0)
 const reviews = ref<CourseReview[]>([]);
-const userReview = ref<CourseReview>()
 const loaded = ref(false)
 
 const fetch = async () => {
@@ -107,7 +114,6 @@ const fetch = async () => {
             per_page: perPage.value
         })
 
-        userReview.value = res.user_review
         reviews.value = res.data
         total.value = res.meta.total
         page.value = res.meta.page

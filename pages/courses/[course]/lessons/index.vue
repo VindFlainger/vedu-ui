@@ -1,15 +1,23 @@
 <template>
     <div class="h-full">
-        <div v-if="!loading && course.lessons.length" class="flex flex-col gap-3">
-            <LessonItem
+        <Container
+            v-if="!loading && course.lessons.length"
+            class="flex flex-col gap-3"
+            drag-handle-selector=".lesson-drag"
+            @drop="handleDrop"
+        >
+            <Draggable
                 v-for="lesson in course.lessons"
                 :key="lesson.id"
-                :lesson="lesson"
-                :course-id="course.id"
-                @delete="handleDelete(lesson.id)"
-                @edit="handleEdit(lesson)"
-            />
-        </div>
+            >
+                <LessonItem
+                    :lesson="lesson"
+                    :course-id="course.id"
+                    @delete="handleDelete(lesson.id)"
+                    @edit="handleEdit(lesson)"
+                />
+            </Draggable>
+        </Container>
         <div v-else-if="loading" class="flex flex-col gap-3">
             <LessonItemSkeleton v-for="(_, i) in 8" :key="i"/>
         </div>
@@ -41,6 +49,9 @@
 </template>
 
 <script setup lang="ts">
+// @ts-ignore
+import { Container, Draggable } from 'vue-dndrop'
+
 import { CourseAccess } from "~/types/courses";
 import { Ref } from "vue";
 import { LessonPreview } from "~/types/lesson";
@@ -90,6 +101,10 @@ const selectedLesson = ref()
 const handleEdit = async (lesson: LessonPreview) => {
     selectedLesson.value = lesson
     showAddLessonModal.value = true
+}
+
+const handleDrop = (e: any) => {
+    console.log(e)
 }
 
 </script>

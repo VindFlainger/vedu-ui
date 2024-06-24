@@ -1,5 +1,5 @@
 <template>
-    <div class="relative flex gap-5 p-5 border border-gray-200 shadow-[0_0_3px_#e5e7eb] rounded-2xl">
+    <div class="relative flex gap-5 p-5 border border-gray-200 shadow-[0_0_3px_#e5e7eb] rounded-2xl bg-white">
         <nuxt-link
             :to="{
                 name: 'courses-course-lessons-lesson',
@@ -49,6 +49,16 @@
                     text: $notifications.DELETE_LESSON_REQUEST.message,
                     cb: () => emit('delete')
                 })"
+            />
+            <u-button
+                class="ml-2 lesson-drag [&_.u-button-icon-style-icon]:!rounded-md"
+                icon="ArrowsPointingOut"
+                icon-style
+                color="primary-700"
+                @click="emit('edit')"
+                :icon-props="{
+                    strokeWidth: '3px'
+                }"
             />
         </div>
     </div>

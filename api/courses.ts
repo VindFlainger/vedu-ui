@@ -110,8 +110,7 @@ export type GetCourseReviewsData = {
         total: number
         per_page: number
         page: number
-    },
-    user_review: CourseReview
+    }
 }
 
 
@@ -120,10 +119,15 @@ export interface AddCourseReviewPayload {
     amount: number
     text: string
 }
-export type AddCourseReviewsData = {
+export type AddCourseReviewsData = CourseReview
 
+
+export interface EditCourseReviewPayload {
+    course_id: string
+    amount?: number
+    text?: string
 }
-
+export type EditCourseReviewsData = CourseReview
 
 export interface JoinCoursePayload {
     course_id: string
@@ -174,6 +178,12 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<AddCourseReviewsData>('POST', `/courses/${data.course_id}/review`, data, options, controls),
+
+    EDIT_COURSE_REVIEW: (
+        data: EditCourseReviewPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<EditCourseReviewsData>('PATCH', `/courses/${data.course_id}/review`, data, options, controls),
 
     JOIN_COURSE: (
         data: JoinCoursePayload,

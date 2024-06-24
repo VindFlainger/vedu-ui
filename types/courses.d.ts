@@ -266,7 +266,8 @@ export interface CourseAccess {
     events: CourseEvents[],
     reviews: {
         avg: number
-        total: number
+        total: number,
+        review: CourseReview
     }
 }
 

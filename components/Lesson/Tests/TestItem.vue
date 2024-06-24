@@ -156,7 +156,6 @@
 import { LessonTest } from '~/types/lesson'
 import StartAttemptModal from "~/components/Lesson/Tests/Modals/StartAttemptModal.vue";
 import { reportTypes, scoreTypes } from "~/config/tests/params";
-import SeeAttemptsModal from "~/components/Lesson/Tests/Modals/SeeAttemptsModal.vue";
 
 const route = useRoute()
 const router = useRouter()

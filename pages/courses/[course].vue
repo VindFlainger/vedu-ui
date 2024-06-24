@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import CourseNoAccess from "~/components/Course/NoAccess/CourseNoAccess.vue";
 import { definePageMeta } from "#imports";
 
 definePageMeta({

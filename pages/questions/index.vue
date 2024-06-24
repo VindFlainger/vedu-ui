@@ -66,10 +66,7 @@
 <script setup lang="ts">
 import { useRouteQuery } from "@vueuse/router";
 import { Question } from "~/models/QuestionModel";
-import UActionBar from "~/components/Globals/UActionBar.vue";
 import QuestionCreateDialog from "~/components/Questions/QuestionCreateDialog.vue";
-import { useNuxt } from "@nuxt/kit";
-import { useExtendedData } from "~/composables/useExtendedData";
 
 definePageMeta({
     roles: ['instructor'],

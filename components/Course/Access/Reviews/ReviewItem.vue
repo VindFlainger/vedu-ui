@@ -26,19 +26,34 @@
         <p class="mt-3 text-[15px]">
             {{ review.text }}
         </p>
-        <p class="top-3 right-3 font-medium absolute ml-3 text-[12px] text-gray-600 capitalize inline-block">
-            {{ $luxon.fromISO(review.created_at).toFormat('LLL d, yyyy') }} </p>
+        <p class="top-3 right-[22px] font-medium absolute ml-3 text-[12px] text-gray-600 capitalize inline-block">
+            {{ $luxon.fromISO(review.created_at).toFormat('LLL d, yyyy') }}
+        </p>
+        <div class="flex justify-end mt-3 -mb-2" v-if="editable">
+            <u-button
+                label="Изменить"
+                size="xs"
+                @click="emit('edit', review)"
+            />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { CourseReview } from "~/types/courses";
 
-const {$luxon} = useNuxtApp()
-
 export interface Props {
     review: CourseReview
+    editable?: boolean
 }
 
+const { $luxon } = useNuxtApp()
+const accountStore = useAccountStore()
+
+const { user } = storeToRefs(accountStore)
+
 const props = withDefaults(defineProps<Props>(), {})
+const emit = defineEmits<{
+    (e: 'edit', v: CourseReview): void
+}>()
 </script>

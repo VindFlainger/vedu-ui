@@ -2,16 +2,15 @@
     <div
         v-if="!hidden"
         class="modal"
-        @click="handleClose()"
     >
+        <div class="absolute inset-0 bg-black/30 z-10" @click="handleClose()"/>
         <transition
             name="fade"
         >
             <div
                 v-if="showContent"
-                class="relative content rounded-2xl overflow-hidden max-sm:!w-[90%]"
+                class="relative content rounded-2xl overflow-hidden max-sm:!w-[90%] z-20"
                 :style="styles"
-                @click.stop
             >
                 <div v-if="!hideHeader" class="relative prevent-select flex items-center h-[60px] z-20" :style="stylesHeader">
                     <div class="flex" :class="{'-ml-2': icon}">
@@ -121,6 +120,15 @@ const handleClose = ($emit?: string, $data?: any, force?: boolean) => {
     }
 }
 
+const forceClose = ($emit?: string, $data?: any) => {
+    showContent.value = false
+    setTimeout(()=> {
+        hidden.value = true
+        if ($emit) emit($emit, $data)
+        else emit('close')
+    }, 150)
+}
+
 const handleEsc = (e: KeyboardEvent) => {
     if (e.key === 'Escape')  handleClose()
 }
@@ -140,7 +148,8 @@ onUnmounted(() => {
 })
 
 defineExpose({
-    close: handleClose
+    close: handleClose,
+    forceClose
 })
 
 </script>
@@ -153,8 +162,7 @@ defineExpose({
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 2000;
+    z-index: 1000;
 }
 
 .content {

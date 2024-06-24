@@ -1,5 +1,11 @@
+import { PersonalData } from "~/types/account";
+
 export interface State {
-    user: any,
+    user: {
+        id: string
+        personal_data: PersonalData
+        role: string
+    },
     maintenance: boolean,
     notifications: any[]
 }

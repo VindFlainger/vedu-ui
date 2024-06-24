@@ -4,6 +4,7 @@
         title="Добавить отзыв"
         icon="Plus"
         max-width="560"
+        :freeze="loading"
     >
         <div class="mt-4 flex justify-center">
             <el-rate
@@ -30,8 +31,8 @@
                     color="red-500"
                 />
                 <u-button
-                    label="Сохранить"
-                    :disabled="loading || addDisabled"
+                    :label="!review ? 'Добавить' : 'Сохранить'"
+                    :disabled="addDisabled"
                     :loading="loading"
                     @click="submit"
                 />
@@ -41,19 +42,26 @@
 </template>
 
 <script setup lang="ts">
-const { $api, $notifications } = useNuxtApp()
-const intercomStore = useIntercomStore()
+import { CourseAccess, CourseReview } from "~/types/courses";
+import { Ref } from "vue";
 
+const { $api, $notifications } = useNuxtApp()
+
+const intercomStore = useIntercomStore()
+const courseStore = useCourseStore()
 
 export interface Props {
-    courseId: string
+    courseId: string,
+    review?: CourseReview
 }
-
 const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits<{
-    'added': []
+    (e: 'added') : void
+    (e: 'edited') : void
 }>()
+
+const { course } = storeToRefs(courseStore) as { course: Ref<CourseAccess> }
 
 const modal = ref<any>(null)
 
@@ -68,26 +76,54 @@ const { loading, addLoading, removeLoading } = useLoading()
 const submit = async () => {
     try {
         addLoading()
-        await $api.courses.ADD_COURSE_REVIEW({
-            course_id: props.courseId,
-            amount: amount.value,
-            text: text.value
-        })
 
-        intercomStore.addNotification({
-            type: 'success',
-            title: $notifications.REVIEW_ADDED.title,
-            text: $notifications.REVIEW_ADDED.message
-        })
+        if (!props.review) {
+            const res = await $api.courses.ADD_COURSE_REVIEW({
+                course_id: props.courseId,
+                amount: amount.value,
+                text: text.value
+            })
 
-        modal.value.close()
+            intercomStore.addNotification({
+                type: 'success',
+                title: $notifications.REVIEW_ADDED.title,
+                text: $notifications.REVIEW_ADDED.message
+            })
 
-        emit('added')
+            course.value.reviews.review = res
+
+            modal.value.forceClose()
+
+            emit('added')
+        } else {
+            const res = await $api.courses.EDIT_COURSE_REVIEW({
+                course_id: props.courseId,
+                amount: amount.value,
+                text: text.value
+            })
+
+            intercomStore.addNotification({
+                type: 'success',
+                title: $notifications.REVIEW_EDITED.title,
+                text: $notifications.REVIEW_EDITED.message,
+            })
+
+            modal.value.forceClose()
+
+            course.value.reviews.review = res
+
+            emit('edited')
+        }
     } catch (err) {
         console.log(err)
     } finally {
         removeLoading()
     }
+}
+
+if (props.review) {
+    amount.value = props.review.amount
+    text.value = props.review.text
 }
 
 </script>
