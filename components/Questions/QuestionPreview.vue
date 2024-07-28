@@ -1,6 +1,8 @@
 <template>
-    <div class="relative question-bg flex flex-col p-3 rounded-lg border border-gray-300 bg-white" v-bind="$attrs">
-        <p class="font-bold text-lg text-primary-900"> {{ question.title }} </p>
+    <div class="relative question-bg flex flex-col p-3 rounded-lg border border-gray-300 bg-white">
+        <p class="font-bold text-lg text-primary-900">
+            {{ question.title }}
+        </p>
         <div>
             <div class="mt-3 text-sm">
                 <p>

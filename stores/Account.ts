@@ -1,21 +1,23 @@
 import { PersonalData } from "~/types/account";
 
 export interface State {
-    user: {
+    user?: {
         id: string
         personal_data: PersonalData
         role: string
+        avatar: SizedImage
     },
     maintenance: boolean,
     notifications: any[]
 }
 
 import api from '~/api/index'
+import { SizedImage } from "~/types/global";
 
 
 export const useAccountStore = defineStore('Account', {
     state: (): State => ({
-        user: null,
+        user: undefined,
         maintenance: false,
         notifications: []
     }),
@@ -24,13 +26,13 @@ export const useAccountStore = defineStore('Account', {
             return state.user?.role
         },
         isInstructor: (state): boolean => {
-            return state.user.role === 'instructor'
+            return state.user?.role === 'instructor'
         },
         isStudent: (state): boolean => {
-            return state.user.role === 'student'
+            return state.user?.role === 'student'
         },
         isNewUser: (state): boolean => {
-            return !!state.user.role
+            return !state.user?.role
         }
     },
     actions: {

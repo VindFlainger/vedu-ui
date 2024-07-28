@@ -20,3 +20,5 @@ export interface BaseError {
     message: string
     data?: any
 }
+
+export type Breakpoints = 'base' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'

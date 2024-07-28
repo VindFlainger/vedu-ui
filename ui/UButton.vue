@@ -7,7 +7,7 @@
             'u-button-solid-bg': !text && !plain && !iconStyle,
             'u-button-plain': text || plain,
         }"
-        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors shrink-0"
+        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors shrink-0 self-center"
     >
         <div v-if="!iconStyle" class="flex items-center justify-center">
             <div
@@ -30,11 +30,9 @@
                     />
                 </slot>
             </div>
-            <div>
+            <div class="leading-[100%] relative top-px">
                 <slot>
-                    <span>
-                        {{ label }}
-                    </span>
+                    {{ label }}
                 </slot>
             </div>
             <div
@@ -76,7 +74,7 @@
                 v-if="label"
                 class="u-button-icon-style-label"
             >
-                {{label}}
+                {{ label }}
             </div>
         </div>
         <div v-if="loading && !disabled" class="u-button-loading"/>
@@ -87,8 +85,9 @@
 import UIcon from '~/ui/UIcon.vue'
 import { useColor } from '~/ui/composables/useColor'
 import { useRounded } from '~/ui/composables/useRounded'
-import LoaderIcon from '~/ui/icons/LoaderIcon.vue'
+import { Breakpoints } from "~/types/global";
 
+const { $getBreakpointValue } = useNuxtApp()
 
 export interface Props {
     /* Basic */
@@ -101,7 +100,7 @@ export interface Props {
     rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
 
     /* Sizing */
-    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+    size?: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | string
 
     /* Types */
     plain?: boolean
@@ -187,7 +186,19 @@ const activeTextColor = computed(() =>
 )
 
 const sizeFrames = computed(() => {
-    switch (props.size) {
+    let size = props.size
+
+    if (props.size.startsWith('~') && /\b((base|2xs|xs|sm|md|lg|xl|2xl):(2xs|xs|sm|md|lg|xl|2xl)|(2xs|xs|sm|md|lg|xl|2xl):(base|2xs|xs|sm|md|lg|xl|2xl))\b/.test(props.size)) {
+        const frames = Object.fromEntries(props.size
+            .replace('~', '')
+            .split(' ')
+            .map(frame => {
+                return [frame.split(':')[0], frame.split(':')[1]]
+            })) as Record<Breakpoints, any>
+        size = $getBreakpointValue(frames).value
+    }
+
+    switch (size) {
         case 'xs':
             return { padding: '3px 10px', iconStylePadding: '2px', fontSize: 14, iconSize: 13 }
         case 'sm':
@@ -197,7 +208,9 @@ const sizeFrames = computed(() => {
         case 'lg':
             return { padding: '8px 18px', iconStylePadding: '8px', fontSize: 16, iconSize: 15 }
         case 'xl':
-            return { padding: '12px 21px', iconStylePadding: '12px', fontSize: 16, iconSize: 15 }
+            return { padding: '12px 21px', iconStylePadding: '10px', fontSize: 16, iconSize: 19 }
+        default:
+            return { padding: '6px 16px', iconStylePadding: '6px', fontSize: 16, iconSize: 15 }
     }
 })
 
@@ -316,7 +329,7 @@ const styles = computed(() => ({
 }
 
 .u-button-icon-style-icon {
-    padding:  var(--u-button-padding);
+    padding: var(--u-button-padding);
     border-radius: 50%;
     overflow: hidden;
 }

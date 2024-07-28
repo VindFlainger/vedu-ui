@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-[url('~/assets/backgrounds/main.svg')]">
         <HeaderBar v-if="hydratated && user && !maintenance"/>
         <LoadingStub v-if="!maintenance && !user"/>
         <MaintenanceStub v-if="maintenance"/>

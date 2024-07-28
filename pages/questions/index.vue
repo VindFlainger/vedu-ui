@@ -1,10 +1,16 @@
 <template>
     <div class="py-4 flex flex-col min-h-[100%] relative">
+
         <div
             v-if="loading && questions.length"
             class="absolute z-20 -inset-3 rounded-xl bg-gray-100/50 shadow-[0_0_15px_#f3f4f6]"
         />
-        <ActionBar v-if="questionsLoaded" :active="getBreakpointData('lg', true, false).value">
+
+        <!-- TOP BAR -->
+        <ActionBar
+            v-if="questionsLoaded"
+            :active="getBreakpointData('lg', true, false).value"
+        >
             <QuestionsActionBar
                 v-model:search-query="searchQuery"
                 v-model:active-tags="activeTags"
@@ -12,6 +18,8 @@
                 @open:add-question-modal="handleOpenAddDialog"
             />
         </ActionBar>
+
+
         <template v-if="questions.length">
             <div class="relative mb-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
@@ -19,7 +27,6 @@
                         v-for="question in questions"
                         :key="question.id"
                         :question="question"
-                        :tags="tags"
                         @edit="handleOpenEditDialog(question)"
                         @remove="handleRemove(question.id)"
                     />
@@ -32,6 +39,8 @@
                 class="mt-auto mb-4"
             />
         </template>
+
+
         <div v-else-if="loading" class="py-16">
             <ULoading :size="50"/>
         </div>

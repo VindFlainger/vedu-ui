@@ -1,9 +1,20 @@
 <template>
-    <div class="pt-8 pb-8">
-        <p class="text-xl font-bold text-primary-900">
-            Новости проекта ({{ total }})
-        </p>
-        <div class="mt-4 grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+    <div class="md:mx-8 lg:mx-16 xl:mx-32">
+
+        <!-- INTRO -->
+        <div v-if="page === 1" class="mt-5 mb-6 flex flex-col items-center sm:mt-8 sm:mb-10 md:mt-16 xl:mt-32">
+            <div class="xl:max-w-[606px] 2xl:max-w-[900px]">
+                <p class="text-center text-3xl font-extrabold font-nunito sm:text-[48px] sm:leading-[72px] 2xl:text-[75px] 2xl:leading-[90px]">
+                    Новости & Статьи
+                </p>
+                <p class="mt-3 text-center text-base text-gray-400 font-nunit sm:text-xl 2xl:mt-5 2xl:text-2xl">
+                    Новости о деятельности и жизни платформы, а также событиях и новых технологиях в сфере образования.
+                </p>
+            </div>
+        </div>
+
+        <!-- NEWS POSTS -->
+        <div class="grid gap-10 md:grid-cols-2 2xl:grid-cols-3">
             <template v-if="!loading">
                 <NewsPostElement
                     v-for="post in news"
@@ -17,9 +28,10 @@
                     :key="i"
                 />
             </template>
-
         </div>
-        <div class="mt-8">
+
+        <!-- PAGINATION -->
+        <div class="mt-16 mb-8">
             <u-pagination
                 v-model:page="page"
                 v-model:per-page="perPage"
@@ -27,7 +39,6 @@
             />
         </div>
     </div>
-
 </template>
 
 

@@ -14,16 +14,22 @@ module.exports = {
             colors: {
                 'regal-blue': '#243c5a',
                 'regal-green': '#43833e',
-                'primary-900': '#058c97',
-                'primary-800': '#0e9b98',
-                'primary-700': '#49BBBD',
-                'primary-500': '#92D6D6',
+                'primary-900': '#04646c',
+                'primary-800': '#05757e',
+                'primary-700': '#058c97',
+                'primary-600': '#058c97',
+                'primary-500': '#0e9b98',
+                'primary-400': '#49BBBD',
+                'primary-300': '#92D6D6',
             },
             fontSize: {
                 title: '2rem',
             },
+            fontFamily: {
+                'nunito': ["Nunito", 'sans-serif']
+            }
         },
     },
-    plugins: [],
+    plugins: ["prettier-plugin-tailwindcss"],
     darkMode: 'class',
 }

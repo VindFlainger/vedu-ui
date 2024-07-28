@@ -1,10 +1,8 @@
 <template>
-    <div>
-        <NotificationBar class="z-[10000]"/>
-        <NuxtLayout>
+    <NotificationBar class="z-[10000]"/>
+    <NuxtLayout>
 
-        </NuxtLayout>
-    </div>
+    </NuxtLayout>
 </template>
 
 <script lang="ts" setup>

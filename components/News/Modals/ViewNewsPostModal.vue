@@ -6,22 +6,22 @@
         max-width="500"
         padding="18px 24px"
     >
-        <p class="font-bold text-xl text-primary-900 leading-[22px]">
+        <p class="text-xl font-extrabold text-primary-900 leading-[22px] font-nunito">
             {{ title }}
         </p>
-        <p class="mt-1 text-gray-500 text-sm leading-[18px]">
-            {{ subtitle}}
+        <p class="mt-3 text-gray-500 text-[15px] leading-[18px]">
+            {{ subtitle }}
         </p>
-        <el-carousel class="mt-5 border-[3px] overflow-hidden border-primary-900/50 rounded-2xl" height="250px">
+        <el-carousel class="mt-5 overflow-hidden rounded-2xl border-[3px] border-primary-900/50" height="250px">
             <el-carousel-item
                 v-for="image in images"
                 :key="image"
             >
-                <img :src="image" class="h-[250px] object-cover w-full"/>
+                <img :src="image" class="w-full object-cover h-[250px]"/>
             </el-carousel-item>
         </el-carousel>
         <p class="mt-3 text-[15px] leading-[20px]" v-html="content"/>
-        <p class="mt-3 text-sm text-primary-900 font-medium capitalize text-right">
+        <p class="mt-3 text-right text-sm font-medium capitalize text-gray-400 font-nunito">
             Опубликовано: {{ $luxon.fromISO(createdAt).toFormat('LLL d, yyyy') }}
         </p>
     </u-dialog>

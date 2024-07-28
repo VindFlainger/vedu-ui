@@ -1,7 +1,16 @@
 <template>
-    <div ref="content" class="h-[calc(100vh-64px)] thinner-scrollbar overflow-y-scroll flex flex-col">
+    <div
+        id="layout-content"
+        ref="content"
+        class="layout-content pt-[114px] h-[calc(100vh)] thinner-scrollbar overflow-y-scroll flex flex-col"
+        :style="{
+            marginTop: `-${headerHeight}px`,
+            paddingTop: `${headerHeight}px`,
+            '--topbarHeight': `${headerHeight}px`
+        }"
+    >
         <div id="action-bar" class="sticky bg-white z-[1000] top-0"></div>
-        <div class="flex justify-center grow bg-sky-50">
+        <div class="flex justify-center grow">
             <div class="max-sm:px-3 sm:w-[95%] lg:w-[90%] max-w-[1600px] h-full">
                 <NotFoundStub v-if="accessDenied"/>
                 <NuxtPage v-else :class="[
@@ -18,6 +27,8 @@
 
 <script setup lang="ts">
 const route: any = useRoute()
+const layoutStore = useLayoutStore()
+
 
 export interface Props {
     maintenance?: boolean,
@@ -28,8 +39,7 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 
 
-const layoutStore = useLayoutStore()
-const { contentHeight, contentWidth } = storeToRefs(layoutStore)
+const { contentHeight, contentWidth, headerHeight } = storeToRefs(layoutStore)
 
 
 const content = ref<HTMLElement>()
@@ -55,4 +65,19 @@ onBeforeUnmount(() => {
 
 <style scoped>
 
+#layout-content::-webkit-scrollbar{
+    width: 4px;
+    background: transparent;
+}
+
+#layout-content::-webkit-scrollbar-track {
+    margin-top: var(--topbarHeight)
+}
+
+#layout-content::-webkit-scrollbar-thumb {
+    margin-top: 114px;
+    width: 8px;
+    background: #b2b5bb;
+    border-radius: 9999px;
+}
 </style>

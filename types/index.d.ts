@@ -3,6 +3,8 @@ import api from '~/api/index'
 import DateFormats from "~/config/dateFormats";
 import { Emitter } from 'mitt'
 import { NotificationsType } from "~/plugins/notifications";
+import { Breakpoints } from "~/plugins/breakpoins";
+import { ComputedRef } from "vue";
 
 interface PluginsInjections {
     $luxon: typeof DateTime
@@ -11,6 +13,7 @@ interface PluginsInjections {
     $dateFormats: typeof DateFormats
     $emitter: Emitter<any>
     $notifications: NotificationsType
+    $getBreakpointValue: (breakpointValues: Record<Breakpoints, any>) => ComputedRef<any>
 }
 
 declare module '#app' {
@@ -25,6 +28,7 @@ declare module 'nuxt/dist/app/nuxt' {
         $dateFormats: typeof DateFormats
         $emitter: Emitter<any>
         $notifications: NotificationsType
+        $getBreakpointValue: (breakpointValues: Record<Breakpoints, any>) => ComputedRef<any>
     }
 
 }
