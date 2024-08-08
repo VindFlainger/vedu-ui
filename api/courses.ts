@@ -33,6 +33,7 @@ export type GetCourseData = CoursePreview | CourseAccess
 export interface GetCoursesPayload {
     page: number
     per_page: number
+    search?: string
 }
 export type GetCoursesData = {
     data: CourseBasePreview[],
@@ -195,7 +196,7 @@ export default {
         data: GetCoursesPayload,
         options?: NitroFetchOptions<any>,
         controls?: Controls
-    ) => _fetch<GetCoursesData>('GET', `/courses`, null, options, controls),
+    ) => _fetch<GetCoursesData>('GET', `/courses`, data, options, controls),
 
     GENERATE_COURSE_ACCESS_TOKEN: (
         data: GenerateCourseTokenPayload,

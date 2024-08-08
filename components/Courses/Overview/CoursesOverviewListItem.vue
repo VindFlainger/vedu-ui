@@ -1,18 +1,21 @@
 <template>
-    <div class="relative p-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col
-        shadow-[rgba(17,_17,_26,_0.1)_0px_4px_16px,_rgba(17,_17,_26,_0.05)_0px_8px_32px]
-        ">
-        <p class="font-bold mb-2">
+    <div class="relative flex flex-col rounded-3xl bg-gray-100 p-4 sm:rounded-[32px] sm:p-5 lg:p-7 2xl:p-5">
+        <p
+            class="text-xl font-extrabold leading-6 text-gray-800 font-nunito sm:line-clamp-2
+               sm:h-[56px] sm:text-2xl sm:leading-7"
+        >
             {{ course.name }}
         </p>
-        <img
-            class="rounded h-[180px] object-cover"
-            :src="course.image?.original || noCourseCoverImage"
-            :alt="course.name"
-        >
-        <div class="flex flex-col flex-grow gap-3 mt-3">
+        <SizedImage
+            class="mt-3 !rounded-xl sm:!rounded-2xl"
+            :image="course.image"
+            :empty-image="noCourseCoverImage"
+            :height="180"
+            width="100%"
+        />
+        <div class="mt-3 flex flex-grow flex-col gap-3">
             <div >
-                <p class="text-[13px] font-medium text-gray-800 mb-px">Теги</p>
+                <p class="mb-px font-medium text-gray-800 text-[13px]">Теги</p>
                 <div v-if="course.tags.length" class="flex flex-wrap gap-2" >
                     <u-tag
                         v-for="tag in course.tags.slice(0, 2)"
@@ -20,14 +23,14 @@
                         :value="tag"
                         size="sm"
                         font-size="12"
-                        class="whitespace-nowrap shrink-0"
+                        class="shrink-0 whitespace-nowrap"
                     />
                     <u-tag
                         v-if="course.tags.length > 2"
                         :value="`+${course.tags.length - 2}`"
                         size="sm"
                         font-size="12"
-                        class="whitespace-nowrap shrink-0"
+                        class="shrink-0 whitespace-nowrap"
                     />
                 </div>
                 <div v-else>
@@ -40,7 +43,7 @@
                 </div>
             </div>
             <div class="mt-auto">
-                <p class="text-[13px] font-medium text-gray-800 mb-px">Инструкторы</p>
+                <p class="mb-px font-medium text-gray-800 text-[13px]">Инструкторы</p>
                 <u-avatar-group
                     :avatars="computedInstructors"
                     flex-show
@@ -50,7 +53,7 @@
                 />
             </div>
             <div>
-                <p class="text-[13px] font-medium text-gray-800 mb-px">Студенты</p>
+                <p class="mb-px font-medium text-gray-800 text-[13px]">Студенты</p>
                 <u-avatar-group
                     v-if="course.students_stats.total_count"
                     :avatars="computedStudents"
@@ -59,21 +62,21 @@
                     space-size="10"
                     :total="course.students_stats.total_count"
                 />
-                <div v-else class="text-[13px] text-gray-500 py-[5px]">
+                <div v-else class="text-gray-500 text-[13px] py-[5px]">
                     Еще не добавлены
                 </div>
             </div>
             <div v-if="course.start">
-                <p class="text-[13px] font-medium text-gray-800 mb-px">Даты</p>
+                <p class="mb-px font-medium text-gray-800 text-[13px]">Даты</p>
                 <div class="flex gap-3">
-                    <div class="flex gap-1 items-center">
-                        <u-icon size="17" value="CalendarDays" class="[&_svg]:stroke-2 relative bottom-px"/>
+                    <div class="flex items-center gap-1">
+                        <u-icon size="17" value="CalendarDays" class="relative bottom-px [&_svg]:stroke-2"/>
                         <span class="text-xs">{{$luxon.fromISO(course.start).toFormat('dd MMM yyyy')}}</span>
                     </div>
                     <span class="text-sm">-</span>
-                    <div class="flex gap-1 items-center">
-                        <u-icon size="17" value="CalendarDays" class="[&_svg]:stroke-2 relative bottom-px"/>
-                        <span class="text-xs ">{{$luxon.fromISO(course.end).toFormat('dd MMM yyyy')}}</span>
+                    <div class="flex items-center gap-1">
+                        <u-icon size="17" value="CalendarDays" class="relative bottom-px [&_svg]:stroke-2"/>
+                        <span class="text-xs">{{$luxon.fromISO(course.end).toFormat('dd MMM yyyy')}}</span>
                     </div>
                 </div>
             </div>
@@ -87,7 +90,7 @@
             @click="emit('delete')"
         />
 
-        <div class="flex justify-between mt-5">
+        <div class="mt-5 flex justify-between">
             <u-button
                 v-if="isInstructor"
                 label="Управлять"

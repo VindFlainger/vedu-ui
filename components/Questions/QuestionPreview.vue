@@ -31,7 +31,7 @@
                     <p class="line-clamp-3 question-content" v-html="question.content"></p>
                 </client-only>
             </div>
-            <div class="mt-3 ">
+            <div v-if="question.tags.length" class="mt-3">
                 <span class="font-bold">Теги:</span>
                 <div class="mt-1 flex flex-wrap pb-1 question-tags gap-[6px]">
                     <UTag

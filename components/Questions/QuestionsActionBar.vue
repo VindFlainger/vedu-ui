@@ -55,7 +55,7 @@
                 label="Новый вопрос"
                 @click="$emit('open:addQuestionModal')"
             />
-            <UInput
+            <u-input
                 :model-value="searchQuery"
                 class="mr-0 ml-auto w-full max-w-[220px] [&_input]:text-sm [&_input::placeholder]:font-light [&_input::placeholder]:text-gray-400"
                 right-icon="MagnifyingGlass"

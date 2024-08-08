@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <img
-            class="object-cover select-none"
-            :style="styles"
-            :src="src"
-            :alt="alt"
-            v-bind="$attrs"
-        >
-    </div>
+    <img
+        class="object-cover select-none"
+        :style="styles"
+        :src="src"
+        :alt="alt"
+        v-bind="$attrs"
+    >
 </template>
 
 <script setup lang="ts">

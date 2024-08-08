@@ -1,11 +1,7 @@
 <template>
-    <div class="pt-4 pb-10 flex flex-col min-h-[100%] relative">
-        <div
-            v-if="loading && questions.length"
-            class="absolute z-20 -inset-3 rounded-xl bg-gray-100/50 shadow-[0_0_15px_#f3f4f6]"
-        />
+    <div class="relative flex flex-col pt-4 pb-10 min-h-[100%]">
 
-        <!-- TOP BAR -->
+        <!-- TOP ACTIONS -->
         <div
             v-if="questionsLoaded"
             class="pb-6"
@@ -19,10 +15,10 @@
         </div>
 
 
-
+        <!-- CONTENT -->
         <template v-if="questions.length">
             <div class="relative">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                     <QuestionPreview
                         v-for="question in questions"
                         :key="question.id"
@@ -31,6 +27,11 @@
                         @remove="handleRemove(question.id)"
                     />
                 </div>
+                <!-- LOADING OTHER -->
+                <div
+                    v-if="loading && questions.length"
+                    class="absolute z-20 -inset-3 rounded-xl bg-gray-100/50 backdrop-blur-[1px] shadow-[0_0_15px_#f3f4f6]"
+                />
             </div>
             <UPagination
                 v-model:page="page"
@@ -41,35 +42,22 @@
         </template>
 
 
-        <div v-else-if="loading" class="py-16">
-            <ULoading :size="50"/>
-        </div>
-        <div v-else class="flex items-center justify-center mt-16">
-            <div class="flex flex-col items-center justify-center py-8 px-16 max-w-[500px] w-[90%]">
+        <!-- LOADING -->
+        <PageLoader v-else-if="loading"/>
+
+        <!-- EMPTY -->
+        <div v-else class="mt-16 flex items-center justify-center">
+            <div class="flex flex-col items-center justify-center px-16 py-8 max-w-[500px] w-[90%]">
                 <div class="w-[50%]">
                     <img class="" src="~/assets/images/qa.png" alt="">
                 </div>
-                <p class="text-xl font-bold mt-1 text-gray-700">No Saved Questions</p>
+                <p class="mt-1 text-xl font-bold text-gray-700">No Saved Questions</p>
                 <UButton class="mt-8" size="sm" label="Create" @click="handleOpenAddDialog"/>
             </div>
         </div>
 
-        <QuestionEditDialog
-            v-if="showQuestionEditDialog && selectedQuestion"
-            v-model="showQuestionEditDialog"
-            destroy-on-close
-            :question="selectedQuestion"
-            max-width="800"
-            @close="showQuestionEditDialog = false; selectedQuestion = null"
-            @updated="fetch"
-        />
-        <QuestionCreateDialog
-            v-if="showQuestionCreateDialog"
-            @close="showQuestionCreateDialog = false"
-            @created="fetch"
-            max-width="800"
-        />
 
+        <!-- BOTTOM ACTIONS -->
         <BottomActionBar :active="contentScrolled">
             <div>
                 <u-button
@@ -81,15 +69,39 @@
             </div>
         </BottomActionBar>
     </div>
+
+
+    <!-- DIALOGS -->
+    <QuestionEditDialog
+        v-if="showQuestionEditDialog && selectedQuestion"
+        v-model="showQuestionEditDialog"
+        destroy-on-close
+        :question="selectedQuestion"
+        max-width="800"
+        @close="showQuestionEditDialog = false; selectedQuestion = null"
+        @updated="fetch"
+    />
+
+    <QuestionCreateDialog
+        v-if="showQuestionCreateDialog"
+        @close="showQuestionCreateDialog = false"
+        @created="fetch"
+        max-width="800"
+    />
+
+
 </template>
 
 <script setup lang="ts">
 import { useRouteQuery } from "@vueuse/router";
 import { Question } from "~/models/QuestionModel";
 import QuestionCreateDialog from "~/components/Questions/QuestionCreateDialog.vue";
+import api from "~/api";
 const layoutStore = useLayoutStore()
+const questionsStore = useQuestionsStore()
 
 const { contentScrolled } = storeToRefs(layoutStore)
+const { tags } = storeToRefs(questionsStore)
 
 definePageMeta({
     roles: ['instructor'],
@@ -98,9 +110,6 @@ definePageMeta({
 const getBreakpointData = inject('getBreakpointData')
 const { $api } = useNuxtApp()
 
-const questionsStore = useQuestionsStore()
-
-const { questions, tags, questionsCount } = storeToRefs(questionsStore)
 
 useSeoMeta({
     title: 'Questions'
@@ -152,10 +161,17 @@ watch([activeTagsRoute, page, perPage, searchQuery], () => {
 const questionsLoaded = ref(false)
 const router = useRouter()
 const { addLoading, removeLoading, loading } = useLoading()
+
+const questions = ref<Question[]>([])
+const questionsCount = ref<number>(0)
 const fetch = async (moveTop: any = false) => {
     try {
         addLoading()
-        await questionsStore.fetchQuestions(filters.value)
+
+        const res = await api.questions.GET_QUESTIONS(filters.value, undefined, { cancelPrevious: true })
+        questions.value = res.data
+        questionsCount.value = res.meta.count
+
         if (moveTop) window.scrollTo({ top: 0, behavior: 'smooth' })
         questionsLoaded.value = true
         count.value = questionsCount.value as number
@@ -178,12 +194,12 @@ const handleRemove = async (id: string) => {
     }
 }
 
-onMounted(()=>{
+onMounted(() => {
     fetch()
     questionsStore.fetchAvailableTags()
 })
 
-onUnmounted(()=>{
+onUnmounted(() => {
     questionsStore.setEmpty()
 })
 </script>

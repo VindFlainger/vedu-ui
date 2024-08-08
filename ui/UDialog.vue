@@ -115,7 +115,7 @@ const handleClose = ($emit?: string, $data?: any, force?: boolean) => {
         setTimeout(()=> {
             hidden.value = true
             if ($emit) emit($emit, $data)
-            else emit('close')
+            emit('close')
         }, 150)
     }
 }
@@ -177,7 +177,7 @@ defineExpose({
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: 0.15s ease-out;
+    transition: 0.15s ease;
 }
 
 .u-dialog-bg {
