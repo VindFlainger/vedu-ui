@@ -4,13 +4,14 @@
             px-4 md:px-8 xl:px-16 py-4 2xl:px-32 2xl:py-8 mr-2"
         ref="header"
         :class="{
-             '!py-2 sm:!py-4 !px-3 sm:!px-6 xl:!px-12 2xl:!px-24 2xl:!py-4': scrolled
+             '!py-2 sm:!py-4 !px-3 sm:!px-6 xl:!px-12 2xl:!px-24 2xl:!py-4': contentScrolled
         }"
     >
+        <div v-if="contentScrolled" class="absolute -top-px h-[calc(100%-4px)] sm:h-[calc(100%-12px)] left-0 right-0 backdrop-blur-[2px]"/>
         <div
-            class="flex w-full items-center max-lg:justify-between"
+            class="relative z-10 flex w-full items-center max-lg:justify-between"
             :class="{
-                'rounded-[24px] bg-gray-100 py-3 px-4 border-[6px] border-white outline  outline-1 outline-gray-300': scrolled
+                'rounded-[24px] bg-gray-50 py-3 px-4 border-[6px] border-white outline  outline-1 outline-gray-300': contentScrolled
             }"
         >
 
@@ -51,7 +52,7 @@
             <div
                 class="hidden lg:flex mr-6 ml-auto bg-[#F9F9F9] py-4 2xl:py-6 px-4 2xl:px-6 rounded-full"
                 :class="{
-                    'bg-white !py-2 2xl:!py-2.5 !px-3 2xl:!px-4': scrolled
+                    'bg-white !py-2 2xl:!py-2.5 !px-3 2xl:!px-4': contentScrolled
                 }"
             >
                 <nuxt-link
@@ -108,7 +109,7 @@ const router = useRouter()
 
 const { isInstructor, isStudent, user } = storeToRefs(accountStore)
 
-const { headerHeight } = storeToRefs(layoutStore)
+const { headerHeight, contentScrolled } = storeToRefs(layoutStore)
 
 const newUsersLinks = [
     {
@@ -170,15 +171,11 @@ const activeLinks = computed(() => {
 })
 
 
-const scrolled = ref(false)
 let content = document.querySelector('#layout-content')
 
-const checkScrolled = (e: Event) => {
-    (e.target as HTMLElement).scrollTop > 0 ? scrolled.value = true : scrolled.value = false
-}
 
 let observer: ResizeObserver | null = null
-const header = ref<HTMLElement | null>(null)
+const header = ref<HTMLElement>()
 
 
 const handleResize = () => {
@@ -188,14 +185,12 @@ const handleResize = () => {
 }
 
 onMounted(() => {
-    if (content) content.addEventListener('scroll', checkScrolled)
     observer = new ResizeObserver(handleResize)
     handleResize()
-    if (header.value) observer.observe(header.value)
+    observer.observe(header.value as HTMLElement)
 })
 
 onBeforeUnmount(() => {
-    if (content) content.removeEventListener('scroll', checkScrolled)
     if (observer) observer.disconnect()
 })
 

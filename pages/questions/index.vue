@@ -1,15 +1,14 @@
 <template>
-    <div class="py-4 flex flex-col min-h-[100%] relative">
-
+    <div class="pt-4 pb-10 flex flex-col min-h-[100%] relative">
         <div
             v-if="loading && questions.length"
             class="absolute z-20 -inset-3 rounded-xl bg-gray-100/50 shadow-[0_0_15px_#f3f4f6]"
         />
 
         <!-- TOP BAR -->
-        <ActionBar
+        <div
             v-if="questionsLoaded"
-            :active="getBreakpointData('lg', true, false).value"
+            class="pb-6"
         >
             <QuestionsActionBar
                 v-model:search-query="searchQuery"
@@ -17,12 +16,13 @@
                 :tags="tags"
                 @open:add-question-modal="handleOpenAddDialog"
             />
-        </ActionBar>
+        </div>
+
 
 
         <template v-if="questions.length">
-            <div class="relative mb-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            <div class="relative">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
                     <QuestionPreview
                         v-for="question in questions"
                         :key="question.id"
@@ -36,7 +36,7 @@
                 v-model:page="page"
                 v-model:per-page="perPage"
                 v-model:count="count"
-                class="mt-auto mb-4"
+                class="mt-12"
             />
         </template>
 
@@ -69,6 +69,17 @@
             @created="fetch"
             max-width="800"
         />
+
+        <BottomActionBar :active="contentScrolled">
+            <div>
+                <u-button
+                    icon-style
+                    icon="Plus"
+                    label="Новый вопрос"
+                    @click="handleOpenAddDialog"
+                />
+            </div>
+        </BottomActionBar>
     </div>
 </template>
 
@@ -76,6 +87,9 @@
 import { useRouteQuery } from "@vueuse/router";
 import { Question } from "~/models/QuestionModel";
 import QuestionCreateDialog from "~/components/Questions/QuestionCreateDialog.vue";
+const layoutStore = useLayoutStore()
+
+const { contentScrolled } = storeToRefs(layoutStore)
 
 definePageMeta({
     roles: ['instructor'],

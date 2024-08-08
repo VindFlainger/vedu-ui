@@ -7,7 +7,8 @@
             'u-button-solid-bg': !text && !plain && !iconStyle,
             'u-button-plain': text || plain,
         }"
-        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors shrink-0 self-center"
+        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors
+            shrink-0 self-center font-nunito"
     >
         <div v-if="!iconStyle" class="flex items-center justify-center">
             <div
@@ -30,7 +31,7 @@
                     />
                 </slot>
             </div>
-            <div class="leading-[100%] relative top-px">
+            <div class="relative top-px">
                 <slot>
                     {{ label }}
                 </slot>
@@ -72,7 +73,7 @@
 
             <div
                 v-if="label"
-                class="u-button-icon-style-label"
+                class="u-button-icon-style-label top-px relative"
             >
                 {{ label }}
             </div>
@@ -132,10 +133,10 @@ const defaults = {
     color: '#49BBBD',
     iconStyleIconTextColor: '#ffffff',
     borderWidth: 1,
-    size: 'sm',
+    size: 'md',
     rounded: 'xl',
     textColor: '#ffffff',
-    fontWeight: 500,
+    fontWeight: 700,
     loading: false,
     disabled: false,
     disabledColor: '#E6E6E6',
@@ -146,11 +147,11 @@ const defaults = {
 const props = withDefaults(defineProps<Props>(), {
     color: '#49BBBD',
     borderWidth: 1,
-    size: 'sm',
+    size: 'md',
     rounded: 'xl',
     textColor: '#ffffff',
     iconStyleIconTextColor: '#ffffff',
-    fontWeight: 500,
+    fontWeight: 700,
     loading: false,
     disabled: false,
     disabledColor: '#E6E6E6',
@@ -219,7 +220,7 @@ const styles = computed(() => ({
     'padding': props.iconStyle ? '' : sizeFrames.value.padding,
     'borderRadius': props.iconStyle ? '' : _rounded.value,
     'color': activeTextColor.value,
-    'fontWeight': props.text ? 400 : props.fontWeight,
+    'fontWeight': props.text ? 700 : props.fontWeight,
     'fontSize': `${props.fontSize || sizeFrames.value.fontSize}px`,
     'filter': props.loading ? 'grayscale(0.3)' : '',
     '--u-button-background-color': props.text ? 'transparent' : activeColor.value,

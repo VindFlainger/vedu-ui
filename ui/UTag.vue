@@ -4,7 +4,7 @@
         class="relative inline-flex items-center border-[var(--u-tag-text-color)] text-[var(--u-tag-color)] select-none"
     >
         <slot name="prefix"></slot>
-        <span>{{ value }}</span>
+        <span class="font-nunito relative top-px">{{ value }}</span>
         <UIcon
             v-if="clearable"
             value="XMark"
@@ -47,7 +47,7 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
     color: 'primary-800',
     rounded: 'lg',
-    fontWeight: 500,
+    fontWeight: 700,
     fontSize: 15,
     size: 'md',
     borderWidth: 2,

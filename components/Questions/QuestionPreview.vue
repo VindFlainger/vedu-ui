@@ -1,36 +1,39 @@
 <template>
-    <div class="relative question-bg flex flex-col p-3 rounded-lg border border-gray-300 bg-white">
-        <p class="font-bold text-lg text-primary-900">
+    <div class="flex flex-col rounded-3xl bg-gray-100 p-4 sm:rounded-[32px] sm:p-5 lg:p-7 2xl:p-5">
+        <p
+            class="text-xl font-extrabold leading-6 text-gray-800 font-nunito sm:line-clamp-2
+               sm:h-[56px] sm:text-2xl sm:leading-7"
+        >
             {{ question.title }}
         </p>
-        <div>
-            <div class="mt-3 text-sm">
+        <div class="mt-6">
+            <div class="">
                 <p>
                     <span class="font-bold">Тип:</span>
                     {{ typeOptions.find(option => option.value === question.type)?.label }}
                 </p>
             </div>
-            <div class="mt-3 text-sm">
+            <div class="mt-3 ">
                 <p class="capitalize">
                     <span class="font-bold">Создан:</span>
                     {{ $luxon.fromISO(question.created_at).toFormat($dateFormats.dayFormat) }}
                 </p>
             </div>
-            <div class="mt-3 text-sm">
+            <div class="mt-3 ">
                 <p class="capitalize">
                     <span class="font-bold">Изменен:</span>
                     {{ $luxon.fromISO(question.updated_at).toFormat($dateFormats.dayFormat) }}
                 </p>
             </div>
-            <div class="mt-3 text-sm">
+            <div class="mt-3 ">
                 <span class="font-bold">Текстовое содержание:</span>
                 <client-only>
-                    <p class="line-clamp-3 question-content h-[60px]" v-html="question.content"></p>
+                    <p class="line-clamp-3 question-content" v-html="question.content"></p>
                 </client-only>
             </div>
-            <div class="text-sm mt-3">
+            <div class="mt-3 ">
                 <span class="font-bold">Теги:</span>
-                <div class="flex flex-wrap question-tags gap-[6px] mt-1 pb-1">
+                <div class="mt-1 flex flex-wrap pb-1 question-tags gap-[6px]">
                     <UTag
                         v-for="tag in question.tags"
                         :key="tag.id"
@@ -41,9 +44,26 @@
                 </div>
             </div>
         </div>
-        <div class="flex mt-auto mb-0 items-center justify-between pt-6">
-            <UButton label="Изменить" size="md" :font-size="14" class="text-sm" @click="emit('edit')"/>
-            <UButton icon-style icon="Trash" color="red-400" size="lg" tag="button" @click="emit('remove')"/>
+        <div class="mt-auto mb-0 flex items-center justify-end gap-4 pt-6">
+            <UButton
+                label="Удалить"
+                color="red-500"
+                tag="button"
+                left-icon="Trash"
+                :left-icon-props="{
+                    solid: true
+                }"
+                text
+                @click="emit('remove')"
+            />
+            <UButton
+                label="Изменить"
+                left-icon="Pencil"
+                :left-icon-props="{
+                    solid: true
+                }"
+                @click="emit('edit')"
+            />
         </div>
     </div>
 </template>

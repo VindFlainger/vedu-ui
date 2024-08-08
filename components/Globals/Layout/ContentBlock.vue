@@ -9,9 +9,10 @@
             '--topbarHeight': `${headerHeight}px`
         }"
     >
-        <div id="action-bar" class="sticky bg-white z-[1000] top-0"></div>
-        <div class="flex justify-center grow">
-            <div class="max-sm:px-3 sm:w-[95%] lg:w-[90%] max-w-[1600px] h-full">
+        <div id="action-bar" class="sticky top-0 right-0 left-0 z-[1000]"/>
+
+        <div class="flex grow justify-center">
+            <div class="h-full max-sm:px-3 max-w-[1600px] sm:w-[95%] lg:w-[90%]">
                 <NotFoundStub v-if="accessDenied"/>
                 <NuxtPage v-else :class="[
                         {
@@ -39,11 +40,14 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 
 
-const { contentHeight, contentWidth, headerHeight } = storeToRefs(layoutStore)
+const { contentHeight, contentWidth, headerHeight, contentScrolled } = storeToRefs(layoutStore)
 
 
 const content = ref<HTMLElement>()
 
+const checkScrolled = (e: Event) => {
+    (e.target as HTMLElement).scrollTop > 0 ? contentScrolled.value = true : contentScrolled.value = false
+}
 
 const handleResize = () => {
     contentHeight.value = content.value?.offsetHeight as number
@@ -54,10 +58,12 @@ let observer: ResizeObserver
 onMounted(() => {
     observer = new ResizeObserver(handleResize)
     observer.observe(content.value as HTMLElement)
+    content.value!.addEventListener('scroll', checkScrolled)
 })
 
 onBeforeUnmount(() => {
     observer.disconnect()
+    content.value!.removeEventListener('scroll', checkScrolled)
 })
 
 </script>

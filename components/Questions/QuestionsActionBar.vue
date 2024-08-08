@@ -15,10 +15,10 @@
                     />
                 </template>
                 <template #content>
-                    <div class="pt-3 px-3">
+                    <div class="px-3 pt-3">
                         <UInput
                             ref="tagInput"
-                            placeholder="Tag Name"
+                            placeholder="Имя тега"
                             v-model="tagQuery"
                             color="primary-700"
                             autofocus
@@ -38,27 +38,26 @@
                                     class="border-dashed"
                                 />
                             </div>
-                            <div v-else class="flex flex-col gap-1 items-center py-6">
+                            <div v-else class="flex flex-col items-center gap-1 py-6">
                                 <UIcon value="FaceFrown" color="gray-600"/>
-                                <p class="text-center text-sm text-gray-600">No Tags Found</p>
+                                <p class="text-center text-sm text-gray-600">Теги не найдены</p>
                             </div>
                         </div>
                     </div>
                 </template>
             </UDropdown>
 
-            <div class="flex items-center cursor-pointer group ml-2" @click="$emit('open:addQuestionModal')">
-                <UButton
-                    icon-style
-                    icon="Plus"
-                    class="self-start group-hover:after:!bg-primary-700"
-                    color="primary-800"
-                />
-                <span class="ml-[6px] text-sm">Новый вопрос</span>
-            </div>
+            <u-button
+                icon-style
+                icon="Plus"
+                class="ml-2 mr-3 self-start group-hover:after:!bg-primary-700 [&_.u-button-icon-style-label]:text-gray-800"
+                color="primary-800"
+                label="Новый вопрос"
+                @click="$emit('open:addQuestionModal')"
+            />
             <UInput
                 :model-value="searchQuery"
-                class="ml-auto mr-0 [&_input]:text-sm [&_input::placeholder]:text-gray-400 [&_input::placeholder]:font-light"
+                class="mr-0 ml-auto w-full max-w-[220px] [&_input]:text-sm [&_input::placeholder]:font-light [&_input::placeholder]:text-gray-400"
                 right-icon="MagnifyingGlass"
                 color="primary-800"
                 placeholder="Имя, содержание, теги..."
@@ -66,7 +65,7 @@
             />
         </div>
         <div v-if="computedActiveTags.length" class="mt-5" >
-            <div class="flex items-center ml-auto">
+            <div class="ml-auto flex items-center">
                 <div class="flex flex-wrap gap-2 self-center">
                     <UTag
                         v-for="tag in computedActiveTags"

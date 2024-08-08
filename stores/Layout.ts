@@ -4,6 +4,7 @@ interface State {
     contentWidth: number
     accessToPage: boolean
     headerHeight: number
+    contentScrolled: boolean
 }
 export const useLayoutStore = defineStore('Layout', {
     state: () : State => ({
@@ -12,6 +13,7 @@ export const useLayoutStore = defineStore('Layout', {
         contentWidth: 0,
         accessToPage: true,
         headerHeight: 0,
+        contentScrolled: false
     }),
     getters: {
 
