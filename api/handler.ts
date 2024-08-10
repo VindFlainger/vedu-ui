@@ -13,7 +13,8 @@ let expires = 0
 let queue: { id: string, handler: any, path: string }[] = []
 
 
-const baseUrl = process.dev ? 'http://localhost:3000' : 'https://vedu-api-16d642d4fe17.herokuapp.com'
+
+
 
 export default async <DataT>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
@@ -22,6 +23,10 @@ export default async <DataT>(
     options?: NitroFetchOptions<any>,
     controls?: Controls
 ) => {
+
+    const config = useRuntimeConfig()
+
+    const baseUrl = config.public.baseUrl
 
     const pending = queue.filter(r => r.path === path)
     pending.forEach(request => {

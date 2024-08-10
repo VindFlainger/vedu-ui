@@ -6,6 +6,11 @@ export default defineNuxtConfig({
     devServer: {
         port: 8080,
     },
+    runtimeConfig: {
+        public: {
+            baseUrl: process.env.BASE_URL
+        }
+    },
     imports: {
         presets: [
             {
