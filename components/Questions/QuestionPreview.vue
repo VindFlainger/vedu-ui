@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col rounded-3xl bg-gray-100 p-4 sm:rounded-[32px] sm:p-5 lg:p-7 2xl:p-5">
+    <div class="relative flex flex-col rounded-2xl bg-gray-100 p-4 sm:rounded-3xl sm:p-3 lg:p-5">
         <p
             class="text-xl font-extrabold leading-6 text-gray-800 font-nunito sm:line-clamp-2
                sm:h-[56px] sm:text-2xl sm:leading-7"

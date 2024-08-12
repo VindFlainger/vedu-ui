@@ -133,6 +133,7 @@ export interface CourseBasePreview {
     owner: string
     name: string
     type: string
+    status: 'draft' | 'published' | 'archived'
     about: string
     start: string
     end: string

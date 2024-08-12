@@ -1,5 +1,5 @@
 <template>
-    <div class="pt-4 pb-10 min-h-[100%]">
+    <div class="pt-4 pb-10 min-h-[100%] w-full">
 
         <!-- TOP ACTIONS -->
         <CoursesActionBar
@@ -14,17 +14,18 @@
         <template v-if="courses.length">
 
             <div class="relative">
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     <CoursesOverviewListItem
                         v-for="course in courses"
                         :key="course.id"
                         :course="course"
-                        @manage="handleOpenEditDialog(course.id)"
+                        @publish="handlePublishCourse(course.id)"
+                        @edit="handleOpenEditDialog(course.id)"
                         @delete="$emitter.emit('open:confirm-delete', {
-                    title: $notifications.DELETE_COURSE_REQUEST.title(course.name),
-                    text: $notifications.DELETE_COURSE_REQUEST.message,
-                    cb: () => deleteCourse(course.id)
-                })"
+                            title: $notifications.DELETE_COURSE_REQUEST.title(course.name),
+                            text: $notifications.DELETE_COURSE_REQUEST.message,
+                            cb: () => deleteCourse(course.id)
+                        })"
                     />
                 </div>
 
@@ -35,6 +36,7 @@
                 />
             </div>
 
+            <!-- PAGINATION -->
             <UPagination
                 :count="total"
                 :page="page"
@@ -48,6 +50,7 @@
         <!-- LOADING -->
         <PageLoader v-else-if="fetchLoading"/>
 
+        <!-- EMPTY -->
         <CoursesOverviewEmpty v-else/>
     </div>
 
@@ -149,6 +152,24 @@ const deleteCourse = async (id: string) => {
         console.log(err)
     } finally {
         removeDeleteLoading()
+    }
+}
+
+
+
+const handlePublishCourse = async (id: string) => {
+    try {
+        addFetchLoading()
+
+        await $api.courses.PUBLISH_COURSE({
+            course_id: id
+        })
+
+        fetch()
+    } catch (err) {
+        console.log(err)
+    } finally {
+       removeFetchLoading()
     }
 }
 

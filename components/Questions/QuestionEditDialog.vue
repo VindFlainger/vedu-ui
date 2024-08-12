@@ -6,7 +6,7 @@
                     <span class="font-bold">Название:</span> <span class="ml-1">{{ question.title }}</span>
                 </div>
                 <div class="mt-3">
-                    <span class="font-bold">Тип:</span> <span class="ml-1 capitalize">{{ question.type }}</span>
+                    <span class="font-bold">Тип:</span> <span class="ml-1">{{ questionTypeName }}</span>
                 </div>
                 <div class="mt-3">
                     <p class="font-bold">Содержание:</p>
@@ -72,6 +72,7 @@
 
 <script setup lang="ts">
 import { Question, QuestionMultipleAnswer } from "~/models/QuestionModel";
+import { questionOptions } from "~/config/questions/params";
 const { $api } = useNuxtApp()
 
 export interface Props {
@@ -84,6 +85,9 @@ const emit = defineEmits<{}>()
 
 const dialog = ref()
 const characterLimit = ref(500)
+
+
+const questionTypeName = computed(() => questionOptions.find(option => option.value === props.question.type)?.label)
 
 const lazyOptions = ref(props.question.options)
 const lazyContent = ref(props.question.content)

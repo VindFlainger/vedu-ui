@@ -3,7 +3,6 @@
         :trigger="props.trigger"
         ref="dropdown"
         placement="bottom-start"
-        @visible-change="handleChange"
     >
         <slot name="opener" :toggle="toggle">
             <UButton
@@ -13,7 +12,7 @@
         </slot>
         <template #dropdown>
             <div :style="styles">
-                <slot name="content">
+                <slot name="content" :close="dropdown?.handleClose">
                     <el-dropdown-menu>
                         <el-dropdown-item v-for="item in items">
                             <slot v-bind="item">
@@ -33,7 +32,8 @@ import { DropdownInstance } from 'element-plus'
 import { Props as ButtonProps } from '~/ui/UButton.vue'
 import { useSize } from "~/ui/composables/useSize";
 
-export interface Props {
+
+export type Props = {
     label?: string
     items?: any[]
     trigger?: 'hover' | 'click'
@@ -53,7 +53,7 @@ const toggle = () => {
     dropdown.value?.handleOpen()
 }
 
-const {size: width} = useSize(props.width)
+const { size: width } = useSize(props.width)
 
 /*const cache = ref({x: 0, y: 0})
 const handleChange = (v: boolean) => {

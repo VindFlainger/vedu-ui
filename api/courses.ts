@@ -59,6 +59,12 @@ export interface CreateCourseData {
 
 }
 
+export interface PublishCoursePayload {
+    course_id: string
+}
+export type PublishCourseData  = boolean
+
+
 export interface DeleteCoursePayload {
     course_id: string
 }
@@ -143,6 +149,12 @@ export default {
         options?: NitroFetchOptions<any>,
         controls?: Controls
     ) => _fetch<CreateCourseData>('POST', `/courses`, data, options, controls),
+
+    PUBLISH_COURSE: (
+        data: PublishCoursePayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<PublishCourseData>('POST', `/courses/${data.course_id}/publish`, data, options, controls),
 
     DELETE_COURSE: (
         data: DeleteCoursePayload,

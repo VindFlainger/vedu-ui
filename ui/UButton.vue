@@ -1,14 +1,14 @@
 <template>
     <button
+        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors
+            shrink-0 self-center font-nunito"
         :style="styles"
-        @click="handleClick"
         :class="{
             'cursor-not-allowed': disabled,
             'u-button-solid-bg': !text && !plain && !iconStyle,
             'u-button-plain': text || plain,
         }"
-        class="u-button u-button-bg relative overflow-hidden selection:bg-none z-10 duration-150 transition-colors
-            shrink-0 self-center font-nunito"
+        @click="handleClick"
     >
         <div v-if="!iconStyle" class="flex items-center justify-center">
             <div
@@ -87,6 +87,7 @@ import UIcon from '~/ui/UIcon.vue'
 import { useColor } from '~/ui/composables/useColor'
 import { useRounded } from '~/ui/composables/useRounded'
 import { Breakpoints } from "~/types/global";
+import { v4 } from "uuid";
 
 const { $getBreakpointValue } = useNuxtApp()
 
@@ -173,9 +174,9 @@ const handleClick = () => {
     if (!props.loading && !props.loading && !props.disabled) emit('click')
 }
 
-const { color: _color } = useColor(props.color)
-const { color: _textColor } = useColor(props.textColor)
-const { rounded: _rounded } = useRounded(props.rounded)
+const { color: _color } = useColor(() => props.color)
+const { color: _textColor } = useColor(() => props.textColor)
+const { rounded: _rounded } = useRounded(() => props.rounded)
 
 const activeColor = computed(() => props.disabled ? props.disabledColor : _color.value)
 const activeTextColor = computed(() =>

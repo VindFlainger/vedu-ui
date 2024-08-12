@@ -12,7 +12,7 @@
         <div id="action-bar" class="sticky top-0 right-0 left-0 z-[1000]"/>
 
         <div class="flex grow justify-center">
-            <div class="h-full max-sm:px-3 max-w-[1600px] sm:w-[95%] lg:w-[90%]">
+            <div class="h-full max-sm:px-3 max-w-[1600px] w-[calc(100%-12px)] sm:w-[95%] lg:w-[90%]">
                 <NotFoundStub v-if="accessDenied"/>
                 <NuxtPage v-else :class="[
                         {

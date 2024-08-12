@@ -4,6 +4,7 @@
         :style="styles"
         :src="src"
         :alt="alt"
+        draggable="false"
         v-bind="$attrs"
     >
 </template>

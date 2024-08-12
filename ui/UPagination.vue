@@ -2,7 +2,7 @@
     <client-only>
         <div class="flex items-center rounded-lg" v-bind="$attrs">
             <USelect
-                class="w-[64px] [&_input]:text-center"
+                class="w-[80px] [&_input]:text-center"
                 :options="perPageOptions"
                 :model-value="perPage"
                 placeholder=" "
@@ -80,7 +80,8 @@ const perPageOptions = ref([
     },
     {
         value: 50
-    }
+    },
+
 ])
 
 const handlePerPageChange = (v: number) => {

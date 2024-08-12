@@ -11,3 +11,20 @@ export interface Notification {
     data: any
     content?: string
 }
+
+export interface InviteNotification extends Notification {
+    type: "invite"
+    data: {
+        course_name: string
+        course_id: string
+        image: string
+    }
+}
+
+export interface MessageNotification extends Notification {
+    type: "message"
+    data: {
+        title: string
+        text: string
+    }
+}

@@ -31,7 +31,8 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
     size: 24,
     color: '#000000',
-    tag: 'span'
+    tag: 'span',
+    value: "InformationCircle"
 })
 
 const color = computed<string>(() => parseColor(props.color))
