@@ -73,7 +73,7 @@ onMounted(() => {
             }),
             new TileLayer({
                 source: new XYZ({
-                    url: 'https://api.maptiler.com/maps/2900d16f-0d5f-40fb-b41c-7a79a988060b/?key=zvvVG6Fwo8iH5z6BgcWy#{z}/{y}/{x}', // Замените YOUR_API_KEY на ваш API ключ
+                    url: 'https://api.maptiler.com/maps/2900d16f-0d5f-40fb-b41c-7a79a988060b/?key=aaTJgsTJuf9rAe59rOTa#{z}/{y}/{x}', // Замените YOUR_API_KEY на ваш API ключ
                     attributions: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>',
                 }),
                 visible: true,
