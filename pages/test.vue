@@ -1,307 +1,195 @@
 <template>
-    <div class="p-16 grid gap-3">
-        <div class="p-3 border border-gray-600 border-dashed rounded w-96">
-            <p class="mb-3 font-bold p-1">Лаба 4.1</p>
-            <div>
-                <USelect v-model="mark" :options="marks"/>
-                <p>{{ markFeedback }}</p>
-                <UButton
-                    :disabled="!mark"
-                    label="Отправить"
-                    size="xs"
-                    class="mt-4"
-                    @click="submitMarks"
-                />
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-96">
-            <p class="mb-3 font-bold p-1">Лаба 4.2</p>
-            <div>
-                <USelect v-model="weekday" :options="weekdays"/>
-                <p>{{ weekdayFeedback }}</p>
-                <UButton
-                    :disabled="!weekday"
-                    label="Отправить"
-                    size="xs"
-                    class="mt-4"
-                    @click="submitWeekdays"
-                />
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-96">
-            <p class="mb-3 font-bold p-1">Лаба 4.3</p>
-            <div>
-                <UInput
-                    v-model="email.value.value"
-                    type="email"
-                    :conditions="[
-                        ['Not valid e-mail', 'error', EmailSubmitCount && !EmailMeta.valid]
-                    ]"
-                />
-                <p>{{emailFeedback}}</p>
-                <UButton
-                    :disabled="!email.value.value"
-                    label="Проверить"
-                    size="xs"
-                    class="mt-4"
-                    @click="EmailSubmit"
-                />
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-96">
-            <p class="mb-3 font-bold p-1">Лаба 4.4</p>
-            <div>
-                <UInputPhone
-                    v-model="phone"
-                />
-                <p>{{phoneFeedback}}</p>
-                <UButton
-                    :disabled="!phone"
-                    label="Проверить"
-                    size="xs"
-                    class="mt-4"
-                    @click="submitPhone"
-                />
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-[600px]">
-            <p class="mb-3 font-bold p-1">Лаба 5.1</p>
-            <div>
-                <el-table :data="usersData" style="width: 100%">
-                    <el-table-column prop="id" label="Date" width="180" />
-                    <el-table-column prop="title" label="Name" width="180" />
-                    <el-table-column prop="teacher" label="Address" />
-                    <el-table-column prop="type" label="Address" />
-                </el-table>
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-[600px]">
-            <p class="mb-3 font-bold p-1">Лаба 5.2</p>
-            <div>
-                <el-table :data="universityData" style="width: 100%">
-                    <el-table-column prop="id" label="Date" width="180" />
-                    <el-table-column prop="lastName" label="Name" width="180" />
-                    <el-table-column prop="subject" label="Address" />
-                    <el-table-column prop="mark" label="Address" />
-                </el-table>
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-[600px]">
-            <p class="mb-3 font-bold p-1">Лаба 6</p>
-            <UButton label="Запуск" @click="getDayInfo"/>
-            <div>
-                <p>
-                    <span>Название текущего дня недели: </span>
-                    <span>{{weekdayName}}</span>
-                </p>
-                <p>
-                    <span>Номер текущего дня меясца: </span>
-                    <span>{{weekdayMonthNumber}}</span>
-                </p>
-                <p>
-                    <span>Номер текущего дня в года: </span>
-                    <span>{{weekdayYearNumber}}</span>
-                </p>
-            </div>
-        </div>
-        <div class="p-3 border border-gray-600 border-dashed rounded w-[600px]">
-            <p class="mb-3 font-bold p-1">Лаба 7</p>
-            <UButton label="Запуск" @click="getDayInfoProxy"/>
-            <div>
-                <p>
-                    <span>Название текущего дня недели Proxy: </span>
-                    <span>{{weekdayNameProxy}}</span>
-                </p>
-                <p>
-                    <span>Номер текущего дня меясца Proxy: </span>
-                    <span>{{weekdayMonthNumberProxy}}</span>
-                </p>
-                <p>
-                    <span>Номер текущего дня в года Proxy: </span>
-                    <span>{{weekdayYearNumberProxy}}</span>
-                </p>
-            </div>
-        </div>
+    <div>
+        <a class="skiplink" href="#map">Go to map</a>
+        <div id="map" class="map h-[500px]" tabindex="0"></div>
+        <button id="zoom-out">Zoom out</button>
+        <button id="zoom-in">Zoom in</button>
+        <button id="route">Get Route</button>
     </div>
 </template>
 
-<script setup lang="ts">
-import _fetch from '~/api/handler'
-
+<script setup>
 definePageMeta({
     layout: 'empty'
 })
 
-const marks = [
-    {
-        label: 'Отлично',
-        value: 'Отлично'
-    },
-    {
-        label: 'Хорошо',
-        value: 'Хорошо'
-    },
-    {
-        label: 'Удовлетворительно',
-        value: 'Удовлетворительно'
-    },
-    {
-        label: 'Неудовлетворительно',
-        value: 'Неудовлетворительно'
-    },
-]
-const mark = ref()
-const markFeedback = ref()
-
-const submitMarks = async () => {
-    markFeedback.value = await _fetch('POST', '/mocks/mark', { mark: mark.value }, undefined, { noAuth: true })
-}
+import css from '../node_modules/ol/ol.css?inline'
 
 
-const weekdays = [
-    {
-        label: 'Sunday',
-        value: 'Sunday'
-    },
-    {
-        label: 'Monday',
-        value: 'Monday'
-    },
-    {
-        label: 'Tuesday',
-        value: 'Tuesday'
-    },
-    {
-        label: 'Wednesday',
-        value: 'Wednesday'
-    },
-    {
-        label: 'Thursday',
-        value: 'Thursday'
-    },
-    {
-        label: 'Friday',
-        value: 'Friday'
-    },
-    {
-        label: 'Saturday',
-        value: 'Saturday'
+useHead({
+    link: {
+        value: css,
     }
-]
-const weekday = ref()
-const weekdayFeedback = ref()
-
-const submitWeekdays = async () => {
-    weekdayFeedback.value = await _fetch('POST', '/mocks/weekdays', { weekday: weekday.value }, undefined, { noAuth: true })
-}
-
-
-const { submitCount: EmailSubmitCount, meta: EmailMeta, handleSubmit: EmailHandleSubmit } = useForm({
-    validationSchema: object({
-        email: string().required("Email is required").email("Invalid email"),
-    }),
-});
-const email = useField<string>('email' )
-const emailFeedback = ref()
-
-const EmailSubmit = EmailHandleSubmit(async ()=>{
-    emailFeedback.value = await _fetch('POST', '/mocks/email', { email: email.value.value }, undefined, { noAuth: true })
 })
 
-const phone = ref()
-const phoneFeedback = ref()
-const submitPhone = async () => {
-    phoneFeedback.value = await _fetch('POST', '/mocks/phone', { phone: phone.value }, undefined, { noAuth: true })
-}
 
-const universityData = [
-    {
-        id: '1',
-        lastName: 'Hirzhon',
-        subject: 'Math',
-        mark: 12312
-    },
-    {
-        id: '1',
-        lastName: 'Hirzhon',
-        subject: 'Math',
-        mark: 12312
-    },
-    {
-        id: '1',
-        lastName: 'Hirzhon',
-        subject: 'Math',
-        mark: 12312
-    },
-    {
-        id: '1',
-        lastName: 'Hirzhon',
-        subject: 'Math',
-        mark: 12312
-    },
-]
+import {onMounted} from "vue";
 
-const weekdayName = ref()
-const weekdayMonthNumber = ref()
-const weekdayYearNumber = ref()
-const getDayInfo = async () => {
-    const res = await _fetch('GET', '/mocks/day-info') as any
-    weekdayName.value = res.weekday_name
-    weekdayMonthNumber.value = res.weekday_month_number
-    weekdayYearNumber.value = res.weekday_year_number
-}
+import Map from 'ol/Map.js';
+import OSM from 'ol/source/OSM.js';
+import TileLayer from 'ol/layer/Tile.js';
+import View from 'ol/View.js';
 
-const weekdayNameProxy = ref()
-const weekdayMonthNumberProxy = ref()
-const weekdayYearNumberProxy = ref()
+import Geocoder from 'ol-geocoder';
+import {XYZ} from "ol/source.js";
+import {fromLonLat, toLonLat} from 'ol/proj.js';
+import OpenRouteService from 'openrouteservice-js';
+import {LineString} from "ol/geom.js";
+import {Feature} from "ol";
+import VectorLayer from "ol/layer/Vector.js";
+import VectorSource from "ol/source/Vector.js";
+import {Stroke, Style} from "ol/style.js";
+import polyline from '@mapbox/polyline';
 
-const getDayInfoProxy = async () => {
-    weekdayNameProxy.value = new Date().toLocaleDateString('ru',{weekday: 'long'})
-    weekdayMonthNumberProxy.value = new Date().getDate()
-    weekdayYearNumberProxy.value = (()=>{
-        const now = new Date() as any;
-        const start = new Date(now.getFullYear(), 0, 0) as any;
-        const diff = now - start;
-        const oneDay = 1000 * 60 * 60 * 24;
-        return Math.floor(diff / oneDay)
-    })()
-}
+// @mapbox/polyline, ol, ol-geocoder, openrouteservice-js
 
-const usersData = [
-    {
-        id: 1,
-        title: 'Deutch',
-        teacher: 'Borisovna',
-        type: 'practical'
-    },
-    {
-        id: 2,
-        title: 'SAP Administator',
-        teacher: 'Petrov',
-        type: 'lecture'
-    },
-    {
-        id: 3,
-        title: 'Administrator',
-        teacher: 'Sidorov',
-        type: 'lab'
-    },
-    {
-        id: 4,
-        title: 'Web-technology',
-        teacher: 'Ivanov',
-        type: 'lecture'
-    },
-    {
-        id: 5,
-        title: 'Web-technology',
-        teacher: 'Ivanov',
-        type: 'lab'
+
+onMounted(() => {
+    const vectorSource = new VectorSource(); // Создаем источник для векторных данных
+    const vectorLayer = new VectorLayer({
+        source: vectorSource,
+        style: new Style({
+            stroke: new Stroke({
+                color: '#1648c4',
+                width: 7,
+            }),
+        }),
+    });
+
+    const map = new Map({
+        layers: [
+            /* new TileLayer({
+                 source: new OSM({
+
+                 }),
+                 visible: true,
+             }),*/
+            new TileLayer({
+                source: new XYZ({
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attributions: 'Tiles © Esri',
+                }),
+                visible: true,
+            }),
+            new TileLayer({
+                source: new XYZ({
+                    url: 'https://api.maptiler.com/maps/2900d16f-0d5f-40fb-b41c-7a79a988060b/?key=zvvVG6Fwo8iH5z6BgcWy#{z}/{y}/{x}', // Замените YOUR_API_KEY на ваш API ключ
+                    attributions: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>',
+                }),
+                visible: true,
+            }),
+            vectorLayer,
+        ],
+        target: 'map',
+        view: new View({
+            center: [0, 0],
+            zoom: 2,
+        }),
+    });
+
+    document.getElementById('zoom-out').onclick = function () {
+        const view = map.getView();
+        const zoom = view.getZoom();
+        view.setZoom(zoom - 1);
+    };
+
+    document.getElementById('zoom-in').onclick = function () {
+        const view = map.getView();
+        const zoom = view.getZoom();
+        view.setZoom(zoom + 1);
+    };
+
+    const geocoder = new Geocoder('nominatim', {
+        provider: 'osm', // Используем OpenStreetMap как провайдера геокодирования
+        autoComplete: true,
+        targetType: 'text-input', // Можно выбрать 'glass-button' или 'input'
+        lang: 'en-US',
+        placeholder: 'Search for a location...',
+        limit: 5,
+        keepOpen: true
+    });
+
+    map.addControl(geocoder);
+
+    // Обработка события выбора в поиске
+    geocoder.on('addresschosen', function (evt) {
+        const view = map.getView();
+        const coordinates = evt.coordinate;
+        view.setCenter(coordinates);
+        view.setZoom(12); // Задаем масштаб при переходе к найденному месту
+    });
+
+    document.getElementById('route').addEventListener('click', async () => {
+        const startCoords = [8.681495, 49.41443]; // Example start coordinates
+        const endCoords = [8.687872, 49.420318]; // Example end coordinates
+
+        // Convert coordinates to the format required by OpenRouteService
+        const [startLonLat, endLonLat] = [startCoords, endCoords].map(coord => toLonLat(coord));
+
+
+        const orsClient = new OpenRouteService.Directions({ api_key: '5b3ce3597851110001cf624882549bd1310d4beabe2ca5c15f87f880' });
+
+        try {
+            const { routes } = await orsClient.calculate({
+                coordinates: [[8.690958, 49.404662], [8.687868, 49.390139]],
+                profile: 'driving-car',
+                extra_info: ['waytype', 'steepness'],
+                format: 'json',
+                api_version: 'v2'
+                /*coordinates: [startLonLat, endLonLat],
+                profile: 'driving-car', // or 'cycling-regular', 'foot-walking'*/
+            });
+
+            // Decode polyline string to coordinates
+            const polylineString = routes[0].geometry; // Получаем строку polyline
+            const routeCoordinates = polyline.decode(polylineString); // Декодируем строку polyline
+
+            const [firstPart, secondPart] = splitRoute(routeCoordinates, 0.4);
+
+            // Convert coordinates to map projection (EPSG:3857)
+            const firstSegment = new LineString(firstPart.map(coord => fromLonLat([coord[1], coord[0]])));
+            const secondSegment = new LineString(secondPart.map(coord => fromLonLat([coord[1], coord[0]])));
+
+
+            const firstFeature = new Feature(firstSegment);
+            const secondFeature = new Feature(secondSegment);
+
+
+            vectorSource.clear(); // Очищаем старые маршруты
+            vectorSource.addFeature(firstFeature);
+            vectorSource.addFeature(secondFeature);
+
+
+            vectorLayer.setStyle((feature) => {
+                const color = feature === firstFeature ? '#ff0000' : '#1648c4'; // Red for the first 40%, blue for the rest
+                return new Style({
+                    stroke: new Stroke({
+                        color: color,
+                        width: 7,
+                    }),
+                });
+            });
+
+
+            // Calculate extent and fit the view
+            const extent = firstSegment.getExtent().concat(secondSegment.getExtent());
+            map.getView().fit(extent);
+
+
+        } catch (error) {
+            console.error('Error fetching route:', error);
+        }
+    });
+
+    function splitRoute(routeCoordinates, fraction) {
+        const splitIndex = Math.floor(routeCoordinates.length * fraction);
+        const firstPart = routeCoordinates.slice(0, splitIndex + 1); // +1 чтобы включить splitIndex
+        const secondPart = routeCoordinates.slice(splitIndex);
+
+        return [firstPart, secondPart];
     }
-]
+
+
+})
 
 </script>
-
-<style scoped>
-
-</style>
