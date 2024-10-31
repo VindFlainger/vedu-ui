@@ -16,7 +16,7 @@
                 right-icon="MagnifyingGlass"
                 color="primary-800"
                 placeholder="Имя, содержание, теги..."
-                @update:model-value="emit('update:searchQuery', $event)"
+                @update:model-value="emit('update:searchQuery', $event as string)"
             />
         </div>
 

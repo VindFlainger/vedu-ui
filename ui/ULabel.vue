@@ -2,7 +2,7 @@
     <p
         v-if="props.label"
         class="font-medium text-base flex items-center"
-        :style="{ color: textColor }"
+        :style="{ color: _textColor, fontSize: _fontSize }"
     >
         {{ props.label }}
         <span class="text-red-500 font-bold inline-block ml-px" v-if="required">*</span>
@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import UIcon from "~/ui/UIcon.vue";
 import { useColor } from "~/ui/composables/useColor";
+import { useSize } from "./composables/useSize";
 
 export interface Props {
     label?: string,
@@ -22,15 +23,19 @@ export interface Props {
     description?: string,
     questionIndicatorColor?: string,
     textColor?: string
+    fontSize?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    questionIndicatorColor: 'primary-800',
+    questionIndicatorColor: 'primary-700',
     textColor: 'black',
+    fontSize: 16
 })
 
-const { color: questionIndicatorColor } = useColor(props.questionIndicatorColor)
-const { color } = useColor(props.textColor)
+const { color: questionIndicatorColor } = useColor(() => props.questionIndicatorColor)
+const { color: _textColor } = useColor(() => props.textColor)
+const { size: _fontSize } = useSize(() => props.fontSize)
+
 
 </script>
 

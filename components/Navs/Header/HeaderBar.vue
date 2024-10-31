@@ -84,10 +84,13 @@
                     class="ml-3 lg:ml-4"
                     rounded
                     :size="$getBreakpointValue({
-                    base: 36,
-                    lg: 40
-                })"
+                        base: 36,
+                        lg: 40
+                    })"
                     src="~/assets/images/previews/boy-large.png"
+                    @click="router.push({
+                        name: 'profile'
+                    })"
                 />
             </div>
             <div v-else class="ml-10">

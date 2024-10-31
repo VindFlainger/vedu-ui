@@ -31,7 +31,7 @@
                     />
                 </slot>
             </div>
-            <div class="relative top-px">
+            <div>
                 <slot>
                     {{ label }}
                 </slot>
@@ -73,7 +73,7 @@
 
             <div
                 v-if="label"
-                class="u-button-icon-style-label top-px relative"
+                class="u-button-icon-style-label relative"
             >
                 {{ label }}
             </div>
@@ -97,7 +97,7 @@ export interface Props {
     textColor?: string
     iconStyleIconTextColor?: string
     fontWeight?: number | string
-    fontSize?: number
+    fontSize?: number | string
     borderWidth?: string | number
     rounded?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
 

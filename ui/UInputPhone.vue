@@ -1,77 +1,30 @@
 <template>
     <div>
-        <p class="mb-1 text-sm font-medium text-gray-600" v-if="props.label">
-            {{ props.label }}
-        </p>
+        <ULabel
+                v-if="label"
+                :label="props.label"
+                :required="required"
+                :style="sizeFrames.labelStyles"
+        />
         <div class="flex">
-            <ElDropdown
-                trigger="click"
-                @command="emit('update:country', $event)"
-                popper-class="[&>_span]:hidden"
-                :popper-options="{
-                    placement: 'bottom-start',
-                    modifiers: [
-                    {
-                      name: 'flip',
-                      options: {
-                        fallbackPlacements: ['top-start'], // by default, all the placements are allowed
-                        rootBoundary: 'document'
-                      },
-                    },
-                  ],
-                }"
-                placement="bottom-start"
-                @visible-change="active = $event"
-            >
-                <ElButton
-                    class="!h-[48px] !border-none !shadow-[0_0_0_1px_#d1d5db] min-w-[133px] hover:!bg-white focus:!bg-white focus:!outline-none"
-                >
-                    <div class="flex items-center group" :class="{active}">
-                        <img class="h-6 w-6" :src="activeCountry.flag" alt="" />
-                        <span
-                            class="relative top-px ml-2 block text-base font-normal text-black"
-                        >
-                            +{{ activeCountry.code }}
-                        </span>
-                        <UIcon class="ml-4 delay-100 duration-200 group-[.active]:rotate-180" :size="16" value="ChevronDown" stroke-width="2.3" />
-                    </div>
-                </ElButton>
-                <template #dropdown>
-                    <ElDropdownMenu class="!p-0">
-                        <ElDropdownItem
-                            v-for="country in countries"
-                            :key="country.value"
-                            class="!p-0"
-                            :class="[country.value === activeCountry.value?'!bg-black/10':'hover:!bg-black/5']"
-                            :command="country.value"
-                        >
-                            <template #default>
-                                <div class="flex p-4">
-                                    <img
-                                        class="h-6 w-6"
-                                        :src="country.flag"
-                                        alt=""
-                                    />
-                                    <span
-                                        class="relative top-px ml-4 block text-base font-normal text-black"
-                                    >
-                                        +{{ country.code }}
-                                    </span>
-                                    <span
-                                        class="relative top-px ml-4 block text-base font-normal text-black"
-                                    >
-                                        {{ country.name }}
-                                    </span>
-                                </div>
-                            </template>
-                        </ElDropdownItem>
-                    </ElDropdownMenu>
+            <u-select v-model="innerCountry" :options="countries" label-name="name" class="w-[100px]">
+                <template #empty>
+
                 </template>
-            </ElDropdown>
+                <template #option="{ active, label, option }">
+                    <div class="flex items-center p-2">
+                        <img :src="option.flag" alt="" class="size-7" />
+                        <p>
+                            <span class="ml-3 text-[15px] font-medium">{{ label }}</span>
+                            <span class="ml-1">(+{{ option.code }})</span>
+                        </p>
+                    </div>
+                </template>
+            </u-select>
             <UInput
                 class="ml-2 grow !appearance-none [&_input]:!text-base [&_input]:!text-black"
-                type="phone"
                 :modelValue="lazyPhone"
+                :mask="activeCountry?.mask"
                 @update:modelValue="handlePhoneInput"
             ></UInput>
         </div>
@@ -79,69 +32,114 @@
 </template>
 
 <script setup lang="ts">
-import UInput from '~/ui/UInput.vue'
-import gb from '~/ui/assets/flags/gb.png'
-import by from '~/ui/assets/flags/by.png'
-import {CountryCode, parsePhoneNumber} from 'libphonenumber-js'
-import UIcon from "~/ui/UIcon.vue";
+import UInput from '~/ui/UInput.vue';
+import ru from '~/ui/assets/flags/ru.png';
+import by from '~/ui/assets/flags/by.png';
+import { CountryCode, parsePhoneNumber } from 'libphonenumber-js';
 
 export interface Props {
-    modelValue?: string
-    country: string
-    label?: string
+    label?: string;
+    required?: boolean;
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export interface Phone {
-    code: number,
-    phone: string,
-    country: string
+    code: number;
+    phone: string;
+    country: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    modelValue: '',
-    country: 'by',
-})
+    size: 'sm',
+});
 
-const emit = defineEmits<{
-    'update:modelValue': [phone: any]
-    'update:country': [country: string]
-}>()
+const modelValue = defineModel<string | undefined>();
+const country = defineModel<string | undefined>('country');
 
-const active = ref(false)
+
+const active = ref(false);
+const innerCountry = ref('by');
+
+watch(
+    country,
+    (v) => {
+        innerCountry.value = v || 'by';
+    },
+    {
+        immediate: true,
+    }
+);
+
+watch(
+    innerCountry,
+    (v) => {
+        innerCountry.value = v;
+    },
+    {
+        immediate: true,
+    }
+);
 
 const countries = ref([
     {
-        name: 'United Kingdom',
-        value: 'gb',
-        code: 44,
-        flag: gb,
+        name: 'Россия',
+        value: 'ru',
+        code: 7,
+        masks: '(###) ###-##-##',
+        flag: ru,
     },
     {
-        name: 'Belarus',
+        name: 'Беларусь',
         value: 'by',
         code: 375,
+        mask: '(##) ###-##-##',
         flag: by,
     },
-])
+]);
 
-const activeCountry = computed(() =>
-    countries.value.find((c) => c.value === props.country)
-)
+const activeCountry = computed(() => countries.value.find((c) => c.value === innerCountry.value));
 
-const lazyPhone = ref('')
+const lazyPhone = ref('');
 
 const handlePhoneInput = async (v: string) => {
-    if (activeCountry.value){
-        emit('update:modelValue', '+' + activeCountry.value.code + v)
+    if (activeCountry.value) {
+        console.log(modelValue)
+        modelValue.value = '+' + activeCountry.value.code + v;
 
         try {
             if (v && v.length > 3) {
-                v = parsePhoneNumber(v, activeCountry.value.value.toUpperCase() as CountryCode).formatInternational()
+                v = parsePhoneNumber(v, activeCountry.value.value.toUpperCase() as CountryCode).formatInternational();
             }
-            v = v.replace('+' + String(activeCountry.value.code), '')
-        } catch (e){}
-        lazyPhone.value  = v
+            v = v.replace('+' + String(activeCountry.value.code), '');
+        } catch (e) {}
+        lazyPhone.value = v;
     }
-}
+};
+
+
+const sizeFrames = computed(() => {
+    switch (props.size) {
+        case 'xs':
+            return {
+                labelStyles: { marginBottom: '3px', fontSize: '14px' },
+            };
+        case 'sm':
+            return {
+                labelStyles: { marginBottom: '4px', fontSize: '15px' },
+            };
+        case 'md':
+            return {
+                labelStyles: { marginBottom: '5px', fontSize: '16px' },
+            };
+        case 'lg':
+            return {
+                labelStyles: { marginBottom: '7px', fontSize: '16px' },
+            };
+        case 'xl':
+            return {
+                labelStyles: { marginBottom: '9px', fontSize: '16px' },
+            };
+    }
+});
 
 </script>

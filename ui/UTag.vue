@@ -4,7 +4,7 @@
         class="relative inline-flex items-center text-[var(--u-tag-color)] select-none"
     >
         <slot name="prefix"></slot>
-        <span class="font-nunito relative top-px">{{ value }}</span>
+        <span class="font-nunito relative">{{ value }}</span>
         <UIcon
             v-if="clearable"
             value="XMark"

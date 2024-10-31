@@ -18,7 +18,6 @@
             :style="styles"
             :enable-time-picker="false"
             @update:model-value="emit('update:modelValue', $event)"
-
         >
             <template #input-icon>
                 <UIcon value="Calendar" class="relative left-2" :size="sizeFrames.iconSizes.calendar"/>

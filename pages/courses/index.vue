@@ -14,7 +14,7 @@
         <template v-if="courses.length">
 
             <div class="relative">
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div class="grid grid-cols-1 gap-6 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                     <CoursesOverviewListItem
                         v-for="course in courses"
                         :key="course.id"
@@ -41,8 +41,8 @@
                 :count="total"
                 :page="page"
                 :per-page="perPage"
-                @update:page="page = $event; fetch(true)"
-                @update:per-page="perPage = $event; fetch(true)"
+                @update:page="page = $event as number; fetch(true)"
+                @update:per-page="perPage = $event as number; fetch(true)"
                 class="mt-12"
             />
         </template>
@@ -95,9 +95,9 @@ const handleCloseEditDialog = () => {
     selectedCourse.value = null
 }
 
-const page = useRouteQuery('page', 1, { transform: v => Number(v) })
-const perPage = useRouteQuery('per_page', 30, { transform: v => Number(v) })
-const searchQuery = useRouteQuery<string, string>('query')
+const page = useRouteQuery<string | number | undefined, number>('page', 1, { transform: v => Number(v) })
+const perPage = useRouteQuery<string | number | undefined, number>('per_page', 30, { transform: v => Number(v) })
+const searchQuery = useRouteQuery<string | undefined>('query', "")
 const {
     loading: fetchLoading,
     addLoading: addFetchLoading,

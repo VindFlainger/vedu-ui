@@ -11,10 +11,9 @@
             <ElSelect
                 ref="USelect"
                 :model-value="lazyValue"
-                class="u-select w-full focus:!outline-none [&_.el-select\_\_input]:!ml-[var(--u-select-multiple-margin)]
-                    [&_.el-input\_\_inner]:!overflow-ellipsis [&_.el-input\_\_prefix-inner>:last-child]:!mr-[var(--u-select-icon-margin)]
-                "
-                :class="{'[&_.el-select-tags-wrapper]:!hidden': hideSelected}"
+                class="u-select w-full focus:!outline-none [&_.el-input\_\_inner]:!overflow-ellipsis 
+                    [&_.el-input\_\_prefix-inner>:last-child]:!mr-[var(--u-select-icon-margin)] [&_.el-select\_\_input]:!ml-[var(--u-select-multiple-margin)]"
+                :class="{ '[&_.el-select-tags-wrapper]:!hidden': hideSelected }"
                 v-bind="{ ...attrs, class: inputClass }"
                 :placeholder="placeholder as string"
                 :style="styles"
@@ -23,10 +22,10 @@
                 :popper-options="{
                     modifiers: [
                         {
-                          name: 'offset',
-                          options: {
-                            offset: [0, 4],
-                          },
+                            name: 'offset',
+                            options: {
+                                offset: [0, 4],
+                            },
                         },
                     ],
                 }"
@@ -37,6 +36,9 @@
                 @visible-change="active = $event"
                 @update:model-value="handleChangeValue"
             >
+                <template #label>
+                    asda
+                </template>
                 <template #default>
                     <ElOption
                         v-for="option in computedOptions"
@@ -44,45 +46,43 @@
                         :value="option.value"
                         :label="option.label"
                     >
-                        <template #default="props">
+                        <template #default>
                             <div
                                 class="group"
                                 :class="{
-                                active: attrs.multiple
-                                    ? lazyValue?.includes(option.value)
-                                    : option.value === lazyValue,
-                            }"
+                                    active: attrs.multiple
+                                        ? lazyValue?.includes(option.value)
+                                        : option.value === lazyValue,
+                                }"
                             >
-                                <div
-                                    class="flex items-center"
-                                    :class="{'group-[.active]:bg-primary-700/20': hideCheckboxStyle}"
-                                    :style="{ padding: sizeFrames.paddingDropdownItem }"
-                                >
-                                    <UCheckbox
-                                        v-if="!hideCheckboxStyle"
-                                        class="mr-[6px]"
-                                        size="sm"
-                                        :model-value="
-                                            multiple
-                                                ? lazyValue?.includes(option.value)
-                                                : option.value === lazyValue
-                                    "
-                                        color="primary-700"
-                                    />
-                                    <img
-                                        v-if="option.img"
-                                        :src="option.img"
-                                        class="mr-2"
-                                    />
-                                    <span
-                                        class="relative top-px text-gray-700"
-                                        :class="{
-                                        'group-[.active]:text-primary-700': !hideCheckboxStyle,
-                                    }"
+                                <slot name="option" :active="multiple ? lazyValue?.includes(option.value): option.value === lazyValue" :label="option.label" :option="option">
+                                    <div
+                                        class="flex items-center"
+                                        :class="{ 'group-[.active]:bg-primary-700/20': hideCheckboxStyle }"
+                                        :style="{ padding: sizeFrames.paddingDropdownItem }"
                                     >
-                                    {{ option.label }}
-                                </span>
-                                </div>
+                                        <UCheckbox
+                                            v-if="!hideCheckboxStyle"
+                                            class="mr-[6px]"
+                                            size="sm"
+                                            :model-value="
+                                                multiple
+                                                    ? lazyValue?.includes(option.value)
+                                                    : option.value === lazyValue
+                                            "
+                                            color="primary-700"
+                                        />
+                                        <img v-if="option.img" :src="option.img" class="mr-2" />
+                                        <span
+                                            class="relative top-px text-gray-700"
+                                            :class="{
+                                                'group-[.active]:text-primary-700': !hideCheckboxStyle,
+                                            }"
+                                        >
+                                            {{ option.label }}
+                                        </span>
+                                    </div>
+                                </slot>
                             </div>
                         </template>
                     </ElOption>
@@ -94,14 +94,11 @@
                         :value="leftIcon"
                         :size="sizeFrames.iconSize"
                     />
-                    <div class="flex absolute top-[calc(50%+1px)] -translate-y-1/2"
-                         :style="{'right': sizeFrames.iconRight}">
-                        <UDefaultLoader
-                            v-if="loading"
-                            size="20"
-                            :color="color"
-                            class="fill-black mr-[6px] !stroke-2"
-                        />
+                    <div
+                        class="absolute top-[calc(50%+1px)] flex -translate-y-1/2"
+                        :style="{ right: sizeFrames.iconRight }"
+                    >
+                        <UDefaultLoader v-if="loading" size="20" :color="color" class="mr-[6px] fill-black !stroke-2" />
                         <UIcon
                             v-if="!active && !loading"
                             value="ChevronDown"
@@ -120,17 +117,13 @@
                 <template #empty>
                     <slot name="empty">
                         <div class="px-2 py-3">
-                            <div class="flex items-center  text-sm text-gray-600">
-                                <UIcon value="Funnel" size="18" color="gray-600"/>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <UIcon value="Funnel" size="18" color="gray-600" />
                                 <p class="ml-[6px]">{{ noItemsFoundText }}</p>
                             </div>
-                            <button
-                                v-if="addable"
-                                class="flex items-center mt-2 cursor-pointer"
-                                @click="addItem"
-                            >
-                                <UIcon value="Plus" size="16" color="primary-900" stroke-width="2"/>
-                                <p class="text-[13px] ml-[2px] text-primary-900 font-medium">{{ addableLabel }}</p>
+                            <button v-if="addable" class="mt-2 flex cursor-pointer items-center" @click="addItem">
+                                <UIcon value="Plus" size="16" color="primary-900" stroke-width="2" />
+                                <p class="ml-[2px] text-[13px] font-medium text-primary-900">{{ addableLabel }}</p>
                             </button>
                         </div>
                     </slot>
@@ -142,7 +135,7 @@
                     <li
                         v-for="error in (errors as Array<any>).slice(0, errorsCount as number)"
                         :key="error"
-                        :class="{ 'ml-3 list-disc': (errors as Array<any>) > 1 && errorsCount > 1 }"
+                        :class="{ 'ml-3 list-disc': (errors as Array<any>).length > 1 && errorsCount > 1 }"
                     >
                         {{ error }}
                     </li>
@@ -153,45 +146,44 @@
 </template>
 
 <script setup lang="ts">
-
-import { useRounded } from "~/ui/composables/useRounded";
-import { useColor } from "~/ui/composables/useColor";
+import { useRounded } from '~/ui/composables/useRounded';
+import { useColor } from '~/ui/composables/useColor';
 
 defineOptions({
     inheritAttrs: false,
-})
+});
 
 export interface Props {
-    label?: string
-    inputClass?: string
-    modelValue?: any[] | any,
-    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-    leftIcon?: string
-    errors?: Array<any>
-    errorsCount?: number
-    hideErrors?: boolean | number
-    errorState?: boolean
-    valueName?: string
-    labelName?: string
-    imageName?: string
-    options?: any[]
-    collapseTags?: boolean
-    maxCollapseTags?: number
-    hideCheckboxStyle?: boolean,
-    labelClass?: string,
-    required?: boolean,
-    placeholder?: string,
-    rounded?: string,
-    color?: string,
-    infoLine?: boolean,
-    addable?: boolean,
-    addableLabel?: string,
-    loading?: boolean,
-    hideSelected?: boolean,
-    filterable?: boolean,
-    multiple?: boolean,
-    returnObject?: boolean,
-    noItemsFoundText?: string
+    label?: string;
+    inputClass?: string;
+    modelValue?: any[] | any;
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    leftIcon?: string;
+    errors?: Array<any>;
+    errorsCount?: number;
+    hideErrors?: boolean | number;
+    errorState?: boolean;
+    valueName?: string;
+    labelName?: string;
+    imageName?: string;
+    options?: any[];
+    collapseTags?: boolean;
+    maxCollapseTags?: number;
+    hideCheckboxStyle?: boolean;
+    labelClass?: string;
+    required?: boolean;
+    placeholder?: string;
+    rounded?: string;
+    color?: string;
+    infoLine?: boolean;
+    addable?: boolean;
+    addableLabel?: string;
+    loading?: boolean;
+    hideSelected?: boolean;
+    filterable?: boolean;
+    multiple?: boolean;
+    returnObject?: boolean;
+    noItemsFoundText?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -212,44 +204,59 @@ const props = withDefaults(defineProps<Props>(), {
     addableLabel: 'Add new',
     returnObject: false,
     multiple: false,
-    noItemsFoundText: 'No items matching query'
-})
+    noItemsFoundText: 'No items matching query',
+});
 
-const attrs = useAttrs()
+const attrs = useAttrs();
+
 
 const slots = defineSlots<{
-    prefix?(): any
-    suffix?(): any
-}>()
+    prefix?(): any;
+    suffix?(): any;
+    empty?(): any;
+    option?(props: { active: boolean, label: string, option: any }): any;
+}>();
 
 const emit = defineEmits<{
-    'update:modelValue': [v: any],
-    'add': [{ query: string, cb: () => void }]
-}>()
+    'update:modelValue': [v: any];
+    add: [{ query: string; cb: () => void }];
+}>();
 
-const lazyValue = ref<Props['modelValue']>(null)
+const lazyValue = ref<Props['modelValue']>(null);
 
 const handleChangeValue = (v: Props['modelValue']) => {
     if (props.returnObject) {
-        if (!props.multiple) emit('update:modelValue', props.options.find(option => option[props.valueName] === v))
-        else emit('update:modelValue', props.options.filter(option => v.includes(option[props.valueName])))
+        if (!props.multiple)
+            emit(
+                'update:modelValue',
+                props.options.find((option) => option[props.valueName] === v)
+            );
+        else
+            emit(
+                'update:modelValue',
+                props.options.filter((option) => v.includes(option[props.valueName]))
+            );
     } else {
-        emit('update:modelValue', v)
+        emit('update:modelValue', v);
     }
-}
+};
 
-watch(() => props.modelValue, (v: Props['modelValue']) => {
-    if (props.returnObject) {
-        if (!props.multiple) lazyValue.value = v[props.valueName]
-        else lazyValue.value = v.map((x: any) => x[props.valueName])
-    } else {
-        lazyValue.value = v
-    }
-}, { immediate: true })
+watch(
+    () => props.modelValue,
+    (v: Props['modelValue']) => {
+        if (props.returnObject) {
+            if (!props.multiple) lazyValue.value = v[props.valueName];
+            else lazyValue.value = v.map((x: any) => x[props.valueName]);
+        } else {
+            lazyValue.value = v;
+        }
+    },
+    { immediate: true }
+);
 
-const isPrefixed = computed(() => slots.prefix || props.leftIcon)
+const isPrefixed = computed(() => slots.prefix || props.leftIcon);
 
-const { rounded } = useRounded(props.rounded)
+const { rounded } = useRounded(props.rounded);
 const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
@@ -262,8 +269,8 @@ const sizeFrames = computed(() => {
                 labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 paddingDropdownItem: '6px',
                 iconMargin: 3,
-                multipleMargin: 8
-            }
+                multipleMargin: 8,
+            };
         case 'sm':
             return {
                 height: 35,
@@ -274,8 +281,8 @@ const sizeFrames = computed(() => {
                 labelStyles: { marginBottom: '4px', fontSize: '15px' },
                 paddingDropdownItem: '10px',
                 iconMargin: 4,
-                multipleMargin: 8
-            }
+                multipleMargin: 8,
+            };
         case 'md':
             return {
                 height: 48,
@@ -291,8 +298,8 @@ const sizeFrames = computed(() => {
                 },
                 paddingDropdownItem: '12px',
                 iconMargin: 5,
-                multipleMargin: 12
-            }
+                multipleMargin: 12,
+            };
         case 'lg':
             return {
                 height: 56,
@@ -303,8 +310,8 @@ const sizeFrames = computed(() => {
                 iconRight: '12px',
                 paddingDropdownItem: '12px',
                 iconMargin: 7,
-                multipleMargin: 14
-            }
+                multipleMargin: 14,
+            };
         case 'xl':
             return {
                 height: 64,
@@ -315,19 +322,19 @@ const sizeFrames = computed(() => {
                 iconRight: '12px',
                 paddingDropdownItem: '12px',
                 iconMargin: 12,
-                multipleMargin: 16
-            }
+                multipleMargin: 16,
+            };
     }
-})
+});
 
-const { color: _color } = useColor(props.color)
+const { color: _color } = useColor(props.color);
 
 const color = computed(() =>
     (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : _color.value
-)
+);
 const textColor = computed(() =>
     (props.errors.length && !props.hideErrors) || props.errorState ? '#DC2626' : '#000000'
-)
+);
 
 const styles = computed(() => ({
     '--u-select-padding': sizeFrames.value.padding,
@@ -341,48 +348,54 @@ const styles = computed(() => ({
     '--u-select-text-color': textColor.value,
     '--u-select-icon-margin': `${sizeFrames.value.iconMargin}px`,
     '--u-select-multiple-margin': `${sizeFrames.value.multipleMargin}px`,
-}))
+}));
 
-const active = ref(false)
+const active = ref(false);
 
 const computedOptions = computed(() => {
-    let options = props.options
-        .map((option) => ({
-            value: option[props.valueName],
-            label: option[props.labelName],
-            img: option[props.imageName],
-        }))
-    if (props.hideSelected) options = options.filter(option => Array.isArray(props.modelValue) ? !props.modelValue.some((x: any) => x === option.value) : props.modelValue !== option.value)
+    let options = props.options.map((option) => ({
+        ...option,
+        value: option[props.valueName],
+        label: option[props.labelName],
+        img: option[props.imageName],
+    }));
 
-    return options
-})
+    if (props.hideSelected)
+        options = options.filter((option) =>
+            Array.isArray(props.modelValue)
+                ? !props.modelValue.some((x: any) => x === option.value)
+                : props.modelValue !== option.value
+        );
 
-const USelect = ref()
+    return options;
+});
+
+const USelect = ref();
 
 const addItem = () => {
     emit('add', {
-            query: USelect.value.query,
-            cb: () => {
-                USelect.value.blur()
-            }
-        }
-    )
-}
-
+        query: USelect.value.query,
+        cb: () => {
+            USelect.value.blur();
+        },
+    });
+};
 </script>
 
 <style scoped lang="scss">
 .u-select {
     :deep(input) {
-        color: var(--u-select-text-color)
+        color: var(--u-select-text-color);
     }
 
-    :deep(.el-input__wrapper) {
+    :deep(.el-select__wrapper) {
         border-radius: var(--u-select-rounded);
         box-shadow: inset 0 0 0 1px var(--color) !important;
         padding: var(--u-select-padding-content);
+        height: var(--u-select-height);
+        padding: var(--u-select-padding);
 
-        .el-input__suffix {
+        .el-select__suffix {
             @apply hidden;
         }
 
@@ -390,13 +403,7 @@ const addItem = () => {
             @apply m-0;
         }
     }
-
-    :deep(input) {
-        height: var(--u-select-height);
-        padding: var(--u-select-padding);
-    }
-
-
+    
     :deep(.el-select__tags) {
         padding: var(--u--select-tags-padding);
     }

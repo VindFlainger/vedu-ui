@@ -13,7 +13,7 @@
 import { useSize } from "~/ui/composables/useSize";
 
 export interface Props {
-    image: {
+    image?: {
         original: string,
         frames?: {
             width: number,

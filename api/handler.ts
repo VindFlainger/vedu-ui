@@ -90,10 +90,11 @@ export default async <DataT>(
                                     if (e.response?.status === 403 || e.response?.status === 401){
                                         fetchError = true
                                         accountStore.clearAuth()
-                                    } else if (e.name === 'FetchError'){
-                                        accountStore.maintenance = true
-                                        return reject()
                                     }
+                                    // } else if (e.name === 'TypeError'){
+                                    //     accountStore.maintenance = true
+                                    //     return reject()
+                                    // }
                                 })
                                 .finally(() => {
                                     tokenFetching = false

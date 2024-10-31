@@ -1,17 +1,34 @@
-import { SizedImage } from "~/types/global";
+import { SizedImage } from '~/types/global';
 
-export interface PersonalData {
-    first_name: string
-    last_name: string
-    gender: string
-    age: number
-    country: string
-    email: string
+export interface UserProfile {
+    id: string;
+    personal_data: PersonalData;
+    role: string;
+    avatar: SizedImage;
 }
 
+export interface UserAddress {
+    region: string;
+    settlement: string;
+    street: string;
+    house: string;
+    unit: string | null;
+    flat: string | null;
+}
+
+export interface PersonalData {
+    first_name: string;
+    last_name: string;
+    gender: string;
+    birth_date: string;
+    country: string;
+    email: string;
+    phone_number: string | null;
+    address: UserAddress;
+}
 
 export interface UserPreview {
-    id: string,
-    avatar?: SizedImage,
-    personal_data: PersonalData
+    id: string;
+    avatar?: SizedImage;
+    personal_data: PersonalData;
 }

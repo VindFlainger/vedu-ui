@@ -30,7 +30,6 @@ declare module 'nuxt/dist/app/nuxt' {
         $notifications: NotificationsType
         $getBreakpointValue: (breakpointValues: Record<Breakpoints, any>) => ComputedRef<any>
     }
-
 }
 
 declare module '@vue/runtime-core' {

@@ -1,12 +1,7 @@
-import { PersonalData } from "~/types/account";
+import { PersonalData, UserProfile } from "~/types/account";
 
 export interface State {
-    user?: {
-        id: string
-        personal_data: PersonalData
-        role: string
-        avatar: SizedImage
-    },
+    user?: UserProfile,
     maintenance: boolean,
     notifications: any[]
 }
@@ -37,6 +32,7 @@ export const useAccountStore = defineStore('Account', {
     },
     actions: {
         async setAuth(refreshToken: string, remember: boolean) {
+            console.log('here')
             if (remember) localStorage.setItem('refresh_token', refreshToken)
             else sessionStorage.setItem('refresh_token', refreshToken)
         },

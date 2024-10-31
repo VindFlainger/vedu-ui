@@ -1,4 +1,3 @@
-// @ts-ignore
 import {DateTime, Settings} from "luxon";
 import dateFormats from "~/config/dateFormats";
 
