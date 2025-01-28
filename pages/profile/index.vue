@@ -8,20 +8,35 @@
                     Персональные данные
                 </p>
                 <div>
-                    <div class="flex gap-5">
-                        <u-input v-model="firstName.value.value" class="flex-grow max-w-[300px]" label="Имя" info-line />
-                        <u-input v-model="lastName.value.value" class="flex-grow max-w-[300px]" label="Фамилия" info-line />
+                    <div class="flex gap-6">
+                        <u-input
+                            v-model="firstName.value.value"
+                            class="max-w-[300px] flex-grow"
+                            label="Имя"
+                            info-line
+                        />
+                        <u-input
+                            v-model="lastName.value.value"
+                            class="max-w-[300px] flex-grow"
+                            label="Фамилия"
+                            info-line
+                        />
                         <u-date-input
                             v-model="birthDate.value.value"
-                            class="!max-w-[300px]"
+                            class="!max-w-[300px] flex-grow"
                             label="Дата рождения"
                             info-line
                             position="left"
                         />
                     </div>
-                    <div class="flex gap-5">
-                        <u-input label="Email address" type="email" />
-                        <u-input-phone label="Phone number" v-model:country="country.value.value" v-model="phone.value.value" />
+                    <div class="flex gap-6">
+                        <u-input
+                            v-model="email.value.value"
+                            class="max-w-[250px] flex-grow"
+                            label="Электронная почта"
+                            type="email"
+                        />
+                        <u-input-phone label="Мобильный телефон" v-model="phone.value.value" />
                     </div>
                 </div>
             </div>
@@ -32,7 +47,7 @@
                     <u-icon class="relative bottom-px" value="GlobeAlt" solid color="primary-700" :size="20" />
                     Контактные данные
                 </p>
-                <div class="grid grid-cols-2 gap-x-7">
+                <div class="flex gap-x-12">
                     <!-- <UInput label="Страна" info-line /> -->
                     <div>
                         <u-label label="Страна" :font-size="15" :description="countryDescription" />
@@ -42,19 +57,33 @@
                                 :key="flag.value"
                                 class="rounded-full border-2 border-transparent"
                                 :class="{
-                                    '!border-white outline outline-2 outline-primary-800':
-                                        user.personal_data.country === flag.value,
+                                    'border-white outline !outline-2 !outline-primary-800':
+                                        country.value.value === flag.value,
                                 }"
+                                @click="country.value.value = flag.value"
                             >
                                 <img :src="flag.flag" alt="flag.name" class="size-8" />
                             </button>
                         </div>
                     </div>
-                    <UInput label="Регион" info-line />
-                    <USelect label="Город/населенный пункт" info-line />
-                    <USelect label="Улица" info-line />
-                    <USelect label="Дом" info-line />
-                    <USelect label="Квартира" info-line />
+                    <u-select
+                        v-model="address.value.value"
+                        :remote="searchForCompletion"
+                        return-object
+                        filterable
+                        class="max-w-[450px] flex-grow"
+                        label="Адрес"
+                        @update:model-value="handleAddressChange"
+                    />
+                </div>
+                <div class="mt-10 grid grid-cols-2 gap-x-8 gap-y-5">
+                    <u-input v-model="region.value.value" label="Регион" />
+                    <u-input v-model="settlement.value.value" label="Город" />
+                    <u-input v-model="street.value.value" label="Улица" />
+                    <u-input v-model="house.value.value" label="Дом" />
+                    <u-input v-model="unit.value.value" label="Блок / подъезд" />
+                    <u-input v-model="room.value.value" label="Квартира / комната" />
+                    <u-input v-model="postalCode.value.value" label="Почтовый индекс" />
                 </div>
             </div>
         </div>
@@ -66,12 +95,13 @@
 </template>
 
 <script setup lang="ts">
-import UInput from '~/ui/UInput.vue';
-import USelect from '~/ui/USelect.vue';
-import { definePageMeta } from '#imports';
-import { PersonalData, UserProfile } from 'types/account';
+import type { PersonalData, UserProfile } from '~/types/account';
+
 import ru from '~/assets/flags/ru.png';
 import by from '~/assets/flags/by.png';
+import type { GeoAddress } from '~/types/completion';
+
+const { $api } = useNuxtApp();
 
 definePageMeta({
     layout: 'default',
@@ -94,7 +124,7 @@ const flags = ref<
 
 const countryDescription = 'Измение страны повлияет на другие настройки, изменяйте страну с осторожностью';
 
-const { meta } = useForm({
+const { meta, values } = useForm({
     validationSchema: object({
         firstName: string()
             .required('Введите имя')
@@ -108,36 +138,81 @@ const { meta } = useForm({
     }),
 });
 
-const firstName = useField<string>('firstName');
-const lastName = useField<string>('lastName');
-const birthDate = useField<string>('birthDate');
+const firstName = useField<string>('first_name');
+const lastName = useField<string>('last_name');
+const birthDate = useField<string>('birth_date');
+const email = useField<string>('email');
+const phone = useField<string>('phone_number');
 
 const country = useField<string>('country');
-const email = useField<string>('email');
-const phone = useField<string>('phone');
+const region = useField<string>('region');
+const settlement = useField<string>('settlement');
+const street = useField<string>('street');
+const house = useField<string>('house');
+const unit = useField<string>('unit');
+const room = useField<string>('room');
+const postalCode = useField<string>('postal_code');
 
-// const address = useField<string>("firstName");
-// const lastName = useField<string>("lastName");
-// const age = useField<string>("age");
-// const gender = useField<string>("gender");
-// const country = useField<string>("country");
-// const inviteCode = ref('')
-// const agreement = ref(false)
+const address = useField<GeoAddress | { value: string, label: string }>('address');
 
-const lazyUserData = ref<PersonalData>(user.value.personal_data);
+const userData = ref<PersonalData>(user.value.personal_data);
 
 firstName.value.value = user.value.personal_data.first_name;
 lastName.value.value = user.value.personal_data.last_name;
 birthDate.value.value = user.value.personal_data.birth_date;
+email.value.value = user.value.personal_data.email;
+phone.value.value = user.value.personal_data.phone_number || '';
 
-const changesDone = computed(() => {
-    return;
-    lazyUserData.value.first_name !== firstName.value.value ||
-        lazyUserData.value.last_name !== lastName.value.value ||
-        lazyUserData.value.birth_date !== birthDate.value.value;
-});
+const initValues = () => {
+    firstName.value.value = user.value.personal_data.first_name;
+    lastName.value.value = user.value.personal_data.last_name;
+    birthDate.value.value = user.value.personal_data.birth_date;
+    email.value.value = user.value.personal_data.email;
+    phone.value.value = user.value.personal_data.phone_number || '';
 
-const countries = [];
+    country.value.value = user.value.personal_data.country || '';
+    region.value.value = user.value.personal_data.address.region || '';
+    settlement.value.value = user.value.personal_data.address.settlement || '';
+    street.value.value = user.value.personal_data.address.street || '';
+    house.value.value = user.value.personal_data.address.house || '';
+    unit.value.value = user.value.personal_data.address.unit || '';
+    room.value.value = user.value.personal_data.address.room || '';
+    postalCode.value.value = user.value.personal_data.address.postal_code || '';
+
+    address.value.value = {
+        label: [region.value.value,  settlement.value.value, street.value.value, house.value.value, room.value.value].filter(v => v).join(', '),
+        value: [region.value.value,  settlement.value.value, street.value.value, house.value.value, room.value.value].filter(v => v).join(', ')
+    }
+};
+
+initValues()
+
+const countryList: Record<string, string> = {
+    by: 'Беларусь',
+    ru: 'Россия',
+};
+
+const searchForCompletion = async (v: string) => {
+    const res = await $api.completion.GET_ADDRESS_COMPLETION({
+        query: v,
+        country: countryList[country.value.value],
+    });
+
+    return res.suggestions.map((item) => ({
+        ...item.data,
+        value: [item.data.country, item.data.region_with_type,  item.data.city, item.data.street, item.data.house, (item.data.flat || item.data.room)].filter(v => v).join(', '),
+        label: item.value,
+    }));
+};
+
+const handleAddressChange = (v: GeoAddress) => {
+    region.value.value = v.region_with_type || '';
+    settlement.value.value = v.city || v.settlement || '';
+    street.value.value = v.street || '';
+    house.value.value = v.house || '';
+    unit.value.value = v.block || '';
+    room.value.value = v.flat || v.room || '';
+    postalCode.value.value = v.postal_code || '';
+};
+
 </script>
-
-<style scoped></style>

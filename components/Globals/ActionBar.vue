@@ -29,6 +29,7 @@
                <slot></slot>
             </div>
         </div>
+		<U-c
     </client-only>
 </template>
 

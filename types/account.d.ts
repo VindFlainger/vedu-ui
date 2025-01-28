@@ -13,7 +13,8 @@ export interface UserAddress {
     street: string;
     house: string;
     unit: string | null;
-    flat: string | null;
+    room: string | null;
+    postal_code: string | null
 }
 
 export interface PersonalData {

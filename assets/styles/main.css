@@ -28,9 +28,6 @@ body {
     overflow: hidden;
 }
 
-button:focus{
-    outline: none
-}
 
 .main-scrollbar::-webkit-scrollbar {
     width: 8px;

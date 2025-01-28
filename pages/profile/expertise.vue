@@ -1,5 +1,6 @@
 <template>
     <div>
+		<CategoryD
         <div>
             <p class="flex gap-1.5 items-center mb-5 font-nunito text-lg font-extrabold text-primary-700"> 
 				<u-icon class="relative bottom-px" value="AcademicCap" solid color="primary-700" :size="20"/>
@@ -21,7 +22,7 @@
 			</p>
             <div class="grid grid-cols-2 gap-x-7">
                 <UInput label="Адрес" info-line />
-                <UInput label="Почтовый индекс" info-line />
+                <UInput label="Почтовый индекс" info-line  />
                 <USelect label="Страна" info-line />
                 <USelect label="Город" info-line />
                 <UInput label="Email address" type="email" />
@@ -31,6 +32,8 @@
     </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+
+</script>
 
 <style></style>

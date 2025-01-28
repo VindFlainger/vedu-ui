@@ -12,8 +12,11 @@
                 ref="USelect"
                 :model-value="lazyValue"
                 class="u-select w-full focus:!outline-none [&_.el-input\_\_inner]:!overflow-ellipsis 
-                    [&_.el-input\_\_prefix-inner>:last-child]:!mr-[var(--u-select-icon-margin)] [&_.el-select\_\_input]:!ml-[var(--u-select-multiple-margin)]"
-                :class="{ '[&_.el-select-tags-wrapper]:!hidden': hideSelected }"
+                    [&_.el-input\_\_prefix-inner>:last-child]:!mr-[var(--u-select-icon-margin)]"
+                :class="{ 
+                    [String.raw`[&_.el-select\_\_selected-item]:!hidden`]: hideSelected,
+                    [String.raw`[&_.el-select\_\_selected-item.el-select\_\_input-wrapper]:!block`]: hideSelected
+                     }"
                 v-bind="{ ...attrs, class: inputClass }"
                 :placeholder="placeholder as string"
                 :style="styles"
@@ -32,12 +35,16 @@
                 :loading="loading as boolean"
                 :multiple="multiple as boolean"
                 :filterable="filterable as boolean"
+                :remote="!!remote"
+                :remote-method="handleRemote"
                 popper-class="u-select-popper"
                 @visible-change="active = $event"
                 @update:model-value="handleChangeValue"
             >
-                <template #label>
-                    asda
+                <template #label v-if="slots.selected">
+                    <div>
+                        <slot name="selected" :selected="computedSelected"></slot>
+                    </div>
                 </template>
                 <template #default>
                     <ElOption
@@ -90,7 +97,7 @@
                 <template #prefix>
                     <UIcon
                         v-if="leftIcon"
-                        class="[&_svg]:!text-[var(--text-color)]"
+                        class="[&_svg]:!text-[var(--text-color)] ml-1.5"
                         :value="leftIcon"
                         :size="sizeFrames.iconSize"
                     />
@@ -184,6 +191,7 @@ export interface Props {
     multiple?: boolean;
     returnObject?: boolean;
     noItemsFoundText?: string;
+    remote?: (v: string) => any
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -215,38 +223,48 @@ const slots = defineSlots<{
     suffix?(): any;
     empty?(): any;
     option?(props: { active: boolean, label: string, option: any }): any;
+    selected?(props: { selected: Props['modelValue'] }): any;
 }>();
 
 const emit = defineEmits<{
-    'update:modelValue': [v: any];
     add: [{ query: string; cb: () => void }];
 }>();
 
+const modelValue = defineModel<any[] | any>()
+
+const USelect = ref();
+
 const lazyValue = ref<Props['modelValue']>(null);
+
+const remoteOptions = ref(null)
 
 const handleChangeValue = (v: Props['modelValue']) => {
     if (props.returnObject) {
         if (!props.multiple)
-            emit(
-                'update:modelValue',
-                props.options.find((option) => option[props.valueName] === v)
-            );
+            modelValue.value = (remoteOptions.value || props.options).find((option) => option[props.valueName] === v)
         else
-            emit(
-                'update:modelValue',
-                props.options.filter((option) => v.includes(option[props.valueName]))
-            );
+            modelValue.value = (remoteOptions.value || props.options).filter((option) => v.includes(option[props.valueName]))
     } else {
-        emit('update:modelValue', v);
+        modelValue.value = v
     }
 };
+
+const handleRemote = async (v: string) => {
+    if (props.remote) {
+        try {
+            remoteOptions.value = await props.remote(v)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
 
 watch(
     () => props.modelValue,
     (v: Props['modelValue']) => {
         if (props.returnObject) {
-            if (!props.multiple) lazyValue.value = v[props.valueName];
-            else lazyValue.value = v.map((x: any) => x[props.valueName]);
+            if (!props.multiple) lazyValue.value = v?.[props.valueName];
+            else lazyValue.value = v ? v.map((x: any) => x[props.valueName]) : [];
         } else {
             lazyValue.value = v;
         }
@@ -353,7 +371,7 @@ const styles = computed(() => ({
 const active = ref(false);
 
 const computedOptions = computed(() => {
-    let options = props.options.map((option) => ({
+    let options = (remoteOptions.value || props.options).map((option) => ({
         ...option,
         value: option[props.valueName],
         label: option[props.labelName],
@@ -370,7 +388,16 @@ const computedOptions = computed(() => {
     return options;
 });
 
-const USelect = ref();
+const computedSelected = computed(() => {
+    if (modelValue.value) {
+        if (Array.isArray(modelValue.value)) return computedOptions.value.filter((option) => modelValue.value.includes(option.value));
+
+        return computedOptions.value.find((option) => option.value === modelValue.value);
+    } 
+    
+    return modelValue.value
+})
+
 
 const addItem = () => {
     emit('add', {
@@ -393,14 +420,17 @@ const addItem = () => {
         box-shadow: inset 0 0 0 1px var(--color) !important;
         padding: var(--u-select-padding-content);
         height: var(--u-select-height);
-        padding: var(--u-select-padding);
+        gap: 0 !important;
 
         .el-select__suffix {
             @apply hidden;
         }
+        .el-select__placeholder {
+            margin-left: var(--u-select-multiple-margin) !important;
+        }
 
-        .el-input__prefix-inner > div {
-            @apply m-0;
+        .el-select__input {
+            margin-left: var(--u-select-multiple-margin) !important;
         }
     }
     

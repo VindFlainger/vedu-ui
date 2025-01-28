@@ -1,7 +1,7 @@
-import { UseFetchOptions } from 'nuxt/app';
-import { Controls } from '~/api/handler';
+import type { UseFetchOptions } from 'nuxt/app';
+import type { Controls } from '~/api/handler';
 import _fetch from '~/api/handler';
-import { NitroFetchOptions } from 'nitropack';
+import type { NitroFetchOptions } from 'nitropack';
 
 export interface CheckEmailPayload {
     email: string;
@@ -89,10 +89,4 @@ export default {
         controls?: Controls
     ) => useFetchData('POST', '/change-password', options),
 
-
-    GET_NEWS: (
-        data: GetNewsPayload,
-        options?: NitroFetchOptions<any>,
-        controls?: Controls
-    ) => _fetch<GetNewsData>('GET', `/news`, data, options, controls),
 };

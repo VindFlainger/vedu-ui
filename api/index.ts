@@ -7,6 +7,7 @@ import courses from '~/api/courses'
 import lesson from '~/api/lesson'
 import news from '~/api/news'
 import notifications from '~/api/notifications'
+import completion from '~/api/completion'
 
 export default {
     auth,
@@ -17,5 +18,6 @@ export default {
     courses,
     lesson,
     news,
-    notifications
+    notifications,
+    completion
 }

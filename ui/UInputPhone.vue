@@ -7,9 +7,12 @@
                 :style="sizeFrames.labelStyles"
         />
         <div class="flex">
-            <u-select v-model="innerCountry" :options="countries" label-name="name" class="w-[100px]">
-                <template #empty>
-
+            <u-select v-model="innerCountry" :options="countries" label-name="name" class="w-[110px]">
+                <template #selected="{ selected }">
+                    <div class="flex items-center">
+                        <img class="size-6" :src="selected.flag" alt="">
+                        <p class="flex-grow text-center">+{{ selected.code}}</p>
+                    </div>
                 </template>
                 <template #option="{ active, label, option }">
                     <div class="flex items-center p-2">
@@ -22,10 +25,9 @@
                 </template>
             </u-select>
             <UInput
+                v-model="lazyPhone"
                 class="ml-2 grow !appearance-none [&_input]:!text-base [&_input]:!text-black"
-                :modelValue="lazyPhone"
                 :mask="activeCountry?.mask"
-                @update:modelValue="handlePhoneInput"
             ></UInput>
         </div>
     </div>
@@ -35,7 +37,7 @@
 import UInput from '~/ui/UInput.vue';
 import ru from '~/ui/assets/flags/ru.png';
 import by from '~/ui/assets/flags/by.png';
-import { CountryCode, parsePhoneNumber } from 'libphonenumber-js';
+
 
 export interface Props {
     label?: string;
@@ -57,8 +59,9 @@ const modelValue = defineModel<string | undefined>();
 const country = defineModel<string | undefined>('country');
 
 
-const active = ref(false);
 const innerCountry = ref('by');
+const lazyPhone = ref('');
+
 
 watch(
     country,
@@ -73,7 +76,8 @@ watch(
 watch(
     innerCountry,
     (v) => {
-        innerCountry.value = v;
+        country.value = v;
+        lazyPhone.value = ''
     },
     {
         immediate: true,
@@ -85,7 +89,7 @@ const countries = ref([
         name: 'Россия',
         value: 'ru',
         code: 7,
-        masks: '(###) ###-##-##',
+        mask: '(###) ###-##-##',
         flag: ru,
     },
     {
@@ -99,22 +103,6 @@ const countries = ref([
 
 const activeCountry = computed(() => countries.value.find((c) => c.value === innerCountry.value));
 
-const lazyPhone = ref('');
-
-const handlePhoneInput = async (v: string) => {
-    if (activeCountry.value) {
-        console.log(modelValue)
-        modelValue.value = '+' + activeCountry.value.code + v;
-
-        try {
-            if (v && v.length > 3) {
-                v = parsePhoneNumber(v, activeCountry.value.value.toUpperCase() as CountryCode).formatInternational();
-            }
-            v = v.replace('+' + String(activeCountry.value.code), '');
-        } catch (e) {}
-        lazyPhone.value = v;
-    }
-};
 
 
 const sizeFrames = computed(() => {

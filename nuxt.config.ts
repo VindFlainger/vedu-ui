@@ -68,5 +68,9 @@ export default defineNuxtConfig({
   ],
 
   css: ['~/assets/styles/main.css', '~/ui/assets/globals.css'],
-  compatibilityDate: '2024-11-01'
+  compatibilityDate: '2024-11-01',
+
+  devtools: {
+    enabled: false
+  }
 });
