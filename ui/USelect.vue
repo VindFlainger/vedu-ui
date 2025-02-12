@@ -401,7 +401,7 @@ const computedSelected = computed(() => {
 
 const addItem = () => {
     emit('add', {
-        query: USelect.value.query,
+        query: USelect.value.states.inputValue,
         cb: () => {
             USelect.value.blur();
         },

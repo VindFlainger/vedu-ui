@@ -71,6 +71,7 @@ const activeTags = computed(() => props.modelValue
 
 const { loading: createLoading, addLoading: addCreateLoading, removeLoading: removeCreateLoading } = useLoading(false)
 const handleCreate = async ({ query, cb }: { query: string, cb: () => void }) => {
+	console.log(query)
     try {
         addCreateLoading()
         const res = await $api.questions.CREATE_TAG({ name: query })

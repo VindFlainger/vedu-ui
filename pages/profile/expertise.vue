@@ -1,6 +1,5 @@
 <template>
     <div>
-		<CategoryD
         <div>
             <p class="flex gap-1.5 items-center mb-5 font-nunito text-lg font-extrabold text-primary-700"> 
 				<u-icon class="relative bottom-px" value="AcademicCap" solid color="primary-700" :size="20"/>

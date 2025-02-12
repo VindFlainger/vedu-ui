@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import by from '~/assets/flags/by.png'
-import pl from '~/assets/flags/pl.png'
+import ru from '~/assets/flags/ru.png'
 
 const countries = ref([
     {
@@ -13,9 +13,9 @@ const countries = ref([
         label: 'Беларусь',
     },
     {
-        img: pl,
-        value: 'pl',
-        label: 'Польша',
+        img: ru,
+        value: 'ru',
+        label: 'Россия',
     },
 ])
 </script>
