@@ -124,7 +124,7 @@ const email = useField<string>("email");
 const recoveryEmailLoading = ref(false)
 const handleRecoveryEmail = _handleRecoveryEmail(async () => {
     recoveryEmailLoading.value = true
-    const { data, error } = await $api.Auth.RECOVERY_EMAIL({
+    const { data, error } = await $api.auth.RECOVERY_EMAIL({
         body: { email: email.value.value }
     })
     recoveryEmailLoading.value = false

@@ -1,15 +1,18 @@
 <template>
-    <div v-bind="{ class: attrs.class }" :class="{ 'prevent-select': !selection }" class="px-[2px]">
-        <p
-            v-if="props.label"
-            class="font-medium text-base"
-            :style="[sizeFrames.labelStyles, { color: textColor }]"
-            :class="labelClass"
-        >
-            {{ props.label }} <span class="text-red-500 -ml-[2px] inline-block" v-if="required">*</span>
-        </p>
+    <div v-bind="{ class: attrs.class }" :class="{ 'prevent-select': !selection }">
+        <ULabel
+            :description="description"
+            :label="label"
+            :required="required"
+            :text-color="textColor"
+            :style="sizeFrames.labelStyles"
+            :questionIndicatorColor="isErrorState ? errorStateColor : undefined"
+        />
         <ElInput
-            class="u-input [&>div]:!shadow-[inset_0_0_0_1px_var(--u-input-color)] [&_input]:text-base [&_input]:text-[var(--u-input-text-color)]"
+            class="u-input [&>div]:!shadow-[inset_0_0_0_1px_var(--u-input-color)] [&_input]:text-base
+                [&_input]:text-[var(--u-input-text-color)] [&_.el-input\_\_prefix-inner>:last-child]:mr-[var(--u-input-icon-margin)]
+                [&_.el-input\_\_suffix-inner>:first-child]:!ml-[var(--u-input-icon-margin)] [&_textarea]:!shadow-[inset_0_0_0_1px_var(--u-input-color)]
+            "
             :model-value="modelValue"
             v-bind="{ ...attrs, class: inputClass }"
             :max="max"
@@ -18,22 +21,26 @@
             :type="passwordVisible ? 'text' : (type as string)"
             :required="required"
             :maxlength="maxlenght as string"
+            ref="Input"
             @update:model-value="handleUpdate"
             @keypress="handleKeypress"
             @blur="handleBlur"
             @keydown.enter="emit('enter')"
+            v-maska
+            :data-maska="mask"
         >
             <template #prefix>
                 <UIcon
                     v-if="leftIcon"
-                    class="[&_svg]:!text-[var(--text-color)]"
+                    class="[&_svg]:!text-[var(--u-input-text-color)]"
                     :value="leftIcon"
                     :size="sizeFrames.iconSizes.default"
                 />
                 <UIcon
                     v-else-if="type === 'email'"
-                    class="[&_svg]:!text-[var(--text-color)]"
+                    class="[&_svg]:!text-[var(--u-input-text-color)]"
                     value="Envelope"
+                    :size="sizeFrames.iconSizes.default"
                 />
                 <slot name="prefix" v-else></slot>
             </template>
@@ -42,6 +49,7 @@
                     v-if="rightIcon"
                     :value="rightIcon"
                     :tag="rightIconButton?'button':undefined"
+                    tabindex="-1"
                     :size="sizeFrames.iconSizes.default"
                     :color="color"
                     @click="emit('click:rightIcon')"
@@ -56,7 +64,7 @@
                 <div v-else-if="type === 'number' && numberAppearance" class="flex flex-col">
                     <UIcon
                         value="Plus"
-                        class="rounded border"
+                        class="rounded border hover:!border-green-700 [&:hover_svg]:!text-green-700 [&_svg]:stroke-[3px]"
                         :style="{ border: `1px solid ${color}` }"
                         tag="button"
                         :size="sizeFrames.iconSizes.plus"
@@ -65,7 +73,7 @@
                     />
                     <UIcon
                         value="Minus"
-                        class="mt-[2px] rounded border"
+                        class="mt-[2px] rounded border hover:!border-red-700 [&:hover_svg]:!text-red-700 [&_svg]:stroke-[3px]"
                         :style="{ border: `1px solid ${color}` }"
                         tag="button"
                         :size="sizeFrames.iconSizes.plus"
@@ -79,7 +87,7 @@
         <div class="flex">
             <ul class="h-6" v-if="infoLine"></ul>
             <div class="grow">
-                <ul v-if="(props.hideErrors || activeErrors.length)"
+                <ul v-if="!props.hideErrors && activeErrors.length"
                     class="mt-1 pl-2 text-[13px] sm:text-sm text-red-500">
                     <li
                         v-for="error in (activeErrors as Array<any>).slice(0, errorsCount as number)"
@@ -122,6 +130,8 @@ import { useColor } from "~/ui/composables/useColor";
 import { useRounded } from "~/ui/composables/useRounded";
 import { useSize } from "~/ui/composables/useSize";
 
+const errorStateColor = '#DC2626'
+
 defineOptions({
     inheritAttrs: false,
 })
@@ -131,7 +141,7 @@ export interface Props {
     label?: string
     inputClass?: string
     labelClass?: string
-    type?: 'text' | 'email' | 'password' | 'number'
+    type?: 'text' | 'email' | 'password' | 'number' | 'textarea'
     passwordAppearance?: boolean
     numberAppearance?: boolean
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -153,7 +163,10 @@ export interface Props {
     rounded?: string,
     maxlenght?: string,
     infoLine?: boolean,
-    fontSize?: string | number
+    fontSize?: string | number,
+    description?: string,
+    labelProps?: any,
+    mask?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -169,8 +182,8 @@ const props = withDefaults(defineProps<Props>(), {
     rightIconButton: false,
     color: 'gray-400',
     textColor: 'black',
-    rounded: 'xl',
-    fontSize: 14
+    rounded: 'lg',
+    fontSize: 14,
 })
 
 const attrs = useAttrs()
@@ -198,16 +211,17 @@ const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
             return {
-                height: 32,
+                height: 27,
                 paddingContent: '1px 6px',
                 padding: `0 ${isSuffixed.value ? '1px' : '2px'} 0 ${
                     isPrefixed.value ? '1px' : '2px'
                 }`,
-                labelStyles: { marginBottom: '3px' },
+                labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 iconSizes: {
-                    default: 24,
-                    plus: 15,
+                    default: 18,
+                    plus: 8,
                 },
+                iconMargin: 3
             }
         case 'sm':
             return {
@@ -216,11 +230,12 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '2px' : '4px'} 0 ${
                     isPrefixed.value ? '2px' : '4px'
                 }`,
-                labelStyles: { marginBottom: '5px' },
+                labelStyles: { marginBottom: '4px', fontSize: '15px' },
                 iconSizes: {
-                    default: 24,
-                    plus: 15,
+                    default: 20,
+                    plus: 11,
                 },
+                iconMargin: 4
             }
         case 'md':
             return {
@@ -229,11 +244,12 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '3px' : '6px'} 0 ${
                     isPrefixed.value ? '3px' : '6px'
                 }`,
-                labelStyles: { marginBottom: '6px' },
+                labelStyles: { marginBottom: '5px', fontSize: '16px' },
                 iconSizes: {
                     default: 24,
                     plus: 13,
                 },
+                iconMargin: 5
             }
         case 'lg':
             return {
@@ -242,11 +258,12 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '4px' : '8px'} 0 ${
                     isPrefixed.value ? '4px' : '8px'
                 }`,
-                labelStyles: { marginBottom: '10px' },
+                labelStyles: { marginBottom: '7px', fontSize: '16px' },
                 iconSizes: {
                     default: 24,
                     plus: 15,
                 },
+                iconMargin: 7
             }
         case 'xl':
             return {
@@ -255,11 +272,12 @@ const sizeFrames = computed(() => {
                 padding: `0 ${isSuffixed.value ? '5px' : '10px'} 0 ${
                     isPrefixed.value ? '5px' : '10px'
                 }`,
-                labelStyles: { marginBottom: '12px' },
+                labelStyles: { marginBottom: '9px', fontSize: '16px' },
                 iconSizes: {
                     default: 24,
                     plus: 15,
                 },
+                iconMargin: 12
             }
     }
 })
@@ -288,21 +306,23 @@ const activeSuccesses = computed(() => {
     return successes
 })
 
+const isErrorState = computed(()=> (activeErrors.value.length && !props.hideErrors) || props.errorState)
 
-const { color } = useColor(computed(() => (activeErrors.value.length && !props.hideErrors) || props.errorState ? '#DC2626' : props.color))
-const { color: textColor } = useColor(computed(() => (activeErrors.value.length && !props.hideErrors) || props.errorState ? '#DC2626' : props.textColor))
+const { color } = useColor(computed(() => isErrorState.value ? errorStateColor : props.color))
+const { color: textColor } = useColor(computed(() => isErrorState.value ? errorStateColor : props.textColor))
 const { rounded } = useRounded(props.rounded)
 const { size: fontSize } = useSize(props.size)
 
 
 const styles = computed(() => ({
-    'height': `${sizeFrames.value.height}px`,
+    'height': props.type !== 'textarea' ? `${sizeFrames.value.height}px` : 'auto',
     '--u-input-padding': sizeFrames.value.padding,
     '--u-input-padding-content': sizeFrames.value.paddingContent,
     '--u-input-color': color.value,
     '--u-input-text-color': textColor.value,
     '--u-input-rounded': rounded.value,
-    '--u-input-font-size': fontSize.value
+    '--u-input-font-size': fontSize.value,
+    '--u-input-icon-margin': `${sizeFrames.value.iconMargin}px`
 }))
 
 const passwordVisible = ref(false)
@@ -363,7 +383,15 @@ const handleNumberChange = (action: string) => {
     else emit('update:modelValue', v)
 }
 
+const Input = ref()
+
+defineExpose({
+    input: Input
+})
+
 </script>
+
+
 
 <style scoped lang="scss">
 .u-input :deep(input) {
@@ -379,6 +407,13 @@ const handleNumberChange = (action: string) => {
 .u-input :deep(> div) {
     padding: var(--u-input-padding-content);
     border-radius: var(--u-input-rounded);
+}
+
+.u-input :deep(> textarea) {
+    padding: var(--u-input-padding-content) !important;
+    padding-top: 6px !important;
+    border-radius: var(--u-input-rounded);
+    resize: none;
 }
 
 .u-input :deep(.el-input__wrapper) {

@@ -1,21 +1,21 @@
 <template>
-    <USelect :options="countries" label="Country" hide-checkbox-style/>
+    <USelect :options="countries" label="Страна" hide-checkbox-style placeholder="Выбрать страну"/>
 </template>
 
 <script setup lang="ts">
 import by from '~/assets/flags/by.png'
-import pl from '~/assets/flags/pl.png'
+import ru from '~/assets/flags/ru.png'
 
 const countries = ref([
     {
         img: by,
         value: 'by',
-        label: 'Belarus',
+        label: 'Беларусь',
     },
     {
-        img: pl,
-        value: 'pl',
-        label: 'Poland',
+        img: ru,
+        value: 'ru',
+        label: 'Россия',
     },
 ])
 </script>

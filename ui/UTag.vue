@@ -1,10 +1,10 @@
 <template>
     <div
         :style="styles"
-        class="relative flex items-center border-[var(--u-tag-text-color)] text-[var(--u-tag-color)] select-none"
+        class="relative inline-flex items-center text-[var(--u-tag-color)] select-none"
     >
         <slot name="prefix"></slot>
-        <span>{{ value }}</span>
+        <span class="font-nunito relative">{{ value }}</span>
         <UIcon
             v-if="clearable"
             value="XMark"
@@ -27,6 +27,7 @@
 import { useColor } from "~/ui/composables/useColor";
 import { useRounded } from "~/ui/composables/useRounded";
 import { useSize } from "~/ui/composables/useSize";
+import { useAdjustedColor } from "~/ui/composables/useAdjustedColor";
 
 export interface Props {
     value: any,
@@ -42,12 +43,25 @@ export interface Props {
     indicatorOutlineColor?: string,
     indicator?: boolean,
     indicatorSize?: string | number
+    solid?: boolean
+}
+
+const defaults = {
+    color: 'primary-800',
+    rounded: 'lg',
+    fontWeight: 700,
+    fontSize: 15,
+    size: 'md',
+    borderWidth: 2,
+    clearable: false,
+    indicatorColor: 'green-500',
+    indicatorSize: 6
 }
 
 const props = withDefaults(defineProps<Props>(), {
     color: 'primary-800',
     rounded: 'lg',
-    fontWeight: 500,
+    fontWeight: 700,
     fontSize: 15,
     size: 'md',
     borderWidth: 2,
@@ -60,38 +74,54 @@ const emit = defineEmits<{
     clear: []
 }>()
 
-const { color: _color } = useColor(props.color)
-const { color: _textColor } = useColor(props.textColor || props.color)
-const { color: _indicatorColor } = useColor(props.indicatorColor)
-const { color: _indicatorOutlineColor } = useColor(props.indicatorOutlineColor || props.color)
-const { size: _indicatorSize } = useSize(props.indicatorSize)
-const { rounded: _rounded } = useRounded(props.rounded)
-const { size: _fontSize } = useSize(props.fontSize)
-const { size: _borderWidth } = useSize(props.borderWidth)
+const { color: _color, adjustedColor: _colorAdjustedBrightness } = useAdjustedColor(() => props.color, -50)
+const { color: _textColor } = useColor(() => props.textColor || props.color)
+const { color: _indicatorColor } = useColor(() => props.indicatorColor)
+const { color: _indicatorOutlineColor } = useColor(() => props.indicatorOutlineColor || props.color)
+const { size: _indicatorSize } = useSize(() => props.indicatorSize)
+const { rounded: _rounded } = useRounded(() => props.rounded)
+const { size: _fontSize } = useSize(() => props.fontSize)
+const { size: _borderWidth } = useSize(() => props.borderWidth)
 
 const sizeFrames = computed(() => {
     switch (props.size) {
         case 'xs':
-            return { padding: '0 4px' }
+            return {
+                padding: '0 4px',
+                fontSize: '12px'
+            }
         case 'sm':
-            return { padding: '0 6px' }
+            return {
+                padding: '0 6px',
+                fontSize: '13px'
+            }
         case 'md':
-            return { padding: '0 8px' }
+            return {
+                padding: '0 8px',
+                fontSize: '14px'
+            }
         case 'lg':
-            return { padding: '1px 9px' }
+            return {
+                padding: '1px 9px',
+                fontSize: '15px'
+            }
         case 'xl':
-            return { padding: '2px 10px' }
+            return {
+                padding: '2px 10px',
+                fontSize: '16px'
+            }
     }
 })
 
 const styles = computed(() => ({
-    'color': _textColor.value,
+    'color': props.solid ? 'white' : _textColor.value,
+    'background': props.solid ? _color.value : 'transparent',
     '--u-tag-color': _color.value,
-    '--u-tag-text-color': _textColor.value,
+    'border-color': props.solid ? _colorAdjustedBrightness.value : _textColor.value,
     'border-radius': _rounded.value,
     'font-weight': props.fontWeight,
     'padding': sizeFrames.value.padding,
-    'font-size': _fontSize.value,
+    'font-size': props.fontSize == defaults.fontSize ? sizeFrames.value.fontSize : _fontSize.value,
     'border-width': _borderWidth.value
 }))
 

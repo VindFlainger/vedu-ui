@@ -1,7 +1,7 @@
-// @ts-ignore
-import {DateTime} from "luxon";
+import {DateTime, Settings} from "luxon";
 import dateFormats from "~/config/dateFormats";
 
+Settings.defaultLocale = 'ru-RU'
 
 export default defineNuxtPlugin(() => {
     return {

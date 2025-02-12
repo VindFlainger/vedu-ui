@@ -1,84 +1,95 @@
 <template>
     <div>
         <div class="flex gap-3 items-start">
-            <UInput
-                info-line
-                size="sm"
-                v-model="text"
+            <USelect
+                :model-value="modelValue"
                 class="max-w-xs grow"
-                maxlenght="16"
-                :conditions="[
-                    ['Tag duplicated', 'error', duplicated],
-                    [`The maximum number of Tags is ${tagsLimit}`, 'error', limitExceeded && text.length],
-                ]"
-                @enter="handleAdd"
-            />
-            <UButton
-                class="self-start shrink-0"
-                label="Add"
-                size="md"
-                :disabled="!text.length || duplicated || limitExceeded"
-                @click="handleAdd"
+                placeholder="Имя тега"
+                filterable
+                hide-selected
+                hide-checkbox-style
+                :options="tags"
+                label-name="name"
+                value-name="id"
+                addable
+                multiple
+                no-items-found-text="По вашему запросу ничего не найдено"
+                addable-label="Добавить новый тег"
+                :loading="createLoading"
+                @add="handleCreate"
+                @update:model-value="emit('update:modelValue', $event)"
             />
         </div>
-        <div class="p-3 min-h-[70px] flex items-center border border-dashed border-gray-400 bg-gray-50 mt-3 rounded-lg select-none">
-            <div v-if="modelValue.length" class="flex gap-3 items-center">
+        <div
+            class="p-3 min-h-[70px] flex items-center border border-dashed border-gray-400 bg-gray-50 mt-3 rounded-lg select-none">
+            <div v-if="activeTags.length" class="flex flex-wrap gap-3 items-center">
                 <UTag
-                    v-for="tag in modelValue"
-                    :key="tag.value || tag.label"
-                    :value="tag.label"
+                    v-for="tag in activeTags"
+                    :key="tag.id"
+                    :value="tag.name"
                     color="indigo-400"
                     clearable
-                    :indicator="!tag.value"
-                    @clear="handleDelete(tag)"
+                    :indicator="tag.exists"
+                    @clear="handleDelete(tag.id)"
                 />
             </div>
             <p v-else class="grow text-center text-gray-500 text-[15px]">
-                No Tags Added
+                Теги не найдены
             </p>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { QuestionTag } from "~/models/QuestionModel";
-import { Optional, ValuesType } from "utility-types";
+const { $api } = useNuxtApp()
+
+const questionsStore = useQuestionsStore()
+
+const { tags } = storeToRefs(questionsStore)
 
 export interface Props {
-    savedTags: QuestionTag[],
-    modelValue: Optional<QuestionTag, 'value'>[]
+    modelValue: string[],
+    savedTags: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    tags: () => [],
-    modelValue: () => []
+    modelValue: () => [],
+    savedTags: () => []
 })
 
 const emit = defineEmits<{
     'update:modelValue': [v: Props['modelValue']]
 }>()
 
-const tagsLimit = ref(6)
-const text = ref('')
+const activeTags = computed(() => props.modelValue
+    .filter(value => tags.value.some(tag => tag.id === value))
+    .map(value => ({
+        ...tags.value.find(tag => tag.id === value),
+        exists: props.savedTags.some(x => x === value)
+    }))
+)
 
-const handleAdd = () => {
-    if (!duplicated.value && !limitExceeded.value) {
-        const tag = {
-            label: text.value
-        }
-        emit('update:modelValue', [...props.modelValue, tag])
-        text.value = ''
+const { loading: createLoading, addLoading: addCreateLoading, removeLoading: removeCreateLoading } = useLoading(false)
+const handleCreate = async ({ query, cb }: { query: string, cb: () => void }) => {
+	console.log(query)
+    try {
+        addCreateLoading()
+        const res = await $api.questions.CREATE_TAG({ name: query })
+        await questionsStore.fetchAvailableTags()
+        emit('update:modelValue', [...props.modelValue, res.id])
+        cb()
+    } catch (e) {
+
+    } finally {
+        removeCreateLoading()
     }
 }
 
-const handleDelete = (tag: Optional<QuestionTag, 'value'>) => {
+const handleDelete = (id: string) => {
     emit(
         'update:modelValue',
-        props.modelValue.filter(_tag => _tag.value ? _tag.value !== tag.value : _tag.label !== tag.label)
+        props.modelValue.filter(x => x !== id)
     )
 }
-
-const duplicated = computed(() => props.modelValue.some(tag => tag.label === text.value))
-const limitExceeded = computed(() => props.modelValue.length >= tagsLimit.value)
 
 </script>

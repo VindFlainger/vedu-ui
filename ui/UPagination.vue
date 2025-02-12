@@ -2,16 +2,17 @@
     <client-only>
         <div class="flex items-center rounded-lg" v-bind="$attrs">
             <USelect
-                class="w-14 [&_input]:text-center [&_input]:right-[6px] [&_input]:relative"
+                class="w-[80px] [&_input]:text-center"
                 :options="perPageOptions"
                 :model-value="perPage"
                 placeholder=" "
                 size="xs"
                 label-name="value"
+                color="primary-700"
                 @update:model-value="handlePerPageChange"
             />
             <p class="text-gray-500 text-sm ml-4">
-                Showing {{ from }} to {{ to }} of {{ count }}
+                Показано {{ from }} до {{ to }} из {{ count }}
             </p>
             <div class="mr-0 ml-auto flex items-center gap-2">
                 <UButton icon-style icon="ArrowLeft" @click="handlePageChange(-1)"></UButton>
@@ -24,6 +25,7 @@
                     class="w-12 text-center"
                     size="xs"
                     type="number"
+                    color="primary-700"
                     @change-number="emit('update:page', lazyPage > 0?lazyPage.value:1)"
                 />
                 <UButton icon-style icon="ArrowRight" @click="handlePageChange(1)"></UButton>
@@ -45,7 +47,7 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     page: 1,
-    perPage: 30,
+    perPage: 15,
     count: 0
 })
 
@@ -78,7 +80,8 @@ const perPageOptions = ref([
     },
     {
         value: 50
-    }
+    },
+
 ])
 
 const handlePerPageChange = (v: number) => {

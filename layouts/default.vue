@@ -1,32 +1,50 @@
 <template>
-    <div>
-        <HeaderBar/>
-        <div class="min-h-[calc(100vh-56px)] flex flex-col">
-            <div id="action-bar" class="sticky top-14 bg-white z-50"></div>
-            <div class="py-4 flex justify-center grow">
-                <div class="max-sm:px-3 sm:w-[90%] lg:w-[80%] max-w-[1600px] min-h-[100%]">
-                    <NuxtPage :class="{'hidden': !hydratated}">
-                        <div>
-
-                        </div>
-                        <slot>
-
-                        </slot>
-                    </NuxtPage>
-                </div>
-            </div>
-        </div>
-
+    <div class="bg-[url('~/assets/backgrounds/main.svg')]">
+        <HeaderBar v-if="hydratated && user && !maintenance"/>
+        <LoadingStub v-if="!maintenance && !user"/>
+        <MaintenanceStub v-if="maintenance"/>
+        <ContentBlock
+            v-if="!maintenance"
+            :access-denied="!layoutStore.accessToPage"
+            :hydratated="hydratated"
+            :maintenance="maintenance"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
+
+import ContentBlock from "~/components/Globals/Layout/ContentBlock.vue";
+
 useSeoMeta({
     titleTemplate: title => `Vedu! | ${title}`
 })
+const accountStore = useAccountStore()
+
+const layoutStore = useLayoutStore()
+
+const { user, maintenance, role } = storeToRefs(accountStore)
+
+const account = useAccountStore()
+const setAuth = () => {
+    if (account.user) {
+        const _hsq = window._hsq = window._hsq || [];
+
+        window._hsq.push(["identify",{
+            email: account.user?.auth?.email,
+            id: account.user.id
+        }]);
+
+        _hsq.push(["trackPageView"]);
+    }
+    window.HubSpotConversations.widget.load()
+}
 
 const hydratated = ref(false)
-onMounted(()=> {
+onMounted(() => {
     hydratated.value = true
+    if (window.HubSpotConversations) setAuth()
+    else  window.hsConversationsOnReady = [setAuth]
 })
+
 </script>

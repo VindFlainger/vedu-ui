@@ -1,48 +1,87 @@
 import { Controls } from "~/api/handler";
 import _fetch from '~/api/handler'
 import { NitroFetchOptions } from "nitropack";
-import { SuccessData } from "~/api/data";
-import { Question, QuestionAnswers, QuestionModel, QuestionTag } from "~/models/QuestionModel";
+import { Question, QuestionAnswers, QuestionTag } from "~/models/QuestionModel";
+import { QuestionFindResult } from "~/types/questions";
 
-export interface AddTagPayload {
-    op: 'add',
-    id: string,
-    value: string
-}
-
-export interface DeleteTagPayload {
-    op: 'delete',
-    id: string,
-    value: string
-}
-
-export interface UpdateAnswersPayload {
-    id: string,
-    answers: QuestionAnswers
-}
-
-export interface UpdateAnswersData {
-    data: QuestionAnswers
-}
 
 export interface GetQuestionsPayload {
     query?: string,
     tags?: string[],
-    page?: string,
-    per_page?: string
+    page?: number,
+    per_page?: number
 }
 
-export interface CreateQuestionsPayload extends QuestionModel {
-
+export interface GetQuestionsData {
+    data: Question[],
+    meta: {
+        page: number,
+        per_page: number,
+        count: number
+    }
 }
 
 
+export interface CreateQuestionsPayload {
+    title: string,
+    content: string,
+    tags: string[],
+    type: string,
+    options: string[] | { label: string, correct?: boolean }[] | { label: string, order: number }[]
+}
+
+export interface RemoveQuestionsPayload {
+    id: string
+}
+
+export interface CreateTagPayload {
+    name: string
+}
+
+export interface CreateTagData {
+    id: string,
+    name: string
+}
+
+export interface UpdateQuestionPayload {
+    id: string,
+    tags: string[],
+    options: QuestionAnswers,
+    content: string
+}
+
+
+export interface SearchQuestionsPayload {
+    page: number
+    per_page: number
+    search: string
+}
+
+export interface SearchQuestionsData {
+    data: QuestionFindResult[]
+    meta: {
+        page: number
+        per_page: number
+        total: number
+    }
+}
 
 export default {
-    GET_QUESTIONS: (data: GetQuestionsPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question[]>('GET', `questions`, data, options, controls),
-    CREATE_QUESTION: (data: CreateQuestionsPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question>('POST', `question`, data, options, controls),
-    GET_TAGS: (data?: null, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<QuestionTag[]>('GET', `question-tags`, data, options, controls),
-    ADD_TAG: (data: AddTagPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<SuccessData>('PUT', `questions/${data.id}/tag/add`, data, options, controls),
-    DELETE_TAG: (data: DeleteTagPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<SuccessData>('PUT', `questions/${data.id}/tag/delete`, data, options, controls),
-    UPDATE_ANSWERS: (data: UpdateAnswersPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<UpdateAnswersData>('PUT', `questions/${data.id}/answer/update`, data, options, controls),
+    GET_QUESTIONS: (data: GetQuestionsPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<GetQuestionsData>('GET', `/questions`, data, options, controls),
+    CREATE_QUESTION: (
+        data: CreateQuestionsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<Question>('POST', `/questions`, data, options, controls),
+
+    REMOVE_QUESTION: (data: RemoveQuestionsPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question>('DELETE', `/questions/${data.id}`, undefined, options, controls),
+    UPDATE_QUESTION: (data: UpdateQuestionPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<Question>('PATCH', `/questions/${data.id}`, data, options, controls),
+    GET_TAGS: (data?: null, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<QuestionTag[]>('GET', `/questions/tags`, data, options, controls),
+    CREATE_TAG: (data: CreateTagPayload, options?: NitroFetchOptions<any>, controls?: Controls) => _fetch<CreateTagData>('POST', `/questions/tags`, data, options, controls),
+
+    SEARCH_QUESTIONS: (
+        data: SearchQuestionsPayload,
+        options?: NitroFetchOptions<any>,
+        controls?: Controls
+    ) => _fetch<SearchQuestionsData>('GET', `/search-questions`, data, options, controls),
 }

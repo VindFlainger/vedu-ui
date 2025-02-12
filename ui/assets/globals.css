@@ -10,7 +10,7 @@
 
 .u-select-popper {
     user-select: none;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
     overflow-x: hidden;
 }
 

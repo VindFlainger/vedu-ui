@@ -1,0 +1,127 @@
+<template>
+    <UDialog
+        title="Funding Balance"
+        max-width="400"
+    >
+        <div class="relative pt-4">
+            <div v-if="!creditCard" class="absolute -m-6 z-[15] bg-gray-500/80 inset-0 flex items-center justify-center">
+                <div class="bg-white/80 w-72 p-5 rounded-2xl">
+                    <p class="text-primary-900 font-medium text-center leading-5">
+                        Oh, it looks like you haven't added a payment method yet
+                    </p>
+                    <div class="flex justify-center">
+                        <u-button
+                            class="mt-4"
+                            label="Add"
+                            @click="$emitter.emit('open:payment-modal')"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="relative w-[315px] h-[184px] rounded-2xl bg-[linear-gradient(177.23deg,_#3A49F9_-13.49%,_#9C2CF3_109.75%)] overflow-hidden">
+                    <div class="absolute top-[30px] left-[30px]">
+                        <p class="text-sm text-white/50">
+                            Fund Limit
+                        </p>
+                        <p class="mt-2 text-[28px] text-white leading-6">
+                            {{creditCard?.fund_limit ? `${useNotateThousands(creditCard?.fund_limit)} BYN` : `∞ BYN`}}
+                        </p>
+                    </div>
+                    <div class="absolute bottom-[25px] left-[30px] text-sm text-white">
+                        {{ creditCard?.number }}
+                    </div>
+                    <div class="absolute bottom-[25px] right-[30px] text-sm text-white">
+                        {{ creditCard?.expires }}
+                    </div>
+                    <div class="absolute top-[25px] right-[30px]">
+                        <img class="w-[45px] h-[35px]" src="~/assets/images/cards/mastercard.png" alt="">
+                    </div>
+                    <img class="absolute -bottom-16 -left-16 z-10" src="~/assets/images/cards/bottom-ellipse.png" alt="">
+                    <img class="absolute -top-14 -right-14 z-10" src="~/assets/images/cards/top-ellipse.png" alt="">
+                </div>
+            </div>
+            <div class="mt-8">
+                <p class="text-gray-800 font-bold">Presets:</p>
+                <div class="flex gap-2.5 flex-wrap justify-center mt-2">
+                    <button
+                        v-for="preset in presets"
+                        :key="preset"
+                        class="min-w-24 w-1/4 p-1.5 bg-primary-700 border-2 border-primary-800 rounded-xl text-center
+                            text-sm font-medium text-white leading-4 hover:bg-primary-700/90 hover:scale-105 duration-150 transition-transform shadow select-none"
+                        :class="{
+                            '!bg-gray-200 !border-gray-300 !text-gray-400 cursor-not-allowed !scale-100': preset > creditCard?.fund_limit,
+                            '!outline !outline-2 !outline-offset-2 !outline-pink-500 !bg-pink-400 !border-pink-500 !scale-100': preset === selectedPreset
+                        }"
+                        :disabled="preset > creditCard?.fund_limit"
+                        @click="selectedPreset = preset"
+                    >
+                        {{ useNotateThousands(preset) }} BYN
+                    </button>
+                </div>
+                <div class="mt-2 py-3 text-center font-bold text-sm text-gray-800">
+                   -OR-
+                </div>
+                <div>
+                    <p class="text-gray-800 font-bold">Custom:</p>
+                    <div>
+                        <u-input
+                            v-model="customAmount"
+                            :max="creditCard?.fund_limit || 1000000000000"
+                            type="number"
+                            class="mt-2"
+                            @input="selectedPreset = null"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <template v-if="creditCard"  #footer>
+            <div class="flex justify-between">
+                <u-button
+                    label="Fund"
+                    :disabled="submitDisabled"
+                    @click="submit"
+                />
+                <u-button
+                    class="font-bold"
+                    font-weight="600"
+                    label="Cancel"
+                    text
+                    color="red-500"
+                />
+            </div>
+        </template>
+    </UDialog>
+</template>
+
+<script setup lang="ts">
+export interface Props {
+}
+
+const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits()
+
+const presets = ref([50, 100, 200, 500, 1000])
+const selectedPreset = ref<number | null>(null)
+
+const customAmount = ref<string | null>(null)
+
+
+const creditCard : any = /*{
+    number: '#### #### #### 4444',
+    expires: '12/22',
+    cvv: '232',
+    fund_limit: 912
+}*/ null
+
+
+const submitDisabled = computed(() => {
+   return !selectedPreset.value && !customAmount.value
+})
+
+const submit = () => {
+
+}
+</script>

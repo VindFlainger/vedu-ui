@@ -17,16 +17,33 @@ const config = resolveConfig({
                 'regal-blue': '#243c5a',
                 'regal-green': '#43833e',
                 'primary': {
-                    700: '#49BBBD',
-                    900: '#058c97',
-                    800: '#0e9b98',
-                    500: '#92D6D6',
-                },
+                    900: '#04646c',
+                    800: '#05757e',
+                    700: '#058c97',
+                    600: '#059197',
+                    500: '#0e9b98',
+                    400: '#49BBBD',
+                    300: '#92D6D6',
+                }
             },
-
+            fontSize: {
+                title: '2rem',
+            },
+            fontFamily: {
+                'nunito': ["Nunito", 'sans-serif']
+            },
         },
+        screens: {
+            '2xs': '320px',
+            'xs': '480px',
+            'sm': '640px',
+            'md': '768px',
+            'lg': '1024px',
+            'xl': '1280px',
+            '2xl': '1536px'
+        }
     },
-    plugins: [],
+    plugins: ["prettier-plugin-tailwindcss"],
     darkMode: 'class',
 }) as any
 

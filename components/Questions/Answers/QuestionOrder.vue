@@ -8,8 +8,8 @@
                 class="max-w-xs grow"
                 maxlenght="256"
                 :conditions="[
-                    ['Answers duplicated', 'error', duplicated],
-                    [`The maximum number of answers is ${answersLimit}`, 'error', limitExceeded && text.length]
+                    ['Ответы повторяются', 'error', duplicated],
+                    [`Максимальное количество ответов - ${answersLimit}`, 'error', limitExceeded && text.length]
                 ]"
                 @enter="handleAdd"
             />
@@ -43,7 +43,7 @@
                 </Draggable>
             </Container>
             <p v-else class="flex items-center justify-center min-h-[70px] rounded-lg text-gray-500 text-[15px] border border-dashed border-gray-300 bg-gray-50">
-                No Answers Added
+                Вы еще не добавили ответы
             </p>
         </div>
     </div>
@@ -101,8 +101,3 @@ const duplicated = computed(() => props.modelValue.some(x => x.label === text.va
 const limitExceeded = computed(() => props.modelValue.length >= answersLimit.value)
 
 </script>
-
-<style>
-
-</style>
-

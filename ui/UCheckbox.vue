@@ -1,6 +1,16 @@
 <template>
-    <label class="flex items-center" :class="{ 'prevent-select': !selection }">
-        <div :style="checkboxStyles" class="rounded-sm outline outline-1 relative" :class="{'!rounded-full': radioStyle}">
+    <label
+        class="flex items-center cursor-pointer"
+        :class="{
+            'prevent-select': !selection,
+            '!cursor-not-allowed': disabled
+        }"
+    >
+        <div
+            :style="[checkboxStyles, checked ? selectedCheckboxStyles : null]"
+            class="u-checkbox-box rounded-sm outline outline-1 relative"
+            :class="{'!rounded-full': radioStyle}"
+        >
             <UIcon
                 v-if="checked && !solid && !radioStyle"
                 :color="color"
@@ -24,9 +34,10 @@
             type="checkbox"
             :class="checkboxClass"
             :checked="checked"
+            :disabled="disabled"
             @change="checked = $event"
         />
-        <span class="ml-2" :class="labelClass" v-if="label || $slots.default">
+        <span class="ml-2 text-gray-800" :class="labelClass" v-if="label || $slots.default">
             <slot>
                 <span>{{ label }}</span>
             </slot>
@@ -48,7 +59,10 @@ export interface Props {
     solid?: boolean
     color?: string
     markerColor?: string
-    radioStyle?: boolean
+    radioStyle?: boolean,
+    returnValue?: boolean,
+    sameCheckedOutline?: boolean,
+    disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -63,14 +77,14 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 
-const { color } = useColor(props.color)
-const { color: markerColor } = useColor(props.markerColor)
+const { color } = useColor(() => props.color)
+const { color: markerColor } = useColor(() => props.markerColor)
 
 
 const checked = computed({
     get() {
         if (Array.isArray(props.modelValue)) return props.modelValue.includes(props.value)
-        else return props.modelValue
+        else return props.returnValue ? props.modelValue === props.value : props.modelValue
     },
     set(event: any) {
         const checked = event.target.checked
@@ -82,7 +96,7 @@ const checked = computed({
                     props.modelValue.filter((value) => value !== props.value)
                 )
             if (checked) emit('update:modelValue', [...props.modelValue, props.value])
-        } else emit('update:modelValue', checked)
+        } else emit('update:modelValue', props.returnValue ? props.value : checked)
     },
 })
 
@@ -106,6 +120,11 @@ const checkboxStyles = computed(() => ({
     height: `${checkboxMetrics.value.wh}px`,
     minWidth: `${checkboxMetrics.value.wh}px`,
     width: `${checkboxMetrics.value.wh}px`,
-    outlineColor: color,
+    outlineColor: color.value,
 }))
+
+const selectedCheckboxStyles = computed(() => ({
+    outlineColor: props.sameCheckedOutline ? markerColor.value : color.value,
+}))
+
 </script>

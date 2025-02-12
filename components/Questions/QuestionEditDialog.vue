@@ -1,15 +1,15 @@
 <template>
-    <UDialog title="Edit Question" icon="Pencil">
+    <UDialog title="Edit Question" icon="Pencil" ref="dialog">
         <template v-slot:default="{close}">
             <div v-if="question">
                 <div>
-                    <span class="font-bold">Title:</span> <span class="ml-1">{{ question.title }}</span>
+                    <span class="font-bold">Название:</span> <span class="ml-1">{{ question.title }}</span>
                 </div>
                 <div class="mt-3">
-                    <span class="font-bold">Type:</span> <span class="ml-1 capitalize">{{ question.type }}</span>
+                    <span class="font-bold">Тип:</span> <span class="ml-1">{{ questionTypeName }}</span>
                 </div>
                 <div class="mt-3">
-                    <p class="font-bold">Content:</p>
+                    <p class="font-bold">Содержание:</p>
                     <client-only>
                         <QuestionEditor class="mt-2" v-model="lazyContent"/>
                     </client-only>
@@ -24,28 +24,28 @@
                             class="text-[13px] mt-1 text-gray-600"
                             :class="{'text-red-500': lazyContent.length > characterLimit}"
                         >
-                            This scale displays the allowable payload for the question. The payload includes not only
-                            symbols, but also decorations and media. To increase the limit upgrade your plan.
+                            Эта шкала отображает допустимую полезную нагрузку для вопроса. Полезная нагрузка включает в себя не только
+                            символы, а также украшения и средства массовой информации. Чтобы увеличить лимит, обновите свой тарифный план.
                         </p>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <p class="font-bold ">Tags:</p>
+                    <p class="font-bold ">Теги:</p>
                     <QuestionTags class="mt-2" v-model="lazyTags"/>
                 </div>
                 <div class="mt-3">
-                    <p class="font-bold ">Correct Answers:</p>
+                    <p class="font-bold ">Правильные ответы:</p>
                     <QuestionTSM
                         v-if="['text', 'single', 'multiple'].includes(question.type)"
                         class="mt-2"
-                        v-model="lazyAnswers"
+                        v-model="lazyOptions"
                         :type="question.type as 'text' | 'single' | 'multiple'"
-                        :saved-answers="question.answers as QuestionMultipleAnswer[] | QuestionTextAnswer[]"
+                        :saved-answers="question.options as QuestionMultipleAnswer[] | string[]"
                     />
                     <QuestionOrder
                         v-else-if="question.type === 'order'"
                         class="mt-2"
-                        v-model="lazyAnswers"
+                        v-model="lazyOptions"
                     />
                 </div>
             </div>
@@ -53,18 +53,17 @@
         <template #footer="{close}">
             <div class="flex gap-4 justify-end">
                 <UButton
-                    label="Cancel"
+                    label="Отмена"
                     text
                     text-color="#6b7280"
                     color="#b91c1c"
-                    class="!font-light"
                     @click="close()"
                 />
                 <UButton
-                    label="Save"
+                    label="Сохранить"
                     :disabled="lazyContent.length > characterLimit"
                     @click="handleUpdate"
-                    :loading="updateAnswersLoading"
+                    :loading="updateLoading"
                 />
             </div>
         </template>
@@ -72,9 +71,9 @@
 </template>
 
 <script setup lang="ts">
-import { Question, QuestionMultipleAnswer, QuestionTextAnswer } from "~/models/QuestionModel";
-
-const questionsStore = useQuestionsStore()
+import { Question, QuestionMultipleAnswer } from "~/models/QuestionModel";
+import { questionOptions } from "~/config/questions/params";
+const { $api } = useNuxtApp()
 
 export interface Props {
     question: Question,
@@ -82,31 +81,39 @@ export interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits<{
+const emit = defineEmits<{}>()
 
-}>()
-
+const dialog = ref()
 const characterLimit = ref(500)
 
 
-const lazyAnswers = ref(props.question.answers)
+const questionTypeName = computed(() => questionOptions.find(option => option.value === props.question.type)?.label)
+
+const lazyOptions = ref(props.question.options)
 const lazyContent = ref(props.question.content)
-const lazyTags = ref(props.question.tags)
+const lazyTags = ref(props.question.tags.map(tag => tag.id))
 
 const {
-    loading: updateAnswersLoading,
-    addLoading: addUpdateAnswersLoading,
-    removeLoading: removeUpdateAnswersLoading
+    loading: updateLoading,
+    addLoading: addUpdateLoading,
+    removeLoading: removeUpdateLoading
 } = useLoading()
 
 const handleUpdate = async () => {
     try {
-        addUpdateAnswersLoading()
-        await questionsStore.updateQuestionAnswers(props.question.id, lazyAnswers.value)
+        addUpdateLoading()
+        await $api.questions.UPDATE_QUESTION({
+            id: props.question.id,
+            content: lazyContent.value,
+            tags: lazyTags.value,
+            options: lazyOptions.value
+        })
+        dialog.value.close('updated')
+
     } catch (e) {
 
     } finally {
-        removeUpdateAnswersLoading()
+        removeUpdateLoading()
     }
 }
 

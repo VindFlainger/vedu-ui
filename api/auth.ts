@@ -1,33 +1,92 @@
-import { UseFetchOptions } from "nuxt/app";
-import { Controls } from "~/composables/useFetchData";
+import type { UseFetchOptions } from 'nuxt/app';
+import type { Controls } from '~/api/handler';
+import _fetch from '~/api/handler';
+import type { NitroFetchOptions } from 'nitropack';
 
-export interface SigninData {
-    refresh_token: string,
-    access_token: string,
-    live_time: number
+export interface CheckEmailPayload {
+    email: string;
 }
 
-export interface CheckEmailData {
-    unic: boolean
+type CheckEmailData = boolean;
+
+export interface SignUpPayload {
+    email: string;
+    password: string;
+    role: string;
+    age: number | string;
+    first_name: string;
+    last_name: string;
+    gender: string;
+    country: string;
+    invite_code?: string;
+}
+
+export interface SignUpData {
+    user_id: string;
+}
+
+export interface SignInPayload {
+    email: string;
+    password: string;
+    remember: boolean;
+    fingerprint: string;
+}
+
+export interface SignInData {
+    refresh_token: string;
+    access_token: string;
+    live_time: number;
 }
 
 export interface RegisterData {
-    success: boolean
+    success: boolean;
 }
 
 export interface RecoveryEmailData {
-    success: boolean
+    success: boolean;
 }
 
 export interface ChangePasswordData {
-    success: boolean
+    success: boolean;
+}
+
+export interface RecoveryEmailData {
+    success: boolean;
+}
+
+export interface ChangePasswordData {
+    success: boolean;
 }
 
 export default {
-    LOGIN_STUDENT: (options?: UseFetchOptions<SigninData>, controls?: Controls) => useFetchData('POST', '/signin', options, controls),
-    CHECK_EMAIL: (options?: UseFetchOptions<CheckEmailData>, controls?: Controls) => useFetchData('POST', '/check-email', options, controls),
-    REGISTER_STUDENT: (options?: UseFetchOptions<RegisterData>, controls?: Controls) => useFetchData('POST', '/register-student', options, controls),
-    REGISTER_INSTRUCTOR: (options?: UseFetchOptions<RegisterData>, controls?: Controls) => useFetchData('POST', '/register-instructor', options, controls),
-    RECOVERY_EMAIL: (options?: UseFetchOptions<RecoveryEmailData>, controls?: Controls) => useFetchData('POST', '/recovery-email', options, controls),
-    CHANGE_PASSWORD: (options?: UseFetchOptions<ChangePasswordData>, controls?: Controls) => useFetchData('POST', '/change-password', options, controls),
-}
+    CHECK_EMAIL: (
+        data: CheckEmailPayload, 
+        options?: NitroFetchOptions<any>, 
+        controls?: Controls
+    ) => _fetch<CheckEmailData>('GET', `/check-email`, data, options, { ...controls, noAuth: true }),
+
+    SIGN_UP: (
+        data: SignUpPayload, 
+        options?: NitroFetchOptions<any>, 
+        controls?: Controls
+    ) => _fetch<SignUpData>('POST', `/signup`, data, options, { ...controls, noAuth: true }),
+
+
+    SIGN_IN: (
+        data: SignInPayload, 
+        options?: NitroFetchOptions<any>, 
+        controls?: Controls
+    ) => _fetch<SignInData>('POST', `/signin`, data, options, { ...controls, noAuth: true }),
+
+    RECOVERY_EMAIL: (
+        options?: UseFetchOptions<RecoveryEmailData>, 
+        controls?: Controls
+    ) => useFetchData('POST', '/recovery-email', options),
+
+
+    CHANGE_PASSWORD: (
+        options?: UseFetchOptions<ChangePasswordData>, 
+        controls?: Controls
+    ) => useFetchData('POST', '/change-password', options),
+
+};

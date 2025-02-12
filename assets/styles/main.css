@@ -1,17 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,400&family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+    font-family: 'Arial AMU Bold';
+    src:  local('Arial AMU Regular'), url("../fonts/Arian.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Arial AMU Bold';
+    src:  local('Arial AMU Bold'), url("../fonts/Arian_Bold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+}
+
+html {
+    font-family: 'Nunito', sans-serif;
+    @apply text-gray-900
+}
+
 body {
-    font-family: 'Poppins', sans-serif;;
+    overflow: hidden;
 }
 
-
-button:focus{
-    outline: none
-}
 
 .main-scrollbar::-webkit-scrollbar {
     width: 8px;
@@ -25,6 +41,7 @@ button:focus{
     border-radius: 5px;
 }
 
+
 body::-webkit-scrollbar{
     width: 8px;
     background: #f3f4f6;
@@ -35,4 +52,82 @@ body::-webkit-scrollbar-thumb {
     margin-top: 56px;
     width: 8px;
     background: #9ca3af;
+}
+
+.thinner-scrollbar::-webkit-scrollbar{
+    width: 8px;
+    background: #f3f4f6;
+    border-radius: 5px;
+}
+
+.thinner-scrollbar::-webkit-scrollbar-thumb {
+    margin-top: 56px;
+    width: 8px;
+    background: #9ca3af;
+}
+
+.inner-scrollbar::-webkit-scrollbar {
+    width: 23px;
+}
+
+.beauty_scrollbar::-webkit-scrollbar {
+    width: 5px;
+    background: #f3f4f6;
+    border-radius: 5px;
+}
+
+.beauty_scrollbar::-webkit-scrollbar-thumb {
+    margin-top: 56px;
+    width: 8px;
+    background: #9ca3af;
+    border-radius: 5px;
+}
+
+
+.inner-scrollbar::-webkit-scrollbar-thumb {
+    border: 10px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    background-color: #d2cece;
+    border-radius: 9999px;
+}
+
+.inner-scrollbar::-webkit-scrollbar-track{
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+#hubspot-messages-iframe-container{
+    z-index: 100 !important;
+}
+
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-loader {
+    position: relative;
+    overflow: hidden;
+    @apply bg-gray-200;
+}
+
+.skeleton-loader::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+    animation: shimmer 2s infinite;
+}
+
+
+.break-words-text {
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+}
+
+.text-shadow {
+    text-shadow: 0 0 1px;
 }

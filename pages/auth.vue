@@ -21,16 +21,17 @@
                         />
                     </div>
                     <div class="px-1">
-                        <LazyActionLogin v-if="action === 'login'" class="mt-4"/>
-                        <LazyActionRegisterStudent
-                            v-if="action === 'register' && role === 'student'"
+                        <LazyActionLogin
+                            v-if="action === 'login'"
+                            v-bind="registerData"
                             class="mt-4"
-                            @registered="action = 'login'"
                         />
-                        <LazyActionRegisterInstructor
-                            v-if="action === 'register' && role === 'instructor'"
+                        <LazyActionRegister
+                            v-if="action === 'register'"
+                            :key="role"
+                            :role="role"
                             class="mt-4"
-                            @registered="action = 'login'"
+                            @registered="handleRegistered"
                         />
                     </div>
                 </div>
@@ -49,11 +50,11 @@ definePageMeta({
 
 const actions = [
     {
-        label: 'Login',
+        label: 'Войти',
         value: 'login',
     },
     {
-        label: 'Register',
+        label: 'Регистрация',
         value: 'register',
     },
 ]
@@ -62,17 +63,21 @@ const action = useRouteQuery('action', 'login')
 
 const roles = [
     {
-        label: 'Student',
+        label: 'Студент',
         value: 'student',
     },
     {
-        label: 'Instructor',
+        label: 'Преповадатель',
         value: 'instructor',
     },
 ]
 const role = ref('student')
 
+const registerData = ref()
+const handleRegistered = (v: any) => {
+    registerData.value = v
+    action.value = 'login'
+}
 
 </script>
 
-<style scoped></style>
