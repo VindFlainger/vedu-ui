@@ -97,8 +97,8 @@
 <script setup lang="ts">
 import type { PersonalData, UserProfile } from '~/types/account';
 
-import ru from '~/assets/flags/ru.png';
-import by from '~/assets/flags/by.png';
+import pl from '~/assets/flags/pl.png';
+import ua from '~/assets/flags/ua.png';
 import type { GeoAddress } from '~/types/completion';
 
 const { $api } = useNuxtApp();
@@ -118,8 +118,8 @@ const flags = ref<
         flag: string;
     }[]
 >([
-    { name: 'Россия', value: 'ru', flag: ru },
-    { name: 'Беларусь', value: 'by', flag: by },
+    { name: 'Украина', value: 'ua', flag: ua },
+    { name: 'Польша', value: 'pl', flag: pl },
 ]);
 
 const countryDescription = 'Измение страны повлияет на другие настройки, изменяйте страну с осторожностью';
@@ -188,8 +188,8 @@ const initValues = () => {
 initValues()
 
 const countryList: Record<string, string> = {
-    by: 'Беларусь',
-    ru: 'Россия',
+    pl: 'Польшая',
+    ua: 'Украина',
 };
 
 const searchForCompletion = async (v: string) => {

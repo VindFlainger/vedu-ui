@@ -3,19 +3,19 @@
 </template>
 
 <script setup lang="ts">
-import by from '~/assets/flags/by.png'
-import ru from '~/assets/flags/ru.png'
+import ua from '~/assets/flags/ua.png'
+import pl from '~/assets/flags/pl.png'
 
 const countries = ref([
     {
-        img: by,
-        value: 'by',
-        label: 'Беларусь',
+        img: pl,
+        value: 'pl',
+        label: 'Польша',
     },
     {
-        img: ru,
-        value: 'ru',
-        label: 'Россия',
+        img: ua,
+        value: 'ua',
+        label: 'Украина',
     },
 ])
 </script>

@@ -35,8 +35,8 @@
 
 <script setup lang="ts">
 import UInput from '~/ui/UInput.vue';
-import ru from '~/ui/assets/flags/ru.png';
-import by from '~/ui/assets/flags/by.png';
+import ua from '~/ui/assets/flags/ua.png';
+import pl from '~/ui/assets/flags/pl.png';
 
 
 export interface Props {
@@ -59,14 +59,14 @@ const modelValue = defineModel<string | undefined>();
 const country = defineModel<string | undefined>('country');
 
 
-const innerCountry = ref('by');
+const innerCountry = ref('pl');
 const lazyPhone = ref('');
 
 
 watch(
     country,
     (v) => {
-        innerCountry.value = v || 'by';
+        innerCountry.value = v || 'pl';
     },
     {
         immediate: true,
@@ -85,20 +85,20 @@ watch(
 );
 
 const countries = ref([
-    {
-        name: 'Россия',
-        value: 'ru',
-        code: 7,
-        mask: '(###) ###-##-##',
-        flag: ru,
-    },
-    {
-        name: 'Беларусь',
-        value: 'by',
-        code: 375,
-        mask: '(##) ###-##-##',
-        flag: by,
-    },
+	{
+		name: 'Польша',
+		value: 'pl',
+		code: 48,
+		mask: '(##) ###-###-###',
+		flag: pl,
+	},
+	{
+		name: 'Украина',
+		value: 'ua',
+		code: 380,
+		mask: '(###) ###-###-###',
+		flag: ua,
+	},
 ]);
 
 const activeCountry = computed(() => countries.value.find((c) => c.value === innerCountry.value));

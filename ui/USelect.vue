@@ -79,7 +79,15 @@
                                             "
                                             color="primary-700"
                                         />
-                                        <img v-if="option.img" :src="option.img" class="mr-2" />
+                                        <img 
+											v-if="option.img" 
+											:src="option.img" 
+											class="mr-2" 
+											:style="{
+												width: sizeFrames.imageStyles.width,
+												height: sizeFrames.imageStyles.width,
+											}" 
+										/>
                                         <span
                                             class="relative top-px text-gray-700"
                                             :class="{
@@ -284,6 +292,10 @@ const sizeFrames = computed(() => {
                 padding: `0 2px 0 2px`,
                 iconSize: 16,
                 iconRight: '6px',
+				imageStyles: {
+                    width: '24px',
+                    height: '24px',
+                },
                 labelStyles: { marginBottom: '3px', fontSize: '14px' },
                 paddingDropdownItem: '6px',
                 iconMargin: 3,
@@ -296,6 +308,10 @@ const sizeFrames = computed(() => {
                 padding: `0 4px 0 4px`,
                 iconSize: 20,
                 iconRight: '7px',
+				imageStyles: {
+                    width: '28px',
+                    height: '28px',
+                },
                 labelStyles: { marginBottom: '4px', fontSize: '15px' },
                 paddingDropdownItem: '10px',
                 iconMargin: 4,
@@ -311,8 +327,8 @@ const sizeFrames = computed(() => {
                 iconSize: 24,
                 iconRight: '12px',
                 imageStyles: {
-                    width: '20px',
-                    height: '20px',
+                    width: '32px',
+                    height: '32px',
                 },
                 paddingDropdownItem: '12px',
                 iconMargin: 5,
@@ -326,6 +342,10 @@ const sizeFrames = computed(() => {
                 labelStyles: { marginBottom: '7px', fontSize: '16px' },
                 iconSize: 24,
                 iconRight: '12px',
+				imageStyles: {
+                    width: '40px',
+                    height: '40px',
+                },
                 paddingDropdownItem: '12px',
                 iconMargin: 7,
                 multipleMargin: 14,
@@ -338,6 +358,10 @@ const sizeFrames = computed(() => {
                 labelStyles: { marginBottom: '9px', fontSize: '16px' },
                 iconSize: 24,
                 iconRight: '12px',
+				imageStyles: {
+                    width: '20px',
+                    height: '20px',
+                },
                 paddingDropdownItem: '12px',
                 iconMargin: 12,
                 multipleMargin: 16,
@@ -366,6 +390,7 @@ const styles = computed(() => ({
     '--u-select-text-color': textColor.value,
     '--u-select-icon-margin': `${sizeFrames.value.iconMargin}px`,
     '--u-select-multiple-margin': `${sizeFrames.value.multipleMargin}px`,
+	'--u-select-image-width': sizeFrames.value.imageStyles.width,
 }));
 
 const active = ref(false);
@@ -411,6 +436,11 @@ const addItem = () => {
 
 <style scoped lang="scss">
 .u-select {
+	.u-select-image {
+		width: var(--u-select-image-width);
+		height: var(--u-select-image-width);
+	}
+
     :deep(input) {
         color: var(--u-select-text-color);
     }

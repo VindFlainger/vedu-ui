@@ -1,10 +1,10 @@
 export default [
     {
-        code: 'by',
-        name: 'Belarus'
+        code: 'pl',
+        name: 'Польша'
     },
     {
-        code: 'pl',
-        name: 'Poland'
+        code: 'ua',
+        name: 'Украина'
     }
 ]
